@@ -1,0 +1,57 @@
+{
+  "name": "terrain-client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@map-colonies/react-components": "^3.10.5",
+    "@map-colonies/react-core": "3.3.2",
+    "@material-ui/core": "^4.11.0",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.1.1",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^16.11.28",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "jest": "^24.9.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.1",
+    "typescript": "^3.7.5",
+    "web-vitals": "^2.1.4",
+    "webpack": "4.42.0",
+    "webpack-dev-server": "3.10.3"
+  },
+  "devDependencies": {
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.3"
+  },
+  "scripts": {
+    "start": "yarn run copyassets:all && react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "copyassets:all": "yarn run copyassets:cesium",
+    "copyassets:cesium": "copyfiles -u 3 \"./node_modules/cesium/Build/Cesium/**/*\" \"./public\""
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
