@@ -1,0 +1,7 @@
+.PageNotFound {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+	font-size: x-large;
+  z-index: 5;
+}
