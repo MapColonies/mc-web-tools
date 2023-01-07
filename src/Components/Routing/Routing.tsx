@@ -21,7 +21,7 @@ const Routing: React.FC = (): JSX.Element => {
         </Route>
 
         {/* Default Route */}
-        <Route path="/">
+        <Route exact path="/">
           <Redirect to="/tools" />
         </Route>
         

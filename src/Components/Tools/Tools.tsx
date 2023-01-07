@@ -7,11 +7,13 @@ const Tools: React.FC = (): JSX.Element => {
 
   return (
     <div className='Tools'>
-      <div>
-        <b>Terrain Verification</b>
-        <NavLink to="/terrain-verification">
-          <img src="/assets/img/map-marker.gif" alt="" />
-        </NavLink>
+      <div className="Grid">
+        <div>
+          <b>Terrain Verification</b>
+          <NavLink to="/terrain-verification">
+            <img src="/assets/img/map-marker.gif" alt="" />
+          </NavLink>
+        </div>
       </div>
     </div>
   );
