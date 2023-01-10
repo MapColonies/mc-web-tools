@@ -24,5 +24,3 @@ public/[cC]esium
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-/helm-from-create
