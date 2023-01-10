@@ -36,10 +36,14 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /env-config.js
+              path: /
               port: 8080
             initialDelaySeconds: 30
             timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
           {{- if .Values.mcTools.resources.enabled }}
           resources:
             requests:
@@ -49,50 +53,7 @@ spec:
               memory: {{ .Values.mcTools.resources.limits.memory }}
               cpu: {{ .Values.mcTools.resources.limits.cpu }}
           {{- end }}
-          env:
-            - name: CONFIGURATION_IMAGE_TAG
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "mc-tools.fullname" . }}-ui-configmap
-                  key: IMAGE_TAG
-            - name: CONFIGURATION_PUBLIC_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "mc-tools.fullname" . }}-ui-configmap
-                  key: PUBLIC_URL
-            - name: CONFIGURATION_SERVICE_PROTOCOL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "mc-tools.fullname" . }}-ui-configmap
-                  key: SERVICE_PROTOCOL
-            - name: CONFIGURATION_SERVICE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "mc-tools.fullname" . }}-ui-configmap
-                  key: SERVICE_URL
-            - name: CONFIGURATION_UI_LANGUAGE
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "mc-tools.fullname" . }}-ui-configmap
-                  key: LANGUAGE
-            - name: CONFIGURATION_MAP_CENTER
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "mc-tools.fullname" . }}-ui-configmap
-                  key: MAP_CENTER
-            - name: CONFIGURATION_MAP_ZOOM
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "mc-tools.fullname" . }}-ui-configmap
-                  key: MAP_ZOOM
-            - name: CONFIGURATION_BASEMAPS
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "mc-tools.fullname" . }}-ui-configmap
-                  key: BASE_MAPS
-            - name: CONFIGURATION_DEFAULT_TERRAIN_PROVIDER_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "mc-tools.fullname" . }}-ui-configmap
-                  key: DEFAULT_TERRAIN_PROVIDER_URL
+          envFrom:
+            - configMapRef:
+              name: {{ template "mc-tools.fullname" . }}-configmap
 {{- end }}

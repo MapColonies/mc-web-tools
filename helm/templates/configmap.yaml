@@ -11,9 +11,6 @@ metadata:
 data:
   IMAGE_TAG: {{ quote .Values.mcTools.imageTag }}
   PUBLIC_URL: {{ quote .Values.mcTools.env.PUBLIC_URL }}
-  SERVICE_URL: {{ quote .Values.mcTools.env.SERVICE_URL }}
-  SERVICE_PROTOCOL:  {{ quote .Values.mcTools.env.SERVICE_PROTOCOL }}
-  LANGUAGE: {{ quote .Values.mcTools.env.LANGUAGE }}
   MAP_CENTER: {{ quote .Values.mcTools.env.MAP.CENTER }}
   MAP_ZOOM: {{ quote .Values.mcTools.env.MAP.ZOOM }}
   BASE_MAPS: {{ quote .Values.mcTools.env.BASE_MAPS }}
