@@ -20,7 +20,7 @@ const Tools: React.FC = (): JSX.Element => {
         <div>
           <b>Footprint Verification</b>
           <NavLink to="/footprint-verification">
-            <img src="/assets/img/map-marker.gif" alt="" />
+            <img src="/assets/img/globe.gif" width="118" alt="" />
           </NavLink>
         </div>
 
