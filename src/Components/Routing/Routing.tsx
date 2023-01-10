@@ -1,5 +1,6 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import FootprintVerification from '../FootprintVerification/FootprintVerification';
 import PageNotFound from '../PageNotFound/PageNotFound';
 import TerrainVerification from '../TerrainVerification/TerrainVerification';
 import Tools from '../Tools/Tools';
@@ -9,6 +10,11 @@ const Routing: React.FC = (): JSX.Element => {
     <div className="Routing">
 
       <Switch>
+
+        {/* Default Route */}
+        <Route path="/" exact>
+          <Redirect to="/tools" />
+        </Route>
 
         {/* Tools */}
         <Route path="/tools">
@@ -20,15 +26,15 @@ const Routing: React.FC = (): JSX.Element => {
           <TerrainVerification />
         </Route>
 
-        {/* Default Route */}
-        <Route exact path="/">
-          <Redirect to="/tools" />
+        {/* Footprint Verification */}
+        <Route path="/footprint-verification">
+          <FootprintVerification />
         </Route>
-        
+
         <Route path="*">
           <PageNotFound />
         </Route>
-
+        
       </Switch>
       
     </div>

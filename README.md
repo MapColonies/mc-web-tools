@@ -1,19 +1,36 @@
-# terrain-client
+# mc-tools
 
-Terrain Inspector App, includes:
+## Includes various client helper tools, such as:
 
-* Terrain provider
+### Terrain Verification app:
+
+* Cesium map with a terrain provider
 
 * Height tool
 
 * Inspector tool
 
+### Footprint Verification app:
+
+* Cesium map
+
+* Shape/geojson file loader
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Run
+## Install
 ```
 yarn
+yarn global add serve
+```
+## Run
+```
 yarn start
+```
+or:
+```
+yarn build
+npx serve -s build
 ```
 
 Runs the app in the development mode.\
