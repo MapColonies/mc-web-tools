@@ -11,8 +11,8 @@ metadata:
 data:
   IMAGE_TAG: {{ quote .Values.mcTools.imageTag }}
   PUBLIC_URL: {{ quote .Values.mcTools.env.PUBLIC_URL }}
-  MAP_CENTER: {{ quote .Values.mcTools.env.MAP.CENTER }}
-  MAP_ZOOM: {{ quote .Values.mcTools.env.MAP.ZOOM }}
+  MAP_CENTER: {{ quote .Values.mcTools.env.MAP_CENTER }}
+  MAP_ZOOM: {{ quote .Values.mcTools.env.MAP_ZOOM }}
   BASE_MAPS: {{ quote .Values.mcTools.env.BASE_MAPS }}
   DEFAULT_TERRAIN_PROVIDER_URL: {{ quote .Values.mcTools.env.DEFAULT_TERRAIN_PROVIDER_URL }}
 {{- end }}
