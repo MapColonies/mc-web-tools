@@ -8,9 +8,6 @@ RUN yarn install --production
 
 COPY . /tmp
 
-ARG DEFAULT_TERRAIN_PROVIDER_URL
-ENV DEFAULT_TERRAIN_PROVIDER_URL=${DEFAULT_TERRAIN_PROVIDER_URL}
-
 RUN yarn build
 
 # ------------------------------------------------------
@@ -22,7 +19,6 @@ RUN sed -i 's/listen       80;/listen       8080;/g' /etc/nginx/conf.d/default.c
   sed -i '/user  nginx;/d' /etc/nginx/nginx.conf && \
   sed -i 's,/var/run/nginx.pid,/tmp/nginx.pid,' /etc/nginx/nginx.conf && \ 
   sed -i "/^http {/a \    server_tokens off;\n    proxy_temp_path /tmp/proxy_temp;\n    client_body_temp_path /tmp/client_temp;\n    fastcgi_temp_path /tmp/fastcgi_temp;\n    uwsgi_temp_path /tmp/uwsgi_temp;\n    scgi_temp_path /tmp/scgi_temp;\n" /etc/nginx/nginx.conf
-
 
 COPY --from=build-stage /tmp/build /usr/share/nginx/html
 
