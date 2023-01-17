@@ -1,13 +1,22 @@
+version: '3'
+
 services:
-  mc-web-tools-service:
+
+  mc-web-tools-service: 
+
     image: mc-web-tools
+
     build: .
+
     container_name: mc-web-tools-container
+
     ports:
       - 3000:8080
-    environement:
+
+    environment:
       MAP_CENTER: '[34.817, 31.911]'
       MAP_ZOOM: 14
       BASE_MAPS: ''
-      DEFAULT_TERRAIN_PROVIDER_URL: 'http://dem-geoserver-proxy-int-nginx-s3-gateway-route-integration.apps.j1lk3njp.eastus.aroapp.io/terrains/srtm100?token=eyJhbGciOiJSUzI1NiIsImtpZCI6Ik1hcENvbG9uaWVzUUEifQ.eyJkIjpbInJhc3RlciIsInJhc3RlcldtcyIsInJhc3RlckV4cG9ydCIsImRlbSIsInZlY3RvciIsIjNkIl0sImlhdCI6MTY2Mzg2MzM0Mywic3ViIjoiTWFwQ29sb25pZXNRQSIsImlzcyI6Im1hcGNvbG9uaWVzLXRva2VuLWNsaSJ9.U_sx0Rsy96MA3xpIcWQHJ76xvK0PlHa--J1YILBYm2fCwtDdM4HLGagwq-OQQnBqi2e8KwktQ7sgt27hOJIPBHuONQS0ezBbuByk6UqN2S7P8WERdt8_lejuR1c94owQq7FOkhEaj_PKJ64ehXuMMHskfNeAIBf8GBN6QUGEenVx2w5k2rYBULoU30rpFkQVo8TtmiK2yGx0Ssx2k6LqSgCZfyZJbFzZ2MH3BPeCVleP1-zypaF9DS7SxS-EutL-gZ1e9bEccNktxQA4VMcjeTv45KYJLTIrccs_8gtPlzfaeNQFTIUKD-cRD1gyd_uLatPsl0wwHyFZIgRuJtcvfw'
+      DEFAULT_TERRAIN_PROVIDER_URL: 'http://localhost:8080'
+
     restart: unless-stopped
