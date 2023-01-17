@@ -1,4 +1,4 @@
-FROM node:18-alpine3.16 AS build-stage
+FROM node:12.18.3-alpine3.12 AS build-stage
 
 WORKDIR /tmp
 
@@ -11,11 +11,11 @@ COPY . /tmp
 ARG DEFAULT_TERRAIN_PROVIDER_URL
 ENV DEFAULT_TERRAIN_PROVIDER_URL=${DEFAULT_TERRAIN_PROVIDER_URL}
 
-ENTRYPOINT yarn build
+RUN yarn build
 
 # ------------------------------------------------------
 
-FROM nginx:1.12-alpine AS production-stage
+FROM nginx:1.19.1-alpine AS production-stage
 
 # Change nginx config to work without root
 RUN sed -i 's/listen       80;/listen       8080;/g' /etc/nginx/conf.d/default.conf  && \
