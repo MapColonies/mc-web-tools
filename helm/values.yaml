@@ -3,7 +3,7 @@ imagePullPolicy: Always
 global:
   dnshost: apps.v0h0bdx6.eastus.aroapp.io
 splunkIndex: ''
-environment: development
+environment: integration
 cloudProvider: azure
 ingress:
   enabled: false
