@@ -9,7 +9,7 @@ metadata:
     {{- end }}
     {{- if eq .Values.ingress.type "nginx-org" }}
     nginx.org/mergeable-ingress-type: "minion"
-    nginx.org/rewrites: 'ServiceName={{ template "mc-tools.fullname" . }}-ui rewrite=/'
+    nginx.org/rewrites: 'ServiceName={{ template "mc-tools.fullname" . }} rewrite=/'
     {{- end }}
     #nginx.org/redirect-to-https: "True" #dont work in minion, should be set in master
     #nginx.org/hsts-behind-proxy: "True" #dont work in minion or master despite documentation
@@ -21,7 +21,7 @@ spec:
         paths:
           - backend:
               service:
-                name: {{ template "mc-tools.fullname" . }}-ui
+                name: {{ template "mc-tools.fullname" . }}
                 port:
                   number: {{ .Values.mcTools.SERVICE_PORT }}
             path: {{ .Values.ingress.externalPath }}{{- if eq .Values.ingress.type "nginx-kubernetes" }}(/|$)(.*){{- end }}

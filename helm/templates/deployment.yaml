@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "mc-tools.fullname" . }}-ui
+  name: {{ template "mc-tools.fullname" . }}
   labels:
     app: {{ template "mc-tools.name" . }}
     component: mc-tools-deployment
@@ -16,20 +16,23 @@ spec:
     matchLabels:
       app: {{ template "mc-tools.name" . }}
       release: {{ .Release.Name }}
-      run: {{ .Release.Name }}-ui
+      run: {{ .Release.Name }}
   template:
     metadata:
       labels:
         app: {{ template "mc-tools.name" . }}
         release: {{ .Release.Name }}
-        run: {{ .Release.Name }}-ui
+        run: {{ .Release.Name }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.pullSecretName }}
       containers:    
-        - name: {{ .Chart.Name }}-ui
+        - name: {{ .Chart.Name }}
           image: "{{ .Values.mcTools.image }}:{{ .Values.mcTools.imageTag}}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ template "mc-tools.fullname" . }}-configmap
           ports:
             - name: http
               containerPort: 8080
@@ -53,7 +56,4 @@ spec:
               memory: {{ .Values.mcTools.resources.limits.memory }}
               cpu: {{ .Values.mcTools.resources.limits.cpu }}
           {{- end }}
-          envFrom:
-            - configMapRef:
-              name: {{ template "mc-tools.fullname" . }}-configmap
 {{- end }}

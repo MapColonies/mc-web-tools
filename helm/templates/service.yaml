@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "mc-tools.fullname" . }}-ui
+  name: {{ template "mc-tools.fullname" . }}
   labels:
     app: {{ template "mc-tools.name" . }}
     component: mc-tools-service
@@ -28,5 +28,5 @@ spec:
   selector:
     app: {{ template "mc-tools.name" . }}
     release: {{ .Release.Name }}
-    run: {{ .Release.Name }}-ui
+    run: {{ .Release.Name }}
 {{- end }}

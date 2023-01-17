@@ -9,7 +9,7 @@ spec:
   path:  {{ .Values.route.path }}
   to:
     kind: Service
-    name: {{ template "mc-tools.fullname" . }}-ui
+    name: {{ template "mc-tools.fullname" . }}
   port:
     targetPort: http
   {{- if .Values.route.tls }}

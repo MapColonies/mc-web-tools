@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "mc-tools.fullname" . }}-ui-configmap
+  name: {{ template "mc-tools.fullname" . }}-configmap
   labels:
     app: {{ template "mc-tools.name" . }}
     component: mc-tools-configmap
