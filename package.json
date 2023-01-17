@@ -1,6 +1,6 @@
 {
-  "name": "terrain-client",
-  "version": "0.1.0",
+  "name": "mc-web-tools",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@map-colonies/react-components": "^3.11.0",
