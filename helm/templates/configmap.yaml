@@ -1,18 +1,18 @@
-{{- if .Values.mcTools.enabled -}}
+{{- if .Values.client.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "mc-tools.fullname" . }}-configmap
+  name: {{ template "mc-web-tools.fullname" . }}-configmap
   labels:
-    app: {{ template "mc-tools.name" . }}
-    component: mc-tools-configmap
+    app: {{ template "mc-web-tools.name" . }}
+    component: mc-web-tools-configmap
     environment: {{ .Values.environment }}
     release: {{ .Release.Name }}
 data:
-  IMAGE_TAG: {{ quote .Values.mcTools.imageTag }}
-  PUBLIC_URL: {{ quote .Values.mcTools.env.PUBLIC_URL }}
-  MAP_CENTER: {{ quote .Values.mcTools.env.MAP_CENTER }}
-  MAP_ZOOM: {{ quote .Values.mcTools.env.MAP_ZOOM }}
-  BASE_MAPS: {{ quote .Values.mcTools.env.BASE_MAPS }}
-  DEFAULT_TERRAIN_PROVIDER_URL: {{ quote .Values.mcTools.env.DEFAULT_TERRAIN_PROVIDER_URL }}
+  IMAGE_TAG: {{ quote .Values.client.imageTag }}
+  PUBLIC_URL: {{ quote .Values.client.env.PUBLIC_URL }}
+  MAP_CENTER: {{ quote .Values.client.env.MAP_CENTER }}
+  MAP_ZOOM: {{ quote .Values.client.env.MAP_ZOOM }}
+  BASE_MAPS: {{ quote .Values.client.env.BASE_MAPS }}
+  DEFAULT_TERRAIN_PROVIDER_URL: {{ quote .Values.client.env.DEFAULT_TERRAIN_PROVIDER_URL }}
 {{- end }}

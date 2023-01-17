@@ -1,11 +1,11 @@
-{{- if .Values.mcTools.enabled -}}
+{{- if .Values.client.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "mc-tools.fullname" . }}
+  name: {{ template "mc-web-tools.fullname" . }}
   labels:
-    app: {{ template "mc-tools.name" . }}
-    component: mc-tools-service
+    app: {{ template "mc-web-tools.name" . }}
+    component: mc-web-tools-service
     environment: {{ .Values.environment }}
     release: {{ .Release.Name }}
 spec:
@@ -18,15 +18,15 @@ spec:
   type: NodePort
   {{- end }}
   ports:
-    - port: {{ .Values.mcTools.SERVICE_PORT }}
+    - port: {{ .Values.client.SERVICE_PORT }}
       targetPort: 8080 # DO NOT CHANGE, AS IT'S HARDCODED IN APPLICATION.
       protocol: TCP
       name: http
       {{- if eq .Values.cloudProvider "minikube" }}
-      nodePort: {{ .Values.mcTools.NODE_PORT }}
+      nodePort: {{ .Values.client.NODE_PORT }}
       {{- end }}
   selector:
-    app: {{ template "mc-tools.name" . }}
+    app: {{ template "mc-web-tools.name" . }}
     release: {{ .Release.Name }}
     run: {{ .Release.Name }}
 {{- end }}

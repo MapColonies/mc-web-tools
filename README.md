@@ -1,4 +1,4 @@
-# mc-tools
+# mc-web-tools
 
 ## Includes various client helper tools, such as:
 

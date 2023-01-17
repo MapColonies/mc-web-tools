@@ -2,14 +2,14 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ template "mc-tools.fullname" . }}-route
+  name: {{ template "mc-web-tools.fullname" . }}-route
   annotations:
     haproxy.router.openshift.io/rewrite-target: /
 spec:
   path:  {{ .Values.route.path }}
   to:
     kind: Service
-    name: {{ template "mc-tools.fullname" . }}
+    name: {{ template "mc-web-tools.fullname" . }}
   port:
     targetPort: http
   {{- if .Values.route.tls }}
