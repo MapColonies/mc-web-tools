@@ -13,7 +13,7 @@ ingress:
   internalPath: /
   tls: []
 route:
-  enabled: false
+  enabled: true
   path: /
   tls: true
 s3Secret:
