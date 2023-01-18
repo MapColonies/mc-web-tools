@@ -12,7 +12,7 @@ var isBrowserVersionSupported = Number(userAgentRes.browser.version.split('.')[F
 var ERROR_CODES = { 
   BROWSER_NOT_SUPPORTED: 'BROWSER_NOT_SUPPORTED',
   BROWSER_VERSION_TOO_OLD: 'BROWSER_VERSION_TOO_OLD'
-}
+};
 
 if (!isEngineChromium || !isBrowserVersionSupported) {
   var err = '';
