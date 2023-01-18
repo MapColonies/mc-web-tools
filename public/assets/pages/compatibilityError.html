@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browser Not Supported!</title>
+    <link rel="stylesheet" href="compatibilityError.css">
+    <script src="../scripts/polyfill.urlSearchParams.js"></script>
+  </head>
+  
+  <body>
+    <img src="./img/compatibility-error-icon.png" />
+    <div class="titles-container">
+      <h1 id="error-main-title"></h1>
+      <h3 id="error-secondary-title"></h1>
+    </div>
+    <div class="details-section">
+      <div id="browsers-view"></div>
+    </div>
+    
+    <script>
+      var browsersContainerElement = document.querySelector('#browsers-view');
+      var errorMainElement = document.querySelector('#error-main-title');
+      var errorSecondaryElement = document.querySelector('#error-secondary-title');
+      var parameters = new URLSearchParams(window.location.search);
+      var errorCode = parameters.get('error');
+      
+      var browsers = [
+        {
+          name: 'Edge',
+          minVersion: '85',
+          img: './img/edge-icon.png'
+        },
+        {
+          name: 'Chrome',
+          minVersion: '84',
+          img: './img/chrome-icon.png'
+        },
+        {
+          name: 'Opera',
+          minVersion: '85',
+          img: './img/opera-icon.png'
+        }
+      ];
+      
+      for (var i = 0; i < browsers.length; i++) {
+        var IMG_TEMP = "{IMG_SRC}";
+        var BROWSER_NAME_TEMP = "{BROWSER_NAME}";
+        var BROWSER_VERSION_TEMP = "{BROWSER_VERSION}";
+        
+        var currentBrowser = browsers[i];
+        
+        var browserItem = '<div class="browser-item-container"><div class="browser-item"><img class="browser-img" src="{IMG_SRC}"/><div class="browser-details"><span class="browser-name">{BROWSER_NAME}</span><span class="browser-version">V{BROWSER_VERSION}+</span></div></div></div>';
+        
+        browsersContainerElement.insertAdjacentHTML('beforeend',
+          browserItem
+          .replace(IMG_TEMP, currentBrowser.img)
+          .replace(BROWSER_NAME_TEMP, currentBrowser.name)
+          .replace(BROWSER_VERSION_TEMP, currentBrowser.minVersion)
+        );
+      }
+      
+      var ERRORS = {
+        BROWSER_NOT_SUPPORTED : { main: "OOPS!</br>YOUR BROWSER IS NOT SUPPORTED.", secondary: "Please upgrade to the latest version of these browsers" },
+        BROWSER_VERSION_TOO_OLD: { main: "OOPS!</br>YOUR BROWSER IS OUTDATED.", secondary: "Please upgrade to the latest version of these browsers" }
+      };
+      
+      var err = ERRORS[errorCode];
+      errorMainElement.innerHTML = err.main;
+      errorSecondaryElement.innerHTML = err.secondary;
+    </script>
+  </body>
+</html>
