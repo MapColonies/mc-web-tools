@@ -1,6 +1,15 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# confd
+confd/**
+!confd/*.js
+!confd/*.tmpl
+!confd/*.toml
+
+# public
+public/env-config.js
 public/[cC]esium
+public/ua-parser
 !public/assets/
 
 # dependencies

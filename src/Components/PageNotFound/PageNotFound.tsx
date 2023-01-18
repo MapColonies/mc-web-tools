@@ -6,8 +6,9 @@ const PageNotFound: React.FC = (): JSX.Element => {
 
   return (
     <div className="PageNotFound">
-      <p>The page you are looking for doesn't exist</p>
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/t3otBjVZzT0?autoplay=1" allow="autoplay" title="Page not Found"></iframe>
+      <div className="Description">The page you are looking for does not exist</div>
+      <div className="Title">404</div>
+      <img src="/assets/img/404.png" alt="" />
     </div>
   );
   

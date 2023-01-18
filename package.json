@@ -13,12 +13,14 @@
     "@types/node": "^16.11.28",
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
+    "@types/ua-parser-js": "^0.7.36",
     "jest": "^24.9.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.3.0",
     "react-scripts": "3.4.1",
     "typescript": "^3.7.5",
+    "ua-parser-js": "^1.0.32",
     "web-vitals": "^2.1.4",
     "webpack": "4.42.0",
     "webpack-dev-server": "3.10.3"
@@ -34,8 +36,13 @@
     "build": "react-scripts --max_old_space_size=4096 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "copyassets:all": "yarn run copyassets:cesium",
-    "copyassets:cesium": "copyfiles -u 3 \"./node_modules/cesium/Build/Cesium/**/*\" \"./public\""
+    "confd": "node ./confd/generate-config.js",
+    "confd:prod": "node ./confd/generate-config.js --environment production",
+    "confd:prod:indocker": "node ./confd/generate-config.js --environment production --indocker",
+    "copyconf": "copyfiles ./confd/* ./build",
+    "copyassets:all": "yarn run copyassets:cesium && yarn run copyassets:ua-parser",
+    "copyassets:cesium": "copyfiles -u 3 \"./node_modules/cesium/Build/Cesium/**/*\" \"./public\"",
+    "copyassets:ua-parser": "copyfiles -u 3 \"./node_modules/ua-parser-js/dist/ua-parser.min.js\" \"./public/ua-parser\""
   },
   "eslintConfig": {
     "extends": [
