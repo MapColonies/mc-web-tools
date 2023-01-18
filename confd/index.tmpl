@@ -47,6 +47,13 @@
             additionalAttributes: 'async'
           }
         ];
+        if (typeof String.prototype.replaceAll == 'undefined') {
+          scripts.unshift({
+            src: '{{ getv "/configuration/public/url" "" }}/assets/scripts/polyfill.chrome_68.replaceall.js',
+            cacheType: 'version',
+            additionalAttributes: 'async'
+          });
+        }
 
         for (var i = 0; i < scripts.length; i++) {
           var script = scripts[i];
