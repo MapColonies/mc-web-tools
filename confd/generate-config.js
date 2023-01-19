@@ -67,14 +67,14 @@ const download = (uri, filename) => {
 };
 
 const downloadIfNotExists = (uri, filename) => {
-  console.log(`Checking if ${filename} exists.`);
+  console.log(`Checking if ${filename} exists`);
   return new Promise(resolve => {
     if (fs.existsSync(filename)) {
-      console.log(`${filename} exists, proceeding to the next stage.`);
+      console.log(`File ${filename} exists, proceeding to the next stage`);
       resolve();
       return;
     }
-    console.log(`${filename} does not exist.`);
+    console.log(`File ${filename} does not exist`);
     resolve(download(uri, filename));
   });
 };
@@ -113,7 +113,7 @@ const createDevConfdConfigFile = (env, isInDocker) => {
   if (!env) {
     env = 'default';
   }
-  console.log('Creating a development toml and tmpl files.');
+  console.log('Creating a development toml and tmpl files');
   const tmplCopy = copyFile(confdTmplPath, devTmplPath);
   const tomlCopy = copyFile(confdConfigPath, devConfigPath, data => {
     const target = 'dest = "' + path.join(confdBasePath, '..', 'html') + '/'; 

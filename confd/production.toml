@@ -4,6 +4,6 @@ dest = "public/env-config.js"
 keys = [
   "/configuration/map/center",
   "/configuration/map/zoom",
-  "/configuration/basemaps",
+  "/configuration/base/maps",
   "/configuration/default/terrain/provider/url"
 ]
