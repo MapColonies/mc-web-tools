@@ -17,12 +17,12 @@ const Tools: React.FC = (): JSX.Element => {
           </NavLink>
         </div>
 
-        <div>
+        {/* <div>
           <b>Footprint Verification</b>
           <NavLink to="/footprint-verification">
             <img src="/assets/img/globe.gif" width="118" alt="" />
           </NavLink>
-        </div>
+        </div> */}
 
       </div>
 
