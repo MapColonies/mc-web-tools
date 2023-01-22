@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "yarn run copyassets:all && react-scripts start",
-    "build": "react-scripts --max_old_space_size=4096 build",
+    "build": "react-scripts --max_old_space_size=4096 build && yarn run copyconf",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "confd": "node ./confd/generate-config.js",
