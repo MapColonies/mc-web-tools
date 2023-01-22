@@ -105,7 +105,7 @@ const createDirIfNotExists = dir => {
   }
 };
 
-const createDevConfdConfigFile = (env, isInDocker) => {
+const createDevConfdConfigFile = async (env, isInDocker) => {
   createDirIfNotExists(confdDevBasePath);
   createDirIfNotExists(path.join(confdDevBasePath, 'conf.d'));
   createDirIfNotExists(path.join(confdDevBasePath, 'templates'));
@@ -174,8 +174,8 @@ const main = () => {
   const env = envIdx !== -1 ? process.argv[envIdx + 1] : null;
   downloadIfNotExists(confdUrl, confdPath)
     .then(() => {
-      replacePlaceHolders().then(()=>{
-        createDevConfdConfigFile(env, isInDocker);
+      replacePlaceHolders().then(async () => {
+        await createDevConfdConfigFile(env, isInDocker);
       });
     })
     .then(() => runConfd())
