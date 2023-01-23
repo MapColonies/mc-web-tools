@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href='/logo.ico' />
+    <link rel="icon" href="%PUBLIC_URL%/logo.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -13,7 +13,7 @@
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href='/manifest.json' />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -26,30 +26,31 @@
     <script type="text/javascript">
       (function() {
         function getTime () { return new Date().getTime().toString() };
-        function getVersion () { return 'v1.0.0' };
+        function getVersion () { return '{APP_VERSION_PLACEHOLDER}' };
+
         // Render SCRIPTS
         var scripts = [
           {
-            src: '/ua-parser/ua-parser.min.js',
+            src: '%PUBLIC_URL%/ua-parser/ua-parser.min.js',
             cacheType: 'version'
           },
           {
-            src: '/assets/scripts/browserCompatibilityCheck.js',
+            src: '%PUBLIC_URL%/assets/scripts/browserCompatibilityCheck.js',
             cacheType: 'version'
           },
           {
-            src: '/env-config.js',
+            src: '%PUBLIC_URL%/env-config.js',
             cacheType: 'timestamp'
           },
           {
-            src: '/Cesium/Cesium.js',
+            src: '%PUBLIC_URL%/Cesium/Cesium.js',
             cacheType: 'version',
             additionalAttributes: 'async'
           }
         ];
         if (typeof String.prototype.replaceAll == 'undefined') {
           scripts.unshift({
-            src: '/assets/scripts/polyfill.chrome_68.replaceall.js',
+            src: '%PUBLIC_URL%/assets/scripts/polyfill.chrome_68.replaceall.js',
             cacheType: 'version',
             additionalAttributes: 'async'
           });
@@ -71,19 +72,19 @@
           }
 
           document.write("<script language='text/javascript' type='text/javascript' src='" + src + "'" + additionalAttributes + "><\/script>");
-        } 
+        }
         // Render STYLES/LINKS
         const styles = [
           {
-            href: '/fonts/mc-icons/style.css',
+            href: '%PUBLIC_URL%/fonts/mc-icons/style.css',
             cacheType: 'version'
           },
           {
-            href: '/Cesium/Widgets/widgets.css',
+            href: '%PUBLIC_URL%/Cesium/Widgets/widgets.css',
             cacheType: 'version'
           },
           {
-            href: '/fonts/material-icons/material-icons.css',
+            href: '%PUBLIC_URL%/fonts/material-icons/material-icons.css',
             cacheType: 'version'
           }
         ];
@@ -106,7 +107,7 @@
   <body style='background-color: black;'>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id='root'>
-      <img alt='Loading...' src='/loading.gif' width='500px' style='display: table; margin: 10% auto 0 auto;'/>
+      <img alt='Loading...' src='%PUBLIC_URL%/loading.gif' width='500px' style='display: table; margin: 10% auto 0 auto;'/>
     </div>
     <!--
       This HTML file is a template.
