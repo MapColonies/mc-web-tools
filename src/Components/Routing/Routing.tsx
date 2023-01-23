@@ -13,11 +13,11 @@ const Routing: React.FC = (): JSX.Element => {
 
         {/* Default Route */}
         <Route path="/" exact>
-          <Redirect to="/tools" />
+          <Redirect to="/index" />
         </Route>
 
         {/* Tools */}
-        <Route path="/tools">
+        <Route path="/index">
           <Tools />
         </Route>
 

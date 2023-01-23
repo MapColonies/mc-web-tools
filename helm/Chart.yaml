@@ -1,6 +1,0 @@
-apiVersion: v2
-name: mc-web-tools
-description: A helm chart for mc web tools client
-type: application
-version: 1.0.0
-appVersion: "1.0.0"
