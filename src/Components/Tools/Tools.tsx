@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import appConfig from '../../Utils/Config';
 
 import './Tools.css';
 
@@ -17,12 +18,19 @@ const Tools: React.FC = (): JSX.Element => {
           </NavLink>
         </div>
 
-        {/* <div>
-          <b>Footprint Verification</b>
-          <NavLink to="/footprint-verification">
-            <img src="/assets/img/globe.gif" width="118" alt="" />
-          </NavLink>
-        </div> */}
+        {
+          Object.values(appConfig.apps).forEach((app: {category: string, title: string, icon: string}): JSX.Element => {
+            return (
+              <div>
+                <b>{app.category}</b>
+                <b>{app.title}</b>
+                <NavLink to="/footprint-verification">
+                  <img src={app.icon} width="118" alt="" />
+                </NavLink>
+              </div>
+            )
+          })
+        }
 
       </div>
 
