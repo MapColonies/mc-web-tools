@@ -58,7 +58,7 @@ const Tools: React.FC = (): JSX.Element => {
           (Object.values(apps) as IApp[]).map((app: IApp, index: number): JSX.Element => {
             if (app.isRouting === true) {
               return (
-                <NavLink key={`${app.category}-${app.name}-${index}`} to="/terrain-verification" className="Item">
+                <NavLink key={`${app.category}-${app.name}-${index}`} to={app.url} className="Item">
                   {appDetails(app)}
                 </NavLink>
               );
