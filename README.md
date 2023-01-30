@@ -1,6 +1,8 @@
 # mc-web-tools
 
-## Includes various web tools, such as:
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+### And includes a various web tools, such as:
 
 ### Terrain Verification app:
 
@@ -10,13 +12,11 @@
 
 * Inspector tool
 
-### Footprint Verification app:
+### Reference to Nominatim app:
 
-* Cesium map
+* OpenStreetMap
 
-* Shape/geojson file loader
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+* A tool to search OSM data by name and address (geocoding) and to generate synthetic addresses of OSM points (reverse geocoding)
 
 ## Install
 ```
@@ -33,5 +33,4 @@ yarn build
 npx serve -s build
 ```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Open [http://localhost:3000](http://localhost:3000) to view it in the development mode.
