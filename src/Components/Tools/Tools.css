@@ -15,11 +15,12 @@
 
 .Tools > .Grid {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-auto-flow: column;
+  /* grid-template-columns: auto auto; */
   gap: 20px;
 }
 
-.Grid > div {
+.Tools .Item {
   width: 220px;
   height: 220px;
   color: white;
@@ -35,4 +36,5 @@
   background-image: url('/assets/img/tool.gif');
   background-repeat: no-repeat;
   background-position: center center;
+  cursor: pointer;
 }
