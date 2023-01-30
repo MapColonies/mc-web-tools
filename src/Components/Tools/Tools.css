@@ -1,3 +1,8 @@
+:root {
+  --toolsColNum: 1;
+  --toolsRowNum: 1;
+}
+
 .Tools {
   width: 100vw;
   height: 100vh;
@@ -6,7 +11,6 @@
 	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
-	align-content: center;
   background-image: url('/assets/img/background.gif');
   background-repeat: no-repeat;
   background-position: center center;
@@ -15,13 +19,12 @@
 
 .Tools > .Grid {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: repeat(var(--toolsColNum), 220px);
+  grid-template-rows: repeat(var(--toolsRowNum), 220px);
   gap: 20px;
 }
 
 .Tools .Item {
-  width: 220px;
-  height: 220px;
   border: 1px solid lightgray;
   border-radius: 10px;
   background-image: url('/assets/img/tool.gif');

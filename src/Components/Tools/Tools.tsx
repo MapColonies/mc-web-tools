@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import appConfig from '../../Utils/Config';
 
@@ -18,6 +18,16 @@ const Tools: React.FC = (): JSX.Element => {
     'terrain-verification': { category: 'DEM', name: 'Terrain Verification', icon: '/assets/img/map-marker.gif', url: '/terrain-verification', isRouting: true },
     ...appConfig.apps
   });
+
+  useEffect(() => {
+    const numberOfApps = Object.values(apps).length;
+    const cols = Math.ceil(Math.sqrt(numberOfApps));
+    const rows = Math.ceil(numberOfApps / cols);
+    document.documentElement.style.setProperty('--toolsColNum', cols.toString());
+    // console.log(window.getComputedStyle(document.querySelector('.Tools') as Element).getPropertyValue('--toolsColNum'));
+    document.documentElement.style.setProperty('--toolsRowNum', rows.toString());
+    // console.log(window.getComputedStyle(document.querySelector('.Tools') as Element).getPropertyValue('--toolsRowNum'));
+  }, []);
 
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
@@ -45,18 +55,16 @@ const Tools: React.FC = (): JSX.Element => {
       <div className="Grid">
 
         {
-          (Object.values(apps) as IApp[]).map((app: IApp): JSX.Element => {
+          (Object.values(apps) as IApp[]).map((app: IApp, index: number): JSX.Element => {
             if (app.isRouting === true) {
               return (
-                <NavLink key={`${app.category}-${app.name}`} to="/terrain-verification">
-                  <div className="Item">
-                    {appDetails(app)}
-                  </div>
+                <NavLink key={`${app.category}-${app.name}-${index}`} to="/terrain-verification" className="Item">
+                  {appDetails(app)}
                 </NavLink>
               );
             } else {
               return (
-                <div key={`${app.category}-${app.name}`} onClick={() => openInNewTab(app.url)} className="Item">
+                <div key={`${app.category}-${app.name}-${index}`} onClick={() => openInNewTab(app.url)} className="Item">
                   {appDetails(app)}
                 </div>
               );
