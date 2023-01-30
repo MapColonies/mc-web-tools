@@ -5,6 +5,8 @@ import { TerrainianHeightTool } from '@map-colonies/react-components/dist/cesium
 import appConfig from '../../Utils/Config';
 import Terrain from '../Terrain/Terrain';
 
+import './TerrainVerification.css';
+
 const TerrainVerification: React.FC = (): JSX.Element => {
 
   return (
