@@ -21,12 +21,12 @@ const Tools: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     const numberOfApps = Object.values(apps).length;
-    const cols = Math.ceil(Math.sqrt(numberOfApps));
+    const toolSize = +window.getComputedStyle(document.querySelector('.Tools') as Element).getPropertyValue('--toolSize').slice(0, -2);
+    const maxNumberOfTools = Math.floor(window.innerWidth / toolSize);
+    const cols = Math.min(maxNumberOfTools, Math.ceil(Math.sqrt(numberOfApps)));
     const rows = Math.ceil(numberOfApps / cols);
     document.documentElement.style.setProperty('--toolsColNum', cols.toString());
-    // console.log(window.getComputedStyle(document.querySelector('.Tools') as Element).getPropertyValue('--toolsColNum'));
     document.documentElement.style.setProperty('--toolsRowNum', rows.toString());
-    // console.log(window.getComputedStyle(document.querySelector('.Tools') as Element).getPropertyValue('--toolsRowNum'));
   }, []);
 
   const openInNewTab = (url: string) => {

@@ -1,4 +1,5 @@
 :root {
+  --toolSize: 220px;
   --toolsColNum: 1;
   --toolsRowNum: 1;
 }
@@ -19,8 +20,8 @@
 
 .Tools > .Grid {
   display: grid;
-  grid-template-columns: repeat(var(--toolsColNum), 220px);
-  grid-template-rows: repeat(var(--toolsRowNum), 220px);
+  grid-template-columns: repeat(var(--toolsColNum), var(--toolSize));
+  grid-template-rows: repeat(var(--toolsRowNum), var(--toolSize));
   gap: 20px;
 }
 
