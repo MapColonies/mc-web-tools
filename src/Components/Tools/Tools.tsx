@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import appConfig from '../../Utils/Config';
 
@@ -9,12 +9,34 @@ interface IApp {
   name: string;
   icon: string;
   url: string;
+  isRouting?: boolean;
 }
 
 const Tools: React.FC = (): JSX.Element => {
 
+  const [apps] = useState({
+    'terrain-verification': { category: 'DEM', name: 'Terrain Verification', icon: '/assets/img/map-marker.gif', url: '/terrain-verification', isRouting: true },
+    ...appConfig.apps
+  });
+
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
+  };
+
+  const appDetails = (app: IApp): JSX.Element => {
+    return (
+      <div className="Details">
+        <div className="Category">{app.category}</div>
+        <div className="Name">{app.name}</div>
+        <div>
+          {
+            app.isRouting ?
+            <img src={app.icon} alt="" /> :
+            <img src={app.icon} width="132" alt="" />
+          }
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -22,23 +44,23 @@ const Tools: React.FC = (): JSX.Element => {
 
       <div className="Grid">
 
-        <NavLink to="/terrain-verification">
-          <div className="Item">
-            <p>DEM</p>
-            <p>Terrain Verification</p>
-            <img src="/assets/img/map-marker.gif" alt="" />
-          </div>
-        </NavLink>
-
         {
-          (Object.values(appConfig.apps) as IApp[]).map((app: IApp): JSX.Element => {
-            return (
-              <div key={`${app.category}-${app.name}`} onClick={() => openInNewTab(app.url)} className="Item">
-                <p>{app.category}</p>
-                <p>{app.name}</p>
-                <img src={app.icon} width="118" alt="" />
-              </div>
-            );
+          (Object.values(apps) as IApp[]).map((app: IApp): JSX.Element => {
+            if (app.isRouting === true) {
+              return (
+                <NavLink key={`${app.category}-${app.name}`} to="/terrain-verification">
+                  <div className="Item">
+                    {appDetails(app)}
+                  </div>
+                </NavLink>
+              );
+            } else {
+              return (
+                <div key={`${app.category}-${app.name}`} onClick={() => openInNewTab(app.url)} className="Item">
+                  {appDetails(app)}
+                </div>
+              );
+            }
           })
         }
 

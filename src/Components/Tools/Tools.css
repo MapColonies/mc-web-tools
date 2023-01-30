@@ -15,26 +15,38 @@
 
 .Tools > .Grid {
   display: grid;
-  grid-auto-flow: column;
-  /* grid-template-columns: auto auto; */
+  grid-template-columns: auto auto;
   gap: 20px;
 }
 
 .Tools .Item {
   width: 220px;
   height: 220px;
-  color: white;
-  font-weight: bold;
-  font-size: larger;
   border: 1px solid lightgray;
   border-radius: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-	align-content: center;
   background-image: url('/assets/img/tool.gif');
   background-repeat: no-repeat;
   background-position: center center;
   cursor: pointer;
+}
+
+.Tools .Details {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 10% 10% 80%;
+	text-align: center;
+}
+
+.Tools .Details .Category {
+  color: #65E0D0;
+  font-weight: bold;
+  font-size: larger;
+}
+
+.Tools .Details .Name {
+  color: white;
+  font-weight: bold;
+  font-size: larger;
 }
