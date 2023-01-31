@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { RMWCProvider, ThemeProvider as RMWCThemeProvider, Themes } from '@map-colonies/react-core';
+import { Box } from '@map-colonies/react-components';
 import { version } from '../../../package.json';
 import Routing from '../Routing/Routing';
 
@@ -71,13 +72,13 @@ const Layout: React.FC = (): JSX.Element => {
 
       <RMWCThemeProvider className={`${theme.type}-theme`} options={theme}>
 
-        <div className='Layout'>
+        <Box className='Layout'>
 
           <main>
             <Routing />
           </main>
           
-        </div>
+        </Box>
 
       </RMWCThemeProvider>
 

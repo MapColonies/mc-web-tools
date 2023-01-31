@@ -1,13 +1,15 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { Box } from '@map-colonies/react-components';
 import FootprintVerification from '../FootprintVerification/FootprintVerification';
 import PageNotFound from '../PageNotFound/PageNotFound';
 import TerrainVerification from '../TerrainVerification/TerrainVerification';
 import Tools from '../Tools/Tools';
 
 const Routing: React.FC = (): JSX.Element => {
+
   return (
-    <div className="Routing">
+    <Box className="Routing">
 
       <Switch>
 
@@ -37,8 +39,9 @@ const Routing: React.FC = (): JSX.Element => {
         
       </Switch>
       
-    </div>
+    </Box>
   );
+  
 };
 
 export default Routing;

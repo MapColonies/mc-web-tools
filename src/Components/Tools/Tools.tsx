@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Box } from '@map-colonies/react-components';
 import appConfig from '../../Utils/Config';
 
 import './Tools.css';
@@ -36,20 +37,18 @@ const Tools: React.FC = (): JSX.Element => {
 
   const appDetails = (app: IApp): JSX.Element => {
     return (
-      <div className="Details">
-        <div className="Category">{app.category}</div>
-        <div className="Name">{app.name}</div>
-        <div>
-            <img src={app.icon} width={app.width} alt="" />
-        </div>
-      </div>
+      <Box className="Details">
+        <Box className="Category">{app.category}</Box>
+        <Box className="Name">{app.name}</Box>
+        <Box><img src={app.icon} width={app.width} alt="" /></Box>
+      </Box>
     );
   };
 
   return (
-    <div className="Tools">
+    <Box className="Tools">
 
-      <div className="Grid">
+      <Box className="Grid">
 
         {
           (Object.values(apps) as IApp[]).map((app: IApp, index: number): JSX.Element => {
@@ -61,17 +60,17 @@ const Tools: React.FC = (): JSX.Element => {
               );
             } else {
               return (
-                <div key={`${app.category}-${app.name}-${index}`} onClick={() => openInNewTab(app.url)} className="Item">
+                <Box key={`${app.category}-${app.name}-${index}`} onClick={() => openInNewTab(app.url)} className="Item">
                   {appDetails(app)}
-                </div>
+                </Box>
               );
             }
           })
         }
 
-      </div>
+      </Box>
 
-    </div>
+    </Box>
   );
 
 };
