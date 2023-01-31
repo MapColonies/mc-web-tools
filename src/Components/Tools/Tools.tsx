@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Tooltip } from '@map-colonies/react-core';
 import { Box } from '@map-colonies/react-components';
 import appConfig from '../../Utils/Config';
 
@@ -12,12 +13,13 @@ interface IApp {
   url: string;
   isInternal?: boolean;
   width?: number;
+  tooltip?: string;
 }
 
 const Tools: React.FC = (): JSX.Element => {
 
   const [apps] = useState({
-    'terrain-verification': { category: 'DEM', name: 'Terrain Verification', icon: '/assets/img/map-marker.gif', url: '/terrain-verification', isInternal: true },
+    'terrain-verification': { category: 'DEM', name: 'Terrain Verification', icon: '/assets/img/map-marker.gif', url: '/terrain-verification', isInternal: true, tooltip: 'A Terrain Verification Tool' },
     ...appConfig.apps
   });
 
@@ -45,6 +47,22 @@ const Tools: React.FC = (): JSX.Element => {
     );
   };
 
+  const internalTool = (app: IApp, index: number): JSX.Element => {
+    return (
+      <NavLink key={`${app.category}-${app.name}-${index}`} to={app.url} className="Item">
+        {appDetails(app)}
+      </NavLink>
+    );
+  };
+
+  const externalTool = (app: IApp, index: number): JSX.Element => {
+    return (
+      <Box key={`${app.category}-${app.name}-${index}`} onClick={() => openInNewTab(app.url)} className="Item">
+        {appDetails(app)}
+      </Box>
+    );
+  };
+
   return (
     <Box className="Tools">
 
@@ -52,18 +70,10 @@ const Tools: React.FC = (): JSX.Element => {
 
         {
           (Object.values(apps) as IApp[]).map((app: IApp, index: number): JSX.Element => {
-            if (app.isInternal === true) {
-              return (
-                <NavLink key={`${app.category}-${app.name}-${index}`} to={app.url} className="Item">
-                  {appDetails(app)}
-                </NavLink>
-              );
+            if (app.tooltip) {
+              return (<Tooltip content={app.tooltip}>{app.isInternal ? internalTool(app, index) : externalTool(app, index)}</Tooltip>);
             } else {
-              return (
-                <Box key={`${app.category}-${app.name}-${index}`} onClick={() => openInNewTab(app.url)} className="Item">
-                  {appDetails(app)}
-                </Box>
-              );
+              return (<>{app.isInternal ? internalTool(app, index) : externalTool(app, index)}</>);
             }
           })
         }
