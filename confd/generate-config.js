@@ -125,15 +125,15 @@ const createDevConfdConfigFile = async (env, isInDocker) => {
     return !isInDocker ? data : data.replace('dest = "public/', target);
   });
 
-  return Promise.all([tmplCopy, tomlCopy]);
+  return Promise.all([tmplCopy, tomlCopy, indexTmplCopy, indexTomlCopy]);
 };
 
 const replacePlaceHolders = () => {
   return copyFile(indexTmplPath, indexTmplPath, (content) => {
-    console.log('**** Replace PLACEHOLDERS by CONFD syntax ****')
+    console.log('**** Replace PLACEHOLDERS by CONFD syntax ****');
     return content
       .replace(/{PUBLIC_URL_PLACEHOLDER}/g, '{{ getv "/configuration/public/url" "." }}')
-      .replace(/{APP_VERSION_PLACEHOLDER}/g, '{{ getv "/configuration/image/tag" "vUnknown" }}');
+      .replace(/{APP_VERSION_PLACEHOLDER}/g, '{{ getv "/configuration/image/tag" "{APP_VERSION_PLACEHOLDER}" }}');
   });
 };
 
