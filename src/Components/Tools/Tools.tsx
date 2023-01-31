@@ -9,13 +9,14 @@ interface IApp {
   name: string;
   icon: string;
   url: string;
-  isRouting?: boolean;
+  isInternal?: boolean;
+  width?: number;
 }
 
 const Tools: React.FC = (): JSX.Element => {
 
   const [apps] = useState({
-    'terrain-verification': { category: 'DEM', name: 'Terrain Verification', icon: '/assets/img/map-marker.gif', url: '/terrain-verification', isRouting: true },
+    'terrain-verification': { category: 'DEM', name: 'Terrain Verification', icon: '/assets/img/map-marker.gif', url: '/terrain-verification', isInternal: true },
     ...appConfig.apps
   });
 
@@ -39,11 +40,7 @@ const Tools: React.FC = (): JSX.Element => {
         <div className="Category">{app.category}</div>
         <div className="Name">{app.name}</div>
         <div>
-          {
-            app.isRouting ?
-            <img src={app.icon} alt="" /> :
-            <img src={app.icon} width="132" alt="" />
-          }
+            <img src={app.icon} width={app.width} alt="" />
         </div>
       </div>
     );
@@ -56,7 +53,7 @@ const Tools: React.FC = (): JSX.Element => {
 
         {
           (Object.values(apps) as IApp[]).map((app: IApp, index: number): JSX.Element => {
-            if (app.isRouting === true) {
+            if (app.isInternal === true) {
               return (
                 <NavLink key={`${app.category}-${app.name}-${index}`} to={app.url} className="Item">
                   {appDetails(app)}
