@@ -16,7 +16,15 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 * OpenStreetMap
 
-* A tool to search OSM data by name and address (geocoding) and to generate synthetic addresses of OSM points (reverse geocoding)
+* A tool to search OSM data by name or address (geocoding) and to generate synthetic addresses of OSM points (reverse geocoding)
+
+### Reference to Cesium-Sandcastle app:
+
+* Cesium map
+
+* A live-coding area
+
+* CesiumJS examples
 
 ## Install
 ```

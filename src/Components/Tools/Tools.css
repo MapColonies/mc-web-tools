@@ -2,6 +2,11 @@
   --toolSize: 220px;
   --toolsColNum: 1;
   --toolsRowNum: 1;
+  --background: #121212;
+  --background-light: #282828;
+  --color: #36baa2;
+  --color-light: #69ddc7;
+  --white: #fff;
 }
 
 .Tools {
@@ -12,10 +17,11 @@
 	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
-  background-image: url('/assets/img/background.gif');
+  background-color: var(--background);
+  /* background-image: url('/assets/img/background.gif');
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: cover;
+  background-size: cover; */
 }
 
 .Tools > .Grid {
@@ -26,12 +32,13 @@
 }
 
 .Tools .Item {
-  border: 1px solid lightgray;
+  border: 1px solid var(--color-light);
   border-radius: 10px;
-  background-image: url('/assets/img/tool.gif');
+  background-color: var(--background-light);
+  /* background-image: url('/assets/img/tool.gif');
   background-repeat: no-repeat;
   background-position: center center;
-  cursor: pointer;
+  cursor: pointer; */
 }
 
 .Tools .Details {
@@ -44,13 +51,13 @@
 }
 
 .Tools .Details .Category {
-  color: #65E0D0;
+  color: var(--color-light);
   font-weight: bold;
   font-size: larger;
 }
 
 .Tools .Details .Name {
-  color: white;
+  color: var(--white);
   font-weight: bold;
   font-size: larger;
 }
