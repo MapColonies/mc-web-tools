@@ -3,12 +3,13 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import Layout from './Components/Layout/Layout';
 import reportWebVitals from './reportWebVitals';
+import appConfig from './Utils/Config';
 
 import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={appConfig.publicUrl}>
       <Layout />
     </BrowserRouter>
   </React.StrictMode>,

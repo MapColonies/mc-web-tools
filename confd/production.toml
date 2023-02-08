@@ -2,6 +2,7 @@
 src = "production.tmpl"
 dest = "public/env-config.js"
 keys = [
+  "/configuration/public/url",
   "/configuration/map/center",
   "/configuration/map/zoom",
   "/configuration/base/maps",
