@@ -35,12 +35,13 @@
             cacheType: 'version'
           },
           {
-            src: '%PUBLIC_URL%/assets/scripts/browserCompatibilityCheck.js',
-            cacheType: 'version'
+            src: '%PUBLIC_URL%/env-config.js',
+            cacheType: 'timestamp',
+            additionalAttributes: 'sync'
           },
           {
-            src: '%PUBLIC_URL%/env-config.js',
-            cacheType: 'timestamp'
+            src: '%PUBLIC_URL%/assets/scripts/browserCompatibilityCheck.js',
+            cacheType: 'version'
           },
           {
             src: '%PUBLIC_URL%/Cesium/Cesium.js',

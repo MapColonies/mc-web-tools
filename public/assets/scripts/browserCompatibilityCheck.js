@@ -21,5 +21,5 @@ if (!isEngineChromium || !isBrowserVersionSupported) {
   } else {
     err = ERROR_CODES.BROWSER_NOT_SUPPORTED;
   }
-  window.location.replace(`${process.env.PUBLIC_URL}/assets/pages/compatibilityError.html?error=${err}`);
+  window.location.replace(`${window._env_.PUBLIC_URL}/assets/pages/compatibilityError.html?error=${err}`);
 }
