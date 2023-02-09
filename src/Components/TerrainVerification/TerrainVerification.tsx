@@ -18,7 +18,7 @@ const TerrainVerification: React.FC = (): JSX.Element => {
       baseMaps={appConfig.baseMaps}
     >
       <Cesium3DTileset
-        url="/assets/tileset/L16_31023/L16_31023.json"
+        url={`${appConfig.publicUrl}/assets/tileset/L16_31023/L16_31023.json`}
         isZoomTo={true}
       />
       <Terrain />
