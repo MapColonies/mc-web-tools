@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
-import { CesiumTerrainProvider, EllipsoidTerrainProvider } from 'cesium';
+import React, { useEffect, useState } from 'react';
 import { get } from 'lodash';
-import { useCesiumMap } from '@map-colonies/react-components';
+import { Box, CesiumCesiumTerrainProvider, CesiumEllipsoidTerrainProvider, useCesiumMap } from '@map-colonies/react-components';
 import appConfig from '../../Utils/Config';
+
+import './Terrain.css';
 
 const Terrain: React.FC = () => {
 
   const mapViewer = useCesiumMap();
+  const [ missingTiles, setMissingTiles ] = useState<string[]>([]);
 
   useEffect(() => {
     const isTerrainTileError = (e: Record<string, unknown>): boolean => {
@@ -20,24 +22,36 @@ const Terrain: React.FC = () => {
         // Remove error event listener after failing once
         mapViewer.terrainProvider.errorEvent.removeEventListener(handleTerrainError);
         // Set default empty terrain provider
-        mapViewer.terrainProvider = new EllipsoidTerrainProvider({});
+        mapViewer.terrainProvider = new CesiumEllipsoidTerrainProvider({});
       } else {
         console.error('Terrain provider error: Tile problem.', e);
+        setMissingTiles(prev => [...prev, e.message as string]);
       }
     };
 
     if (appConfig.terrainProviderUrl) {
-      mapViewer.terrainProvider = new CesiumTerrainProvider({
+      mapViewer.terrainProvider = new CesiumCesiumTerrainProvider({
         url: appConfig.terrainProviderUrl
       });
       mapViewer.terrainProvider.errorEvent.addEventListener(handleTerrainError);
     } else {
       alert(`\nTerrain Provider Access Error:\n\nEmpty Terrain URL`);
-      mapViewer.terrainProvider = new EllipsoidTerrainProvider({});
+      mapViewer.terrainProvider = new CesiumEllipsoidTerrainProvider({});
     }
   }, []);
 
-  return null;
+  return (
+    <Box className="Terrain">
+      {
+        missingTiles.length > 0 &&
+        <Box className="Dialog">
+          {
+            missingTiles.map(tile => <Box>{tile}</Box>)
+          }
+        </Box>
+      }
+    </Box>
+  );
 
 };
 

@@ -12,7 +12,7 @@
 #csvFile::before {
   display: inline-block;
   content: 'Choose file';
-  background: #24aee9;
+  background: var(--color);
   border: 1px solid #999;
   border-radius: 3px;
   padding: 5px 20px;
@@ -22,7 +22,7 @@
   cursor: pointer;
   font-weight: 700;
   font-size: 1.4em;
-  color: white;
+  color: var(--white);
 }
 
 #csvFile:hover::before {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Tooltip } from '@map-colonies/react-core';
 import { Box } from '@map-colonies/react-components';
@@ -49,7 +49,7 @@ const Tools: React.FC = (): JSX.Element => {
 
   const internalTool = (app: IApp, index: number): JSX.Element => {
     return (
-      <NavLink key={`${app.category}-${app.name}-${index}`} to={app.url} className="Item">
+      <NavLink to={app.url} className="Item">
         {appDetails(app)}
       </NavLink>
     );
@@ -57,7 +57,7 @@ const Tools: React.FC = (): JSX.Element => {
 
   const externalTool = (app: IApp, index: number): JSX.Element => {
     return (
-      <Box key={`${app.category}-${app.name}-${index}`} onClick={() => openInNewTab(app.url)} className="Item">
+      <Box onClick={() => openInNewTab(app.url)} className="Item">
         {appDetails(app)}
       </Box>
     );
@@ -71,9 +71,9 @@ const Tools: React.FC = (): JSX.Element => {
         {
           (Object.values(apps) as IApp[]).map((app: IApp, index: number): JSX.Element => {
             if (app.tooltip) {
-              return (<Tooltip content={app.tooltip}>{app.isInternal ? internalTool(app, index) : externalTool(app, index)}</Tooltip>);
+              return (<Tooltip content={app.tooltip} key={`${app.category}-${app.name}-${index}`}>{app.isInternal ? internalTool(app, index) : externalTool(app, index)}</Tooltip>);
             } else {
-              return (<>{app.isInternal ? internalTool(app, index) : externalTool(app, index)}</>);
+              return (<Fragment key={`${app.category}-${app.name}-${index}`}>{app.isInternal ? internalTool(app, index) : externalTool(app, index)}</Fragment>);
             }
           })
         }
