@@ -19,7 +19,7 @@ interface IApp {
 const Tools: React.FC = (): JSX.Element => {
 
   const [apps] = useState({
-    'terrain-verification': { category: 'DEM', name: 'Terrain Verification', icon: '/assets/img/map-marker.gif', url: '/terrain-verification', isInternal: true, tooltip: 'A Terrain Verification Tool' },
+    'terrain-verification': { category: 'DEM', name: 'Terrain Verification', icon: 'map-marker.gif', url: '/terrain-verification', isInternal: true, tooltip: 'A Terrain Verification Tool' },
     ...appConfig.apps
   });
 
@@ -42,7 +42,7 @@ const Tools: React.FC = (): JSX.Element => {
       <Box className="Details">
         <Box className="Category">{app.category}</Box>
         <Box className="Name">{app.name}</Box>
-        <Box><img src={app.icon} width={app.width} alt="" /></Box>
+        <Box><img src={`${appConfig.publicUrl}/assets/img/${app.icon}`} width={app.width} alt="" /></Box>
       </Box>
     );
   };
