@@ -2,11 +2,13 @@
   height: 100vh;
   box-sizing: border-box;
   display: grid;
-  grid-template-rows: 5% 95%;
+  grid-template-rows: 5% 90% 5%;
   grid-template-columns: repeat(3, 1fr);
+  background-color: var(--background);
 }
 
-.Layout > header {
+.Layout > header,
+.Layout > footer {
   grid-column: span 3;
 }
 

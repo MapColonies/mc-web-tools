@@ -82,6 +82,9 @@ const Layout: React.FC = (): JSX.Element => {
           <main>
             <Routing />
           </main>
+
+          <footer>
+          </footer>
           
         </Box>
 
