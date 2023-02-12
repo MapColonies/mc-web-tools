@@ -6,6 +6,8 @@ import PageNotFound from '../PageNotFound/PageNotFound';
 import TerrainVerification from '../TerrainVerification/TerrainVerification';
 import Tools from '../Tools/Tools';
 
+import './Routing.css';
+
 const Routing: React.FC = (): JSX.Element => {
 
   return (

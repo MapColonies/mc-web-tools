@@ -1,0 +1,22 @@
+.Header .Back {
+  display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.Header .Back .ArrowHead {
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent; 
+  border-right: 20px solid var(--color);
+}
+
+.Header .Back .ArrowBody {
+  font-weight: bold;
+  background: var(--color);
+  color: var(--white);
+  width: 92px;
+  height: 20px;
+  cursor: pointer;
+}
