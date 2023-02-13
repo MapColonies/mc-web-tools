@@ -34,7 +34,7 @@ const Tools: React.FC = (): JSX.Element => {
   }, []);
 
   const openInNewTab = (url: string) => {
-    window.open(url, '_blank', 'noreferrer');
+    window.open(url, '_blank', 'noopener noreferrer');
   };
 
   const appDetails = (app: IApp): JSX.Element => {

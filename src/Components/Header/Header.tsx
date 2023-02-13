@@ -8,7 +8,7 @@ const Header: React.FC = (): JSX.Element => {
     <Box className="Header">
       {
         window.opener &&
-        <Box className="Back" onClick={ (): void => { window.opener.focus(); } }>
+        <Box className="Back" onClick={ (): void => { window.top?.close(); } }>
           <Box className="ArrowHead"></Box>
           <Box className="ArrowBody">Back to app</Box>
         </Box>
