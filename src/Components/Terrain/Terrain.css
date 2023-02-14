@@ -6,7 +6,7 @@
   padding: 20px;
   background: rgba(255,0,0,0.5);
   color: var(--white);
-  border-radius: 8px;
+  border-radius: 10px;
   max-height: 300px;
   overflow-x: auto;
 }

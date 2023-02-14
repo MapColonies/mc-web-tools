@@ -1,5 +1,5 @@
 :root {
-  --toolSize: 220px;
+  --toolSize: 240px;
   --toolsColNum: 1;
   --toolsRowNum: 1;
   --background: #121212;
@@ -7,16 +7,17 @@
   --color: #36baa2;
   --color-light: #69ddc7;
   --white: #fff;
+  --black: #000;
 }
 
 .Tools {
   width: 100%;
   height: 100%;
   display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: center;
-	align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 .Tools > .Grid {
@@ -33,13 +34,17 @@
   cursor: pointer;
 }
 
+.Tools .Internal {
+  border: 4px solid var(--color-light);
+}
+
 .Tools .Details {
   width: 100%;
   height: 100%;
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: 10% 10% 80%;
-	text-align: center;
+  grid-template-rows: 10% 10% 50% 30%;
+  text-align: center;
 }
 
 .Tools .Details .Category {
@@ -51,7 +56,23 @@
 .Tools .Details .Name {
   color: var(--white);
   font-weight: bold;
-  font-size: larger;
+  font-size: large;
+}
+
+.Tools .Details .Description {
+  background-color: var(--black);
+  color: var(--color-light);
+  border: 0.5px solid var(--color-light);
+  border-radius: 4px;
+  font-size: medium;
+  margin: 12px;
+  padding: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .Tools a {

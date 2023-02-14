@@ -14,7 +14,7 @@
   content: 'Choose file';
   background: var(--color);
   border: 1px solid #999;
-  border-radius: 3px;
+  border-radius: 4px;
   padding: 5px 20px;
   outline: none;
   white-space: nowrap;

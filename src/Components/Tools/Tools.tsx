@@ -11,15 +11,15 @@ interface IApp {
   name: string;
   icon: string;
   url: string;
-  isInternal?: boolean;
   width?: number;
-  tooltip?: string;
+  description?: string;
+  isInternal?: boolean;
 }
 
 const Tools: React.FC = (): JSX.Element => {
 
   const [apps] = useState({
-    'terrain-verification': { category: 'DEM', name: 'Terrain Verification', icon: 'map-marker.gif', url: '/terrain-verification', isInternal: true, tooltip: 'A Terrain Verification Tool' },
+    'terrain-verification': { category: 'DEM', name: 'Terrain Verification Tool', icon: 'map-marker.gif', url: '/terrain-verification', description: 'A Terrain Verification Tool', isInternal: true },
     ...appConfig.apps
   });
 
@@ -43,13 +43,19 @@ const Tools: React.FC = (): JSX.Element => {
         <Box className="Category">{app.category}</Box>
         <Box className="Name">{app.name}</Box>
         <Box><img src={`${appConfig.publicUrl}/assets/img/${app.icon}`} width={app.width} alt="" /></Box>
+        {
+          app.description &&
+          <Tooltip content={app.description}>
+            <Box className="Description">{app.description}</Box>
+          </Tooltip>
+        }
       </Box>
     );
   };
 
   const internalTool = (app: IApp, index: number): JSX.Element => {
     return (
-      <NavLink to={app.url} className="Item">
+      <NavLink to={app.url} className="Item Internal">
         {appDetails(app)}
       </NavLink>
     );
@@ -70,11 +76,15 @@ const Tools: React.FC = (): JSX.Element => {
 
         {
           (Object.values(apps) as IApp[]).map((app: IApp, index: number): JSX.Element => {
-            if (app.tooltip) {
-              return (<Tooltip content={app.tooltip} key={`${app.category}-${app.name}-${index}`}>{app.isInternal ? internalTool(app, index) : externalTool(app, index)}</Tooltip>);
-            } else {
-              return (<Fragment key={`${app.category}-${app.name}-${index}`}>{app.isInternal ? internalTool(app, index) : externalTool(app, index)}</Fragment>);
-            }
+            return (
+              <Fragment key={`${app.category}-${app.name}-${index}`}>
+                {
+                  app.isInternal ?
+                  internalTool(app, index) :
+                  externalTool(app, index)
+                }
+              </Fragment>
+            );
           })
         }
 
