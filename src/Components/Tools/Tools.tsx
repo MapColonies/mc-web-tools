@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Tooltip } from '@map-colonies/react-core';
+import { Tooltip, Typography } from '@map-colonies/react-core';
 import { Box } from '@map-colonies/react-components';
 import appConfig from '../../Utils/Config';
 
@@ -37,6 +37,10 @@ const Tools: React.FC = (): JSX.Element => {
     window.open(url, '_blank', 'noopener noreferrer');
   };
 
+  const format = (text: string): JSX.Element => {
+    return <Typography tag='div' dangerouslySetInnerHTML={{__html: `${text.replaceAll('. ', '.<br/>')}`}}></Typography>;
+  };
+
   const appDetails = (app: IApp): JSX.Element => {
     return (
       <Box className="Details">
@@ -45,7 +49,7 @@ const Tools: React.FC = (): JSX.Element => {
         <Box><img src={`${appConfig.publicUrl}/assets/img/${app.icon}`} width={app.width} alt="" /></Box>
         {
           app.description &&
-          <Tooltip content={app.description}>
+          <Tooltip content={format(app.description)}>
             <Box className="Description">{app.description}</Box>
           </Tooltip>
         }
