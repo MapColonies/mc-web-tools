@@ -26,6 +26,16 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 * Tools like time+distance matrix computation, isochrones, elevation sampling, map matching and tour optimization (Travelling Salesman)
 
+### 🐼 Reference to Developer Portal app
+
+* MapColonies Documentation
+
+* Getting started guide
+
+* Release Notes
+
+* OGC Protocols
+
 ### 🐼 Reference to Cesium-Sandcastle app
 
 * Cesium map
@@ -38,6 +48,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ```
 yarn
 yarn global add serve
+yarn confd
 ```
 ## Run
 ```
