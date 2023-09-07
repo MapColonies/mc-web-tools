@@ -2,9 +2,9 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-### And includes a various web tools, such as:
+#### And includes a various web tools, such as:
 
-### Terrain Verification app:
+### 🐼 Terrain Verification app
 
 * Cesium map with a terrain provider
 
@@ -12,13 +12,31 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 * Inspector tool
 
-### Reference to Nominatim app:
+### 🐼 Reference to Nominatim app
 
 * OpenStreetMap
 
 * A tool to search OSM data by name or address (geocoding) and to generate synthetic addresses of OSM points (reverse geocoding)
 
-### Reference to Cesium-Sandcastle app:
+### 🐼 Reference to Valhalla app
+
+* OpenStreetMap
+
+* A routing engine and accompanying libraries for use with OSM data
+
+* Tools like time+distance matrix computation, isochrones, elevation sampling, map matching and tour optimization (Travelling Salesman)
+
+### 🐼 Reference to Developer Portal app
+
+* MapColonies Documentation
+
+* Getting started guide
+
+* Release Notes
+
+* OGC Protocols
+
+### 🐼 Reference to Cesium-Sandcastle app
 
 * Cesium map
 
@@ -30,6 +48,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ```
 yarn
 yarn global add serve
+yarn confd
 ```
 ## Run
 ```

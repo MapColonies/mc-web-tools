@@ -9,9 +9,10 @@ import './Tools.css';
 interface IApp {
   category: string;
   name: string;
-  icon: string;
-  url: string;
+  icon?: string;
+  externalIconURL?: string;
   width?: number;
+  url: string;
   description?: string;
   isInternal?: boolean;
 }
@@ -46,7 +47,7 @@ const Tools: React.FC = (): JSX.Element => {
       <Box className="Details">
         <Box className="Category">{app.category}</Box>
         <Box className="Name">{app.name}</Box>
-        <Box><img src={`${appConfig.publicUrl}/assets/img/${app.icon}`} width={app.width} alt="" /></Box>
+        <Box><img src={app.externalIconURL ? `${app.externalIconURL}` : `${appConfig.publicUrl}/assets/img/${app.icon}`} width={app.width} alt="" /></Box>
         {
           app.description &&
           <Tooltip content={format(app.description)}>
