@@ -1,6 +1,6 @@
 {
   "name": "mc-web-tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "dependencies": {
     "@map-colonies/react-components": "^3.13.1",
@@ -31,13 +31,15 @@
     "eslint": "^6.6.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-prettier": "^3.1.3"
+    "eslint-plugin-prettier": "^3.1.3",
+    "standard-version": "^8.0.2"
   },
   "scripts": {
     "start": "yarn run copyassets:all && react-scripts start",
     "build": "react-scripts --max_old_space_size=4096 build && yarn run copyconf",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "release": "standard-version",
     "confd": "node ./confd/generate-config.js",
     "confd:prod": "node ./confd/generate-config.js --environment production",
     "confd:prod:indocker": "node ./confd/generate-config.js --environment production --indocker",
