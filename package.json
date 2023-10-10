@@ -36,7 +36,7 @@
   },
   "scripts": {
     "start": "yarn run copyassets:all && react-scripts start",
-    "build": "react-scripts --max_old_space_size=4096 build && yarn run copyconf",
+    "build": "react-scripts --max_old_space_size=4096 build && yarn run copyconf && yarn run copyassets:all",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "release": "standard-version",
