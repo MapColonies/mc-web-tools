@@ -1,6 +1,6 @@
 {
   "name": "mc-web-tools",
-  "version": "1.0.1",
+  "version": "1.0.17",
   "private": true,
   "dependencies": {
     "@map-colonies/react-components": "^3.13.1",
