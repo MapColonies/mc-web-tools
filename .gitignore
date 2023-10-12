@@ -10,7 +10,12 @@ confd/**
 public/env-config.js
 public/[cC]esium
 public/ua-parser
-!public/assets/
+public/fonts/*
+!public/assets/scripts/
+!public/assets/pages/
+public/assets/img/*
+!public/assets/img/app
+!public/fonts/material-icons
 
 # dependencies
 /node_modules

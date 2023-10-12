@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { RMWCProvider, ThemeProvider as RMWCThemeProvider, Themes } from '@map-colonies/react-core';
 import { Box } from '@map-colonies/react-components';
-import { version } from '../../../package.json';
+import version from '../../../package.json';
 import Header from '../Header/Header';
 import Routing from '../Routing/Routing';
 
@@ -10,7 +10,7 @@ import './Layout.css';
 const Layout: React.FC = (): JSX.Element => {
 
   useEffect(() => {
-    document.title = `Web Tools App - v${version}`;
+    document.title = `Web Tools App - v${version.version}`;
   }, []);
 
   const camelize = (value: string): string => {
