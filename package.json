@@ -1,12 +1,9 @@
 {
-  "name": "discrete-layer-client",
-  "version": "2.2.1",
-  "bugs": {
-    "url": "https://github.com/MapColonies/discrete-layer-client/issues"
-  },
+  "name": "mc-web-tools",
+  "version": "1.0.18",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MapColonies/discrete-layer-client.git"
+    "url": "https://github.com/MapColonies/mc-web-tools.git"
   },
   "license": "MIT",
   "husky": {
