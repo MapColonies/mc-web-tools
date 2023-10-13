@@ -47,7 +47,10 @@ const filterQueryByIDs = (ids: string[]): string => {
 export const parseQueryResults = (xml: string, recordType: string): Record<string,unknown>[] => {
     const parser = new XMLParser({ignoreAttributes : false});
     let jObj = parser.parse(xml);
-
-    return jObj['csw:GetRecordsResponse']['csw:SearchResults'][recordType];
+    const res = jObj['csw:GetRecordsResponse']['csw:SearchResults'][recordType];
+    if(Array.isArray(res)) {
+      return res;
+    }
+    return [res];
     
 } 
