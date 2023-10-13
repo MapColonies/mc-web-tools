@@ -1,7 +1,5 @@
 import React from 'react';
-import { Cesium3DTileset, CesiumMap, CesiumSceneMode } from '@map-colonies/react-components';
-import { InspectorTool } from '@map-colonies/react-components/dist/cesium-map/tools/inspector.tool';
-import { TerrainianHeightTool } from '@map-colonies/react-components/dist/cesium-map/tools/terranian-height.tool';
+import { Cesium3DTileset, CesiumMap, CesiumSceneMode, TerrainianHeightTool, InspectorTool } from '@map-colonies/react-components';
 import appConfig from '../../Utils/Config';
 import Terrain from '../Terrain/Terrain';
 
