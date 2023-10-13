@@ -2258,8 +2258,10 @@
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"
   integrity sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==
 
-"@map-colonies/react-components@file:../Mapcolonies/shared-components/packages/react-components":
-  version "4.3.1"
+"@map-colonies/react-components@^4.4.1":
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/@map-colonies/react-components/-/react-components-4.4.1.tgz#ad25015350aa2f4fba7f6056d7f938510b08fc48"
+  integrity sha512-iUkhqu7giwsULWAmanzIaMhpw8YG31sokT32g7PRmO1r3CjORd8Z1ZTBLduzzWZEDExuCukf+HHFhlN3Ja0dGw==
   dependencies:
     "@date-io/date-fns" "^1.3.13"
     "@here/quantized-mesh-decoder" "^1.2.8"
