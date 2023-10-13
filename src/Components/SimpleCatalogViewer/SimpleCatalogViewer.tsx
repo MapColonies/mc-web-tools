@@ -5,8 +5,14 @@ import { requestHandlerWithToken } from './utils/requestHandler';
 import { getRecordsQueryByID, parseQueryResults } from './utils/cswQueryBuilder';
 import appConfig from '../../Utils/Config';
 import Terrain from '../Terrain/Terrain';
+import { useQueryParams } from "../../Hooks/useQueryParams";
 
 import './SimpleCatalogViewer.css';
+
+type ModelsQueryParam = string[];
+
+const MAXIMUM_SCREEN_SPACE_ERROR = 5;
+const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
 
 const SimpleCatalogViewer: React.FC = (): JSX.Element => {
 
@@ -18,6 +24,9 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
   
   const [models, setModels] = useState<Record<string,unknown>[]>([]);
   
+  const queryParams = useQueryParams();
+  const requestedModels: ModelsQueryParam = JSON.parse(queryParams.get("models") ?? '[]');
+
   useEffect(()=>{
     const cswRequestHandler = async (url: string, method: string, params: Record<string, unknown>): Promise<AxiosResponse> =>
       requestHandlerWithToken(appConfig.simpleCatalogViewerTool.csw3dUrl, method, params);
@@ -51,13 +60,20 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
         url={`${(models[1]['mc:links'] as any)[0]['#text']}?token=${token}`}
         isZoomTo={true}
       />}
-      {/* {
-        models.map((model)=><Cesium3DTileset
-          url={(model['mc:links'] as any)[0]['#text']}
-          isZoomTo={true}/>
-        )
-      } */}
-      {/* <Terrain /> */}
+
+      {/* {models.map((model, i) => {
+            return <Cesium3DTileset
+                maximumScreenSpaceError={MAXIMUM_SCREEN_SPACE_ERROR}
+                cullRequestsWhileMovingMultiplier={CULL_REQUESTS_WHILE_MOVING_MULTIPLIER}
+                preloadFlightDestinations
+                preferLeaves
+                skipLevelOfDetail
+                url={`${(model['mc:links'] as any)[0]['#text']}?token=${token}`}
+                isZoomTo={i === 0}
+            />
+          })} */}
+
+      <Terrain />
     </CesiumMap>
   );
 
