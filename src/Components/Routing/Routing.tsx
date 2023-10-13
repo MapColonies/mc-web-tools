@@ -7,6 +7,7 @@ import TerrainVerification from '../TerrainVerification/TerrainVerification';
 import Tools from '../Tools/Tools';
 
 import './Routing.css';
+import { SimpleCatalogViewer } from '../SimpleCatalogViewer/SimpleCatalogViewer';
 
 const Routing: React.FC = (): JSX.Element => {
 
@@ -31,8 +32,8 @@ const Routing: React.FC = (): JSX.Element => {
         </Route>
 
         {/* Footprint Verification */}
-        <Route path="/footprint-verification">
-          <FootprintVerification />
+        <Route path="/simple-catalog-viewer">
+          <SimpleCatalogViewer />
         </Route>
 
         <Route path="*">

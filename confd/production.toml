@@ -7,5 +7,8 @@ keys = [
   "/configuration/map/zoom",
   "/configuration/base/maps",
   "/configuration/default/terrain/provider/url",
-  "/configuration/apps"
+  "/configuration/apps",
+  "/configuration/map/service/raster/url",
+  "/configuration/csw/raster/url",
+  "/configuration/csw/3d/url"
 ]
