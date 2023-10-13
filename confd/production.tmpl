@@ -8,4 +8,6 @@ window._env_ = {
   MAP_SERVICE_RASTER_URL: '{{ getv "/configuration/map/service/raster/url" "" }}'
   CSW_RASTER_URL: '{{ getv "/configuration/csw/raster/url" ""}}'
   CSW_3D_URL: '{{ getv "/configuration/csw/3d/url" ""}}'
+  ACCESS_TOKEN_ATTRIBUTE_NAME: '{{ getv "/configuration/access/token/attribute/name" "token"}}'
+  ACCESS_TOKEN_INJECTION_TYPE: '{{ getv "/configuration/access/token/injection/type" "queryParam"}}'
 };

@@ -10,5 +10,7 @@ keys = [
   "/configuration/apps",
   "/configuration/map/service/raster/url",
   "/configuration/csw/raster/url",
-  "/configuration/csw/3d/url"
+  "/configuration/csw/3d/url",
+  "/configuration/access/token/attribute/name",
+  "/configuration/access/token/injection/type",
 ]
