@@ -8,6 +8,11 @@ const MAP_ZOOM = (window as any)._env_.MAP_ZOOM;
 const BASE_MAPS = JSON.parse((window as any)._env_.BASE_MAPS);
 const DEFAULT_TERRAIN_PROVIDER_URL = (window as any)._env_.DEFAULT_TERRAIN_PROVIDER_URL;
 const APPS = JSON.parse((window as any)._env_.APPS);
+const TOKEN_INJECTION_TYPE = (window as any)._env_.TOKEN_INJECTION_TYPE;
+const TOKEN_ATTRIBUTE_NAME = (window as any)._env_.TOKEN_ATTRIBUTE_NAME;
+const MAP_SERVICE_RASTER_URL = (window as any)._env_.MAP_SERVICE_RASTER_URL;
+const CSW_RASTER_URL = (window as any)._env_.CSW_RASTER_URL;
+const CSW_3D_URL = (window as any)._env_.CSW_3D_URL;
 
 export enum LinkType {
   WMTS_BASE = 'WMTS_BASE',
@@ -53,6 +58,13 @@ class Config {
   public baseMaps = enrichBaseMaps(BASE_MAPS);
   public terrainProviderUrl = DEFAULT_TERRAIN_PROVIDER_URL;
   public apps = APPS;
+  public simpleCatalogViewerTool = {
+    tokenInjectionType: TOKEN_INJECTION_TYPE,
+    tokenAttributeName: TOKEN_ATTRIBUTE_NAME,
+    mapSericeRasterUrl: MAP_SERVICE_RASTER_URL,
+    cswRasterUrl: CSW_RASTER_URL,
+    csw3dUrl: CSW_3D_URL,
+  }
 }
 
 const appConfig = new Config(); // Singleton
