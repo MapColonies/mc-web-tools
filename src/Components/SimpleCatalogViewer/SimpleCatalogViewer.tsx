@@ -72,7 +72,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
       baseMaps={appConfig.baseMaps}
     >
         {
-        models.length && models.map((model, i) => {
+        models.length && models.map((model, index) => {
             let links = (model["mc:links"] as any);
             if(Array.isArray(links)) {
                 links = links.find((link) => link["@_scheme"] === "3D_LAYER");
@@ -88,7 +88,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                   preferLeaves
                   skipLevelOfDetail
                   url={`${links["#text"]}?token=${userToken}`}
-                  isZoomTo={i === 0}
+                  isZoomTo={index === 0}
                 />
             )
         })
