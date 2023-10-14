@@ -86,7 +86,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                   preferLeaves
                   skipLevelOfDetail
                   url={`${links["#text"]}?token=${userToken}`}
-                  isZoomTo={index === 0}
+                  isZoomTo={model["mc:id"] === modelIds[0]}
                 />
             )
         })
