@@ -42,10 +42,10 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
     }
   }
   // [LON, LAT]
-  const mapCenter: [number, number] = JSON.parse(
-    queryParams.get("position") ?? appConfig.mapCenter
-  );
-  const mapZoom = +(queryParams.get("zoom") ?? appConfig.mapZoom);
+  const mapCenter: [number, number] | undefined = queryParams.get("position") ? JSON.parse(queryParams.get("position") as string) : undefined;
+  console.log(`Got the position:'\n${mapCenter}`)
+  const mapZoom = queryParams.get("zoom") ? +(queryParams.get("zoom") as string) : undefined;
+  console.log(`Got the zoom: \n${mapZoom}`);
   const userToken = queryParams.get("token");
 
 
@@ -71,8 +71,8 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
 
   return (
     <CesiumMap
-      center={mapCenter}
-      zoom={mapZoom}
+      center={mapCenter ?? appConfig.mapCenter}
+      zoom={mapZoom ?? appConfig.mapZoom}
       sceneModes={[CesiumSceneMode.SCENE3D]}
       baseMaps={appConfig.baseMaps}
     >
@@ -82,9 +82,10 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
             if(Array.isArray(links)) {
                 links = links.find((link) => link["@_scheme"] === "3D_LAYER");
             }
-
+            console.log('###########', i)
             return (
                 <Cesium3DTileset
+                  key={i}
                   maximumScreenSpaceError={MAXIMUM_SCREEN_SPACE_ERROR}
                   cullRequestsWhileMovingMultiplier={
                     CULL_REQUESTS_WHILE_MOVING_MULTIPLIER
@@ -93,7 +94,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                   preferLeaves
                   skipLevelOfDetail
                   url={`${links["#text"]}?token=${userToken}`}
-                  isZoomTo={i === 0}
+                  isZoomTo={(!mapCenter || !mapZoom) && i === 0}
                 />
             )
         })
