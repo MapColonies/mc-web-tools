@@ -49,10 +49,8 @@ export const parseQueryResults = (xml: string, recordType: string): Record<strin
     const parsedQuery = parser.parse(xml);
     const recordsResult = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'];
     if (recordsResult['@_numberOfRecordsMatched'] === '0') {
-      console.log("Not found matched IDs!");
+      console.error(`Didn't find matched IDs!`);
       return null;
-    } else {
-      console.log(`Number of matched models: ${recordsResult['@_numberOfRecordsMatched']}\nNumber of returned models: ${recordsResult['@_numberOfRecordsReturned']}`);
     }
     const records = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'][recordType];
     if(Array.isArray(records)) {

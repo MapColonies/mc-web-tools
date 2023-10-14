@@ -26,20 +26,18 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
   let idQueried: string | null | string[] = queryParams.get("model_ids");
   let modelIds: string[] = [];
   if (idQueried == null) {
-    console.log(`model_ids does not exists in the query params!\nA good example: "http://url?model_ids=#ID1;#ID2`);
+    console.error({ msg: `didn't provide models_ids` });
+    alert(`Error: model_ids does not exists in the query params!\nA good example: "http://url?model_ids=#ID1,#ID2`);
   } else {
-    console.log(`Got in model_ids:\n${idQueried}`);
-    modelIds = idQueried.split(';');
-    console.log(`Parsed model_ids:\n${modelIds}.\nNumbers of ids: ${modelIds.length}`);
+    modelIds = idQueried.split(',');
+    if (modelIds.length > 2) {
+        alert(`Warning: You provided more than 2 models. This is not recommended`);
+    }
   }
-  // [LON, LAT]
-  const mapCenter: [number, number] = JSON.parse(
-    queryParams.get("position") ?? appConfig.mapCenter
-  );
-  const mapZoom = +(queryParams.get("zoom") ?? appConfig.mapZoom);
   const userToken = queryParams.get("token");
   if (userToken === null) {
-    console.log(`No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=#TOKEN`);
+    console.error({ msg: `didn't provide token` });
+    alert(`Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=#TOKEN`);
   }
 
   useEffect(() => {
@@ -61,13 +59,13 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
       if (modelsResponse !== null) {
         setModels(modelsResponse);
       }
-    }).catch(e => console.log(e));
+    }).catch(e => console.error(e));
   }, []);
 
   return (
     <CesiumMap
-      center={mapCenter}
-      zoom={mapZoom}
+      center={appConfig.mapCenter}
+      zoom={appConfig.mapZoom}
       sceneModes={[CesiumSceneMode.SCENE3D]}
       baseMaps={appConfig.baseMaps}
     >
