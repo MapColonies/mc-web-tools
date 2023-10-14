@@ -23,7 +23,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
   const [models, setModels] = useState<Record<string, unknown>[]>([]);
   const queryParams = useQueryParams();
 
-  let idQueried: string | null | string[] = queryParams.get("model_ids");
+  let idQueried: string | null = queryParams.get("model_ids");
   let modelIds: string[] = [];
   if (idQueried == null) {
     console.error({ msg: `didn't provide models_ids` });
