@@ -20,7 +20,6 @@ const MAXIMUM_SCREEN_SPACE_ERROR = 5;
 const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
 
 const SimpleCatalogViewer: React.FC = (): JSX.Element => {
-
   const [models, setModels] = useState<Record<string, unknown>[]>([]);
 
   const queryParams = useQueryParams();
@@ -31,14 +30,14 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
   let idQueried: string | null | string[] = queryParams.get("model_ids");
   let modelIds: string[] = [];
   if (idQueried == null) {
-    console.log("model_ids does not exists in the query params!");
+    console.log(`model_ids does not exists in the query params!\nA good example: "http://url?model_ids=[#ID1;#ID2]`);
   } else {
     if (idQueried === "[]") {
       console.log("model_ids is an empty array");
     } else {
       console.log(`Got in model_ids:\n${idQueried}`)
       modelIds = parseIdentifiers(idQueried);
-      console.log(`Parsed model_ids:\n${modelIds}`);
+      console.log(`Parsed model_ids:\n${modelIds}.\nNumbers of ids: ${modelIds.length}`);
     }
   }
   // [LON, LAT]
@@ -47,7 +46,9 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
   );
   const mapZoom = +(queryParams.get("zoom") ?? appConfig.mapZoom);
   const userToken = queryParams.get("token");
-
+  if (userToken === null) {
+    console.log(`No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=#TOKEN`);
+  }
 
   useEffect(() => {
     const cswRequestHandler = async (
@@ -65,7 +66,9 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
       data: getRecordsQueryByID(modelIds, "http://schema.mapcolonies.com/3d"),
     }).then((res) => {
       let modelsResponse = parseQueryResults(res.data, "mc:MC3DRecord");
-      setModels(modelsResponse);
+      if (modelsResponse !== null) {
+        setModels(modelsResponse);
+      }
     }).catch(e => console.log(e));
   }, []);
 
