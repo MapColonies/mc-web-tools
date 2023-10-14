@@ -24,17 +24,21 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
   const [models, setModels] = useState<Record<string, unknown>[]>([]);
 
   const queryParams = useQueryParams();
+  const parseIdentifiers = (idQuery: string) => {
+    return idQuery.replace('[', '').replace(']', '').split(';');
+  }
 
   let idQueried: string | null | string[] = queryParams.get("model_ids");
-  let idList: string[] = [];
+  let modelIds: string[] = [];
   if (idQueried == null) {
     console.log("model_ids does not exists in the query params!");
   } else {
     if (idQueried === "[]") {
       console.log("model_ids is an empty array");
     } else {
-      idList = JSON.parse(idQueried);
-      console.log(`model_ids:\n${idList}`);
+      console.log(`Got in model_ids:\n${idQueried}`)
+      modelIds = parseIdentifiers(idQueried);
+      console.log(`Parsed model_ids:\n${modelIds}`);
     }
   }
   // [LON, LAT]
@@ -58,7 +62,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
       );
 
     cswRequestHandler(appConfig.simpleCatalogViewerTool.csw3dUrl, "POST", {
-      data: getRecordsQueryByID(idList, "http://schema.mapcolonies.com/3d"),
+      data: getRecordsQueryByID(modelIds, "http://schema.mapcolonies.com/3d"),
     }).then((res) => {
       let modelsResponse = parseQueryResults(res.data, "mc:MC3DRecord");
       setModels(modelsResponse);
