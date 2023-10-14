@@ -2,7 +2,7 @@ import { XMLParser } from 'fast-xml-parser';
 
 const filterQueryByIDs = (ids: string[]): string => {
     let result = '';
-    let isMultifilter = ids.length > 1;
+    let isMultiFilter = ids.length > 1;
 
     for (let i = 0;i<ids.length;i++) {
       result += `
@@ -13,7 +13,7 @@ const filterQueryByIDs = (ids: string[]): string => {
       `
     }
 
-    if (isMultifilter) {
+    if (isMultiFilter) {
       result = `<ogc:Or>${result}</ogc:Or>`;
     }
 
@@ -44,9 +44,14 @@ const filterQueryByIDs = (ids: string[]): string => {
         </csw:GetRecords>`;
 };
 
-export const parseQueryResults = (xml: string, recordType: string): Record<string,unknown>[] => {
-    const parser = new XMLParser({ignoreAttributes : false});
-    let parsedQuery = parser.parse(xml);
+export const parseQueryResults = (xml: string, recordType: string): Record<string,unknown>[] | null => {
+    const parser = new XMLParser({ignoreAttributes: false});
+    const parsedQuery = parser.parse(xml);
+    const recordsResult = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'];
+    if (recordsResult['@_numberOfRecordsMatched'] === '0') {
+      console.error(`Didn't find matched IDs!`);
+      return null;
+    }
     const records = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'][recordType];
     if(Array.isArray(records)) {
       return records;

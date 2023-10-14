@@ -20,34 +20,29 @@ const MAXIMUM_SCREEN_SPACE_ERROR = 5;
 const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
 
 const SimpleCatalogViewer: React.FC = (): JSX.Element => {
-
   const [models, setModels] = useState<Record<string, unknown>[]>([]);
-
   const queryParams = useQueryParams();
-  const parseIdentifiers = (idQuery: string) => {
-    return idQuery.replace('[', '').replace(']', '').split(';');
-  }
 
   let idQueried: string | null | string[] = queryParams.get("model_ids");
   let modelIds: string[] = [];
   if (idQueried == null) {
-    console.log("model_ids does not exists in the query params!");
+    console.error({ msg: `didn't provide models_ids` });
+    alert(`Error: model_ids does not exists in the query params!\nA good example: "http://url?model_ids=#ID1,#ID2`);
   } else {
-    if (idQueried === "[]") {
-      console.log("model_ids is an empty array");
-    } else {
-      console.log(`Got in model_ids:\n${idQueried}`)
-      modelIds = parseIdentifiers(idQueried);
-      console.log(`Parsed model_ids:\n${modelIds}`);
+    modelIds = idQueried.split(',');
+    if (modelIds.length > 2) {
+        alert(`Warning: You provided more than 2 models. This is not recommended`);
     }
   }
-  // [LON, LAT]
-  const mapCenter: [number, number] | undefined = queryParams.get("position") ? JSON.parse(queryParams.get("position") as string) : undefined;
-  console.log(`Got the position:'\n${mapCenter}`)
+  const clientMapCenter: [number, number, number] | undefined = queryParams.get("position") ? JSON.parse(queryParams.get("position") as string) : undefined;
+  console.log(`Got the position:'\n${clientMapCenter}`)
   const mapZoom = queryParams.get("zoom") ? +(queryParams.get("zoom") as string) : undefined;
   console.log(`Got the zoom: \n${mapZoom}`);
   const userToken = queryParams.get("token");
-
+  if (userToken === null) {
+    console.error({ msg: `didn't provide token` });
+    alert(`Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=#TOKEN`);
+  }
 
   useEffect(() => {
     const cswRequestHandler = async (
@@ -65,19 +60,21 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
       data: getRecordsQueryByID(modelIds, "http://schema.mapcolonies.com/3d"),
     }).then((res) => {
       let modelsResponse = parseQueryResults(res.data, "mc:MC3DRecord");
-      setModels(modelsResponse);
-    }).catch(e => console.log(e));
+      if (modelsResponse !== null) {
+        setModels(modelsResponse);
+      }
+    }).catch(e => console.error(e));
   }, []);
 
   return (
     <CesiumMap
-      center={mapCenter ?? appConfig.mapCenter}
+      center={clientMapCenter ?? appConfig.mapCenter}
       zoom={mapZoom ?? appConfig.mapZoom}
       sceneModes={[CesiumSceneMode.SCENE3D]}
       baseMaps={appConfig.baseMaps}
     >
         {
-        models.length && models.map((model, i) => {
+        models.length && models.map((model) => {
             let links = (model["mc:links"] as any);
             if(Array.isArray(links)) {
                 links = links.find((link) => link["@_scheme"] === "3D_LAYER");
@@ -94,7 +91,8 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                   preferLeaves
                   skipLevelOfDetail
                   url={`${links["#text"]}?token=${userToken}`}
-                  isZoomTo={(!mapCenter || !mapZoom) && i === 0}
+                  isZoomTo={(!clientMapCenter || !mapZoom) && i === 0}
+                  // isZoomTo={model["mc:id"] === modelIds[0]}
                 />
             )
         })
