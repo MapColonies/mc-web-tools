@@ -21,24 +21,16 @@ const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
 
 const SimpleCatalogViewer: React.FC = (): JSX.Element => {
   const [models, setModels] = useState<Record<string, unknown>[]>([]);
-
   const queryParams = useQueryParams();
-  const parseIdentifiers = (idQuery: string) => {
-    return idQuery.replace('[', '').replace(']', '').split(';');
-  }
 
   let idQueried: string | null | string[] = queryParams.get("model_ids");
   let modelIds: string[] = [];
   if (idQueried == null) {
-    console.log(`model_ids does not exists in the query params!\nA good example: "http://url?model_ids=[#ID1;#ID2]`);
+    console.log(`model_ids does not exists in the query params!\nA good example: "http://url?model_ids=#ID1;#ID2`);
   } else {
-    if (idQueried === "[]") {
-      console.log("model_ids is an empty array");
-    } else {
-      console.log(`Got in model_ids:\n${idQueried}`)
-      modelIds = parseIdentifiers(idQueried);
-      console.log(`Parsed model_ids:\n${modelIds}.\nNumbers of ids: ${modelIds.length}`);
-    }
+    console.log(`Got in model_ids:\n${idQueried}`);
+    modelIds = idQueried.split(';');
+    console.log(`Parsed model_ids:\n${modelIds}.\nNumbers of ids: ${modelIds.length}`);
   }
   // [LON, LAT]
   const mapCenter: [number, number] = JSON.parse(
