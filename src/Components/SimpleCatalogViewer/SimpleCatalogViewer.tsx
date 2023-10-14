@@ -25,16 +25,16 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
 
   const queryParams = useQueryParams();
 
-  let idQueried: string | null | string[] = queryParams.get("identifiers");
+  let idQueried: string | null | string[] = queryParams.get("model_ids");
   let idList: string[] = [];
   if (idQueried == null) {
-    console.log("identifiers does not exists in the query params!");
+    console.log("model_ids does not exists in the query params!");
   } else {
     if (idQueried === "[]") {
-      console.log("identifiers is an empty array");
+      console.log("model_ids is an empty array");
     } else {
       idList = JSON.parse(idQueried);
-      console.log(`identifiers:\n${idList}`);
+      console.log(`model_ids:\n${idList}`);
     }
   }
   // [LON, LAT]
