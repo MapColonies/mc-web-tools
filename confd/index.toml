@@ -3,8 +3,5 @@ src = "index.html"
 dest = "public/index.html"
 keys = [
   "/configuration/public/url",
-  "/configuration/map/tag",
-  "/configuration/map/service/raster/url",
-  "/configuration/csw/raster/url",
-  "/configuration/csw/3d/url"
+  "/configuration/image/tag"
 ]
