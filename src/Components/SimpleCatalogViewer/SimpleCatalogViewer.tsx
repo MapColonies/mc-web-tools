@@ -70,7 +70,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
       baseMaps={appConfig.baseMaps}
     >
         {
-        models.length && models.map((model, index) => {
+        models.length && models.map((model) => {
             let links = (model["mc:links"] as any);
             if(Array.isArray(links)) {
                 links = links.find((link) => link["@_scheme"] === "3D_LAYER");
