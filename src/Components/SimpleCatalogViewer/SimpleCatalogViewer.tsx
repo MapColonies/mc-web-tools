@@ -70,7 +70,8 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         if(modelIds.length > 2) {
-          setDialogErrors((currentErrors) => [...currentErrors, "Warning: You provided more than 2 models. This is not recommended"]);
+        //   setDialogErrors((currentErrors) => [...currentErrors, "Warning: You provided more than 2 models. This is not recommended"]);
+        console.warn("You provided more than 2 models. This is not recommended");
         }
 
         if(userToken) {
