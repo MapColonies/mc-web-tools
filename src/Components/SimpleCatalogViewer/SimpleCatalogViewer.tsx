@@ -41,10 +41,10 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
       alert(`Error: model_ids does not fit the specification!\nA good example: "http://url?model_ids=ID1,ID2"`);
     } else {
       modelIds = idQueried.split(',');
-      console.log("BEFORE!", modelIds)
+
       // Make a unique model ids array
       modelIds = [...new Set(modelIds)];
-      console.log("AFTER!", modelIds)
+      
       if (modelIds.length > 2) {
           alert(`Warning: You provided more than 2 models. This is not recommended`);
       }
