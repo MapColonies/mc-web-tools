@@ -32,7 +32,7 @@ const Routing: React.FC = (): JSX.Element => {
           <TerrainVerification />
         </Route>
 
-        {/* Footprint Verification */}
+        {/* Simple Catalog Viewer */}
         <Route path="/simple-catalog-viewer">
           <SimpleCatalogViewer />
         </Route>

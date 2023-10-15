@@ -26,6 +26,7 @@ interface IClientFlyToPosition {
 
 const SimpleCatalogViewer: React.FC = (): JSX.Element => {
   const [models, setModels] = useState<Record<string, unknown>[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const queryParams = useQueryParams();
 
   let clientPosition: IClientFlyToPosition | undefined = undefined;
@@ -40,6 +41,10 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
       alert(`Error: model_ids does not fit the specification!\nA good example: "http://url?model_ids=ID1,ID2"`);
     } else {
       modelIds = idQueried.split(',');
+      console.log("BEFORE!", modelIds)
+      // Make a unique model ids array
+      modelIds = [...new Set(modelIds)];
+      console.log("AFTER!", modelIds)
       if (modelIds.length > 2) {
           alert(`Warning: You provided more than 2 models. This is not recommended`);
       }
@@ -84,7 +89,12 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
       if (modelsResponse !== null) {
         setModels(modelsResponse);
       }
-    }).catch(e => console.error(e));
+    }).catch(e => {
+      console.error(e)
+    })
+    .finally(() => {
+      setIsLoading(false);
+    });
   }, []);
 
   return (
@@ -93,6 +103,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
       zoom={clientPosition?.zoom ?? appConfig.mapZoom}
       sceneModes={[CesiumSceneMode.SCENE3D]}
       baseMaps={appConfig.baseMaps}
+      className={`simpleViewer ${isLoading ? 'loading' : ''}`}
     >
         {
         models.length && models.map((model) => {
@@ -102,6 +113,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
             }
             return (
                 <Cesium3DTileset
+                  key={model.id as string}
                   maximumScreenSpaceError={MAXIMUM_SCREEN_SPACE_ERROR}
                   cullRequestsWhileMovingMultiplier={
                     CULL_REQUESTS_WHILE_MOVING_MULTIPLIER
