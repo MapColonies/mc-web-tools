@@ -50,7 +50,6 @@ export const parseQueryResults = (xml: string, recordType: string): Record<strin
     const recordsResult = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'];
     if (recordsResult['@_numberOfRecordsMatched'] === '0') {
       console.error(`Didn't find matched IDs!`);
-      alert(`Didn't find matched IDs!`);
       return null;
     }
     const records = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'][recordType];
