@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/MapColonies/mc-web-tools/compare/v1.1.1...v1.1.2) (2023-10-15)
+
+
+### Bug Fixes
+
+* support older browsers ([ba4418a](https://github.com/MapColonies/mc-web-tools/commit/ba4418af7dc43a25a0c296af164cc77352d3ffcf))
+* warning message instead of modal ([6639561](https://github.com/MapColonies/mc-web-tools/commit/6639561c97263037db1e3e185d6bc4b0ecfe31f1))
+
 ### [1.1.1](https://github.com/MapColonies/mc-web-tools/compare/v1.1.0...v1.1.1) (2023-10-15)
 
 
