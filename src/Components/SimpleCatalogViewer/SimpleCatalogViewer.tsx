@@ -33,11 +33,11 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
   let idQueried: string | null = queryParams.get("model_ids");
   if (idQueried == null) {
     console.error({ msg: `didn't provide models_ids` });
-    alert(`Error: model_ids does not exists in the query params!\nA good example: "http://url?model_ids=#ID1,#ID2"`);
+    alert(`Error: model_ids does not exists in the query params!\nA good example: "http://url?model_ids=ID1,ID2"`);
   } else {
     if (!validateIDsQuery(idQueried)) {
       console.error({ msg: `models_ids param is not according to the specifications` });
-      alert(`Error: model_ids does not fit the specification!\nA good example: "http://url?model_ids=#ID1,#ID2"`);
+      alert(`Error: model_ids does not fit the specification!\nA good example: "http://url?model_ids=ID1,ID2"`);
     } else {
       modelIds = idQueried.split(',');
       if (modelIds.length > 2) {
@@ -62,7 +62,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
   const userToken = queryParams.get("token");
   if (userToken === null) {
     console.error({ msg: `didn't provide token` });
-    alert(`Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=#TOKEN"`);
+    alert(`Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=TOKEN"`);
   }
 
   useEffect(() => {
