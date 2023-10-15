@@ -2,7 +2,7 @@ var body = document.querySelector('body');
 var uaParserObj = new UAParser();
 var FIRST_ELEM = 0;
 var CHROMIUM_ENGINE = 'Blink';
-var MINIMUM_SUPPORTED_BROWSER_VERSION = 84;
+var MINIMUM_SUPPORTED_BROWSER_VERSION = 69;
 
 var userAgentRes = uaParserObj.getResult();
 var browserName = userAgentRes.browser.name;
