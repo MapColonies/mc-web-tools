@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/MapColonies/mc-web-tools/compare/v1.1.2...v1.1.3) (2023-10-15)
+
+
+### Bug Fixes
+
+* nginx routing config ([25fb5f3](https://github.com/MapColonies/mc-web-tools/commit/25fb5f394d73f1c7fbc752b8335c19bc23bb15af))
+
 ### [1.1.2](https://github.com/MapColonies/mc-web-tools/compare/v1.1.1...v1.1.2) (2023-10-15)
 
 
