@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/MapColonies/mc-web-tools/compare/v1.3.0...v1.3.1) (2023-10-16)
+
+
+### Bug Fixes
+
+* protocol of link ([ea8f4c3](https://github.com/MapColonies/mc-web-tools/commit/ea8f4c3cd25cc5eae6b904149189ae830e9caaf5))
+
 ## [1.3.0](https://github.com/MapColonies/mc-web-tools/compare/v1.2.0...v1.3.0) (2023-10-16)
 
 
