@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { Box, Cesium3DTileset, CesiumMap, CesiumResource, CesiumSceneMode } from "@map-colonies/react-components";
-import { requestHandlerWithToken } from "./utils/requestHandler";
-import { getRecordsQueryByID, parseQueryResults } from "./utils/cswQueryBuilder";
+import { requestHandlerWithToken } from "../../Utils/RequestHandler";
+import { getRecordsQueryByID, parseQueryResults } from "../../Utils/CswQueryBuilder";
 import appConfig from "../../Utils/Config";
 import Terrain from "../Terrain/Terrain";
 import { useQueryParams } from "../../Hooks/useQueryParams";
 
 import "./SimpleCatalogViewer.css";
-import { validateIDsQuery, validatePositionQuery } from "./utils/validateQueryParams";
+import { validateIDsQuery, validatePositionQuery } from "../../Utils/ValidateQueryParams";
 
 const MAXIMUM_SCREEN_SPACE_ERROR = 5;
 const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
@@ -80,9 +80,9 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
               method: string,
               params: Record<string, unknown>
           ): Promise<AxiosResponse> =>
-              requestHandlerWithToken(appConfig.simpleCatalogViewerTool.csw3dUrl, method, params, userToken);
+              requestHandlerWithToken(appConfig.csw3dUrl, method, params, userToken);
   
-          cswRequestHandler(appConfig.simpleCatalogViewerTool.csw3dUrl, "POST", {
+          cswRequestHandler(appConfig.csw3dUrl, "POST", {
               data: getRecordsQueryByID(modelIds, "http://schema.mapcolonies.com/3d")
           })
               .then((res) => {

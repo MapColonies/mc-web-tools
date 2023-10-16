@@ -1,14 +1,13 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Box } from '@map-colonies/react-components';
-import FootprintVerification from '../FootprintVerification/FootprintVerification';
 import PageNotFound from '../PageNotFound/PageNotFound';
 import TerrainVerification from '../TerrainVerification/TerrainVerification';
 import Tools from '../Tools/Tools';
 import SimpleCatalogViewer from '../SimpleCatalogViewer/SimpleCatalogViewer';
+import SimpleViewer from '../SimpleViewer/SimpleViewer';
 
 import './Routing.css';
-
 
 const Routing: React.FC = (): JSX.Element => {
 
@@ -35,6 +34,11 @@ const Routing: React.FC = (): JSX.Element => {
         {/* Simple Catalog Viewer */}
         <Route path="/simple-catalog-viewer">
           <SimpleCatalogViewer />
+        </Route>
+
+        {/* Simple Viewer */}
+        <Route path="/simple-viewer">
+          <SimpleViewer />
         </Route>
 
         <Route path="*">

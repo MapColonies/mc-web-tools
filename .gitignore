@@ -9,6 +9,7 @@ confd/**
 # public
 public/env-config.js
 public/[cC]esium
+public/Cesium-ion-SDK-1.110
 public/ua-parser
 public/fonts/*
 !public/assets/scripts/
