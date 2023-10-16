@@ -10,7 +10,7 @@ import {
 } from "@map-colonies/react-components";
 import { requestHandlerWithToken } from "./utils/requestHandler";
 import { getRecordsQueryByID, parseQueryResults } from "./utils/cswQueryBuilder";
-import appConfig from "../../Utils/Config";
+import appConfig, { LinkType } from "../../Utils/Config";
 import Terrain from "../Terrain/Terrain";
 import { useQueryParams } from "../../Hooks/useQueryParams";
 
@@ -141,7 +141,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                 {models.map((model) => {
                     let links = model["mc:links"] as any;
                     if (Array.isArray(links)) {
-                        links = links.find((link) => link["@_scheme"] === "3D_LAYER");
+                        links = links.find((link) => link["@_scheme"] === LinkType.THREE_D_LAYER || link["@_scheme"] === LinkType.THREE_D_TILES);
                     }
                     return (
                         <Cesium3DTileset
