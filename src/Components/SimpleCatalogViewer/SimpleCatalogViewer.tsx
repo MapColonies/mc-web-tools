@@ -77,7 +77,6 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
         );
     }
 
-    // const shouldShowExtent = JSON.parse(queryParams.get("show_extent") || "false");
     const shouldShowExtentQueried = queryParams.get("show_extent");
     if (shouldShowExtentQueried != null) {
         if (!validateShowExtent(shouldShowExtentQueried)) {
