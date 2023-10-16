@@ -18,7 +18,6 @@ const Terrain: React.FC = () => {
       const handleTerrainError = (e: Record<string, unknown>): void => {
         if (!isTerrainTileError(e)) {
           console.error('Terrain provider error: Falling back to default terrain.', e);
-          alert(`\nTerrain Provider Access Error:\n\n${appConfig.terrainProviderUrl}`);
           // Remove error event listener after failing once
           // @ts-ignore
           mapViewer.terrainProvider.errorEvent.removeEventListener(handleTerrainError);
@@ -37,7 +36,7 @@ const Terrain: React.FC = () => {
         // @ts-ignore
         mapViewer.terrainProvider.errorEvent.addEventListener(handleTerrainError);
       } else {
-        alert(`\nTerrain Provider Access Error:\n\nEmpty Terrain URL`);
+        console.error(`Terrain Provider Access Error:\n\nEmpty Terrain URL`);
         mapViewer.terrainProvider = new CesiumEllipsoidTerrainProvider({});
       }
     
