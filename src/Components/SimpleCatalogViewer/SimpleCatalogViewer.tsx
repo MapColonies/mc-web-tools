@@ -78,10 +78,11 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
     if (shouldShowExtentQueried != null) {
       if (!validateShowExtent(shouldShowExtentQueried)) {
         console.error(
-            `Error: show_extent parameter does not fit the specification!\nA good example: http://url?token=true"`
+            `Error: show_extent parameter does not fit the specification!\nA good example: http://url?show_extent=true"`
         );
+      } else {
+          shouldShowExtent = JSON.parse(shouldShowExtentQueried);
       }
-      shouldShowExtent = JSON.parse(shouldShowExtentQueried);
     }
 
     useEffect(() => {
