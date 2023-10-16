@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Box, IRasterLayer } from '@map-colonies/react-components';
+import { IBaseMap } from '@map-colonies/react-components/dist/cesium-map/settings/settings';
 import { useQueryParams } from '../../Hooks/useQueryParams';
 import appConfig from '../../Utils/Config';
 import { validateIDsQuery, validatePositionQuery } from '../../Utils/ValidateQueryParams';
@@ -8,10 +9,7 @@ import { requestHandlerWithToken } from '../../Utils/RequestHandler';
 import { getRecordsQueryByID, parseQueryResults } from '../../Utils/CswQueryBuilder';
 
 import './SimpleViewer.css';
-import { IBaseMap } from '@map-colonies/react-components/dist/cesium-map/settings/settings';
 
-const MAXIMUM_SCREEN_SPACE_ERROR = 5;
-const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
 interface IClientFlyToPosition {
 	center: [number, number];
 	zoom: number;
@@ -19,8 +17,6 @@ interface IClientFlyToPosition {
 
 const SimpleViewer: React.FC = (): JSX.Element => {
 	const [models, setModels] = useState<Record<string, unknown>[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [dialogErrors, setDialogErrors] = useState<string[]>([]);
 	const queryParams = useQueryParams();
 
 	let clientPosition: IClientFlyToPosition | undefined = undefined;
@@ -28,15 +24,9 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 	let idQueried: string | null = queryParams.get("model_ids");
 	if (idQueried == null) {
 		console.error({ msg: `didn't provide models_ids` });
-		alert(
-			`Error: model_ids does not exists in the query params!\nA good example: "http://url?model_ids=ID1,ID2"`
-		);
 	} else {
 		if (!validateIDsQuery(idQueried)) {
 			console.error({ msg: `models_ids param is not according to the specifications` });
-			alert(
-				`Error: model_ids does not fit the specification!\nA good example: "http://url?model_ids=ID1,ID2"`
-			);
 		} else {
 			modelIds = idQueried.split(',');
 
@@ -49,9 +39,6 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 	if (positionQueried != null) {
 		if (!validatePositionQuery(positionQueried)) {
 			console.error({ msg: `position param is not according to the specifications` });
-			alert(
-				`Error: position does not fit the specification!\nA good example: "http://url?position=lon,lat,height"\nP.S\nThe position param is optional`
-			);
 		} else {
 			const parsedPosition = positionQueried.split(',');
 			clientPosition = {
@@ -62,10 +49,7 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 	}
 	const userToken = queryParams.get("token");
 	if (userToken === null) {
-		console.error({ msg: `didn't provide token` });
-		alert(
-			`Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=TOKEN"`
-		);
+		console.error(`Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=TOKEN"`);
 	}
 
 	useEffect(() => {
@@ -88,16 +72,10 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 					let modelsResponse = parseQueryResults(res.data, 'mc:MC3DRecord');
 					if (modelsResponse !== null) {
 						setModels(modelsResponse);
-					} else {
-						setDialogErrors((currentErrors) => [...currentErrors, `Didn't find matched IDs!`]);
 					}
 				})
 				.catch((e) => {
 					console.error(e);
-					setDialogErrors((currentErrors) => [...currentErrors, e.message]);
-				})
-				.finally(() => {
-					setIsLoading(false);
 				});
 		}
 	}, []);
