@@ -90,8 +90,11 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 	const WMTSLayerFromActiveBaseMap = baseMapCurrent?.baseRasteLayers.find((layer)=> layer.type === 'WMTS_LAYER');
 
 	const buildBaseMapQueryParam = (rasterLayer: IRasterLayer) => {
-		const baseLayerEncoded = window.btoa(JSON.stringify(rasterLayer.options));
-		return `baseMapLayerEncoded=${baseLayerEncoded}`;
+		if (rasterLayer) {
+			const baseLayerEncoded = window.btoa(JSON.stringify(rasterLayer.options));
+			return `baseMapLayerEncoded=${baseLayerEncoded}`;
+		}
+		return '';
 	}
 
 	return (
