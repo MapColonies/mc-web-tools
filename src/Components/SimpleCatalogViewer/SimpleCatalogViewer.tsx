@@ -132,7 +132,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
     return (
         <>
             <CesiumMap
-                center={clientPosition?.center ?? appConfig.mapCenter}
+                center={clientPosition?.center ?? JSON.parse(appConfig.mapCenter)}
                 zoom={clientPosition?.zoom ?? appConfig.mapZoom}
                 sceneModes={[CesiumSceneMode.SCENE3D]}
                 baseMaps={appConfig.baseMaps}
