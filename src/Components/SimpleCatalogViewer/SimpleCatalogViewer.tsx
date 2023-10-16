@@ -15,7 +15,11 @@ import Terrain from "../Terrain/Terrain";
 import { useQueryParams } from "../../Hooks/useQueryParams";
 
 import "./SimpleCatalogViewer.css";
-import { validateIDsQuery, validatePositionQuery, validateShowExtent } from "./utils/validateQueryParams";
+import {
+    validateIDsQuery,
+    validatePositionQuery,
+    validateShowExtent
+} from "./utils/validateQueryParams";
 import { getFootprintsCollection } from "./utils";
 
 const MAXIMUM_SCREEN_SPACE_ERROR = 5;
@@ -76,13 +80,13 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
     // const shouldShowExtent = JSON.parse(queryParams.get("show_extent") || "false");
     const shouldShowExtentQueried = queryParams.get("show_extent");
     if (shouldShowExtentQueried != null) {
-      if (!validateShowExtent(shouldShowExtentQueried)) {
-        console.error(
-            `Error: show_extent parameter does not fit the specification!\nA good example: http://url?show_extent=true"`
-        );
-      } else {
-          shouldShowExtent = JSON.parse(shouldShowExtentQueried);
-      }
+        if (!validateShowExtent(shouldShowExtentQueried)) {
+            console.error(
+                `Error: show_extent parameter does not fit the specification!\nA good example: http://url?show_extent=true"`
+            );
+        } else {
+            shouldShowExtent = JSON.parse(shouldShowExtentQueried);
+        }
     }
 
     useEffect(() => {
@@ -110,7 +114,11 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                     let modelsResponse = parseQueryResults(res.data, "mc:MC3DRecord");
                     if (modelsResponse !== null) {
                         setModels(modelsResponse);
-                        setFootprints(modelsResponse.map(model => JSON.parse(model["mc:footprint"] as string)));
+                        setFootprints(
+                            modelsResponse.map((model) =>
+                                JSON.parse(model["mc:footprint"] as string)
+                            )
+                        );
                     }
                 })
                 .catch((e) => {
@@ -159,8 +167,8 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                         />
                     );
                 })}
-                
-                {shouldShowExtent && 
+
+                {shouldShowExtent && (
                     <CesiumGeojsonLayer
                         clampToGround={true}
                         data={getFootprintsCollection(footprints, true)}
@@ -172,10 +180,10 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                                     // @ts-ignore
                                     item.polyline.material = color;
                                 }
-                            })
+                            });
                         }}
                     />
-                }
+                )}
                 <Terrain />
             </CesiumMap>
         </>
