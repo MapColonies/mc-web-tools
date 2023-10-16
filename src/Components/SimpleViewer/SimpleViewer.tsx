@@ -19,7 +19,7 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 	const [models, setModels] = useState<Record<string, unknown>[]>([]);
 	const queryParams = useQueryParams();
 
-	let clientPosition: IClientFlyToPosition | undefined = undefined;
+	// let clientPosition: IClientFlyToPosition | undefined = undefined;
 	let modelIds: string[] = [];
 	let idQueried: string | null = queryParams.get("model_ids");
 	if (idQueried == null) {
@@ -35,18 +35,18 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 		}
 	}
 
-	const positionQueried: string | null = queryParams.get("position");
-	if (positionQueried != null) {
-		if (!validatePositionQuery(positionQueried)) {
-			console.error({ msg: `position param is not according to the specifications` });
-		} else {
-			const parsedPosition = positionQueried.split(',');
-			clientPosition = {
-				center: [+parsedPosition[0], +parsedPosition[1]],
-				zoom: +parsedPosition[2]
-			};
-		}
-	}
+	// const positionQueried: string | null = queryParams.get("position");
+	// if (positionQueried != null) {
+	// 	if (!validatePositionQuery(positionQueried)) {
+	// 		console.error({ msg: `position param is not according to the specifications` });
+	// 	} else {
+	// 		const parsedPosition = positionQueried.split(',');
+	// 		clientPosition = {
+	// 			center: [+parsedPosition[0], +parsedPosition[1]],
+	// 			zoom: +parsedPosition[2]
+	// 		};
+	// 	}
+	// }
 	const userToken = queryParams.get("token");
 	if (userToken === null) {
 		console.error(`Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=TOKEN"`);
@@ -106,50 +106,6 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 					style={{ width: '100%', height: '89vh', border: 'none' }}
 				/>
 			</Box>
-			{/* <CesiumMap
-                center={clientPosition?.center ?? appConfig.mapCenter}
-                zoom={clientPosition?.zoom ?? appConfig.mapZoom}
-                sceneModes={[CesiumSceneMode.SCENE3D]}
-                baseMaps={appConfig.baseMaps}
-                className={`SimpleViewer ${isLoading ? "loading" : ""}`}
-            >
-                <Box className="Errors">
-                    {dialogErrors.map((error, i) => (
-                        <Box key={error} className="Dialog">
-                            {error}
-                        </Box>
-                    ))}
-                </Box>
-                {models.map((model) => {
-                    let links = model["mc:links"] as any;
-                    if (Array.isArray(links)) {
-                        links = links.find((link) => link["@_scheme"] === "3D_LAYER");
-                    }
-                    return (
-                        <Cesium3DTileset
-                            key={model.id as string}
-                            maximumScreenSpaceError={MAXIMUM_SCREEN_SPACE_ERROR}
-                            cullRequestsWhileMovingMultiplier={
-                                CULL_REQUESTS_WHILE_MOVING_MULTIPLIER
-                            }
-                            preloadFlightDestinations
-                            preferLeaves
-                            skipLevelOfDetail
-                            // url={
-                            //     new CesiumResource({
-                            //         url: `${links["#text"]}`,
-                            //         queryParameters: {
-                            //             token: userToken
-                            //         }
-                            //     })
-                            // }
-                            url={`${links["#text"]}?token=${userToken}`}
-                            isZoomTo={!clientPosition && model["mc:id"] === modelIds[0]}
-                        />
-                    );
-                })}
-                <Terrain />
-            </CesiumMap> */}
 		</>
 	);
 };
