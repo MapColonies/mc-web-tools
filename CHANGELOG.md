@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/MapColonies/mc-web-tools/compare/v1.1.3...v1.2.0) (2023-10-16)
+
+
+### Features
+
+* add validation to showExtent ([e122f06](https://github.com/MapColonies/mc-web-tools/commit/e122f06434f88b91b9058c26ca6aa83728561e45))
+* remove alerts ([a06cb3b](https://github.com/MapColonies/mc-web-tools/commit/a06cb3b270369d8d0010264caaec4b4831b8ca74))
+* show model extent ([06a76a4](https://github.com/MapColonies/mc-web-tools/commit/06a76a4539a5138e2eca4bf80b762ad1ce64d495))
+
+
+### Bug Fixes
+
+* prettier ([10bb5c9](https://github.com/MapColonies/mc-web-tools/commit/10bb5c943c7cd0beddc7c818e5aeda30cedf383c))
+* remove error dialogs ([4e8262d](https://github.com/MapColonies/mc-web-tools/commit/4e8262d5170b2322e7fb81e736c1f969398b38d5))
+* validation ([ec56601](https://github.com/MapColonies/mc-web-tools/commit/ec566017cccc4f0c8c72bb8bb6d1cc0e8eaebc46))
+
 ### [1.1.3](https://github.com/MapColonies/mc-web-tools/compare/v1.1.2...v1.1.3) (2023-10-15)
 
 

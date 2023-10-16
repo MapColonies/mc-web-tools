@@ -45,6 +45,14 @@
             src: '{{ getv "/configuration/public/url" "" }}/Cesium/Cesium.js',
             cacheType: 'version',
             additionalAttributes: 'async'
+          },
+          {
+            src: '{{ getv "/configuration/public/url" "" }}/assets/scripts/polyfill.fromEntries.js',
+            cacheType: 'timestamp'
+          },
+          {
+            src: '{{ getv "/configuration/public/url" "" }}/assets/scripts/polyfill.urlSearchParams.js',
+            cacheType: 'timestamp'
           }
         ];
         if (typeof String.prototype.replaceAll == 'undefined') {
