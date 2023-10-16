@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { Box, Cesium3DTileset, CesiumMap, CesiumSceneMode } from "@map-colonies/react-components";
+import { Cesium3DTileset, CesiumMap, CesiumSceneMode } from "@map-colonies/react-components";
 import { requestHandlerWithToken } from "./utils/requestHandler";
 import { getRecordsQueryByID, parseQueryResults } from "./utils/cswQueryBuilder";
 import appConfig from "../../Utils/Config";
@@ -19,8 +19,7 @@ interface IClientFlyToPosition {
 
 const SimpleCatalogViewer: React.FC = (): JSX.Element => {
     const [models, setModels] = useState<Record<string, unknown>[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [dialogErrors, setDialogErrors] = useState<string[]>([]);
+    // const [isLoading, setIsLoading] = useState(true);
     const queryParams = useQueryParams();
 
     let clientPosition: IClientFlyToPosition | undefined = undefined;
@@ -60,7 +59,6 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         if(modelIds.length > 2) {
-        //   setDialogErrors((currentErrors) => [...currentErrors, "Warning: You provided more than 2 models. This is not recommended"]);
         console.warn("You provided more than 2 models. This is not recommended");
         }
 
@@ -79,17 +77,14 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                   let modelsResponse = parseQueryResults(res.data, "mc:MC3DRecord");
                   if (modelsResponse !== null) {
                       setModels(modelsResponse);
-                  } else {
-                    setDialogErrors((currentErrors) => [...currentErrors, "Didn't find matched IDs!"]);
                   }
               })
               .catch((e) => {
                   console.error(e);
-                  setDialogErrors((currentErrors) => [...currentErrors, e.message]);
               })
-              .finally(() => {
-                  setIsLoading(false);
-              });
+            //   .finally(() => {
+            //       setIsLoading(false);
+            //   });
         }
     }, []);
 
@@ -102,13 +97,6 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                 baseMaps={appConfig.baseMaps}
                 // className={`simpleViewer ${isLoading ? "loading" : ""}`}
             >
-              <Box className="errors">
-                {dialogErrors.map((error, i) => (
-                    <Box key={error} className="Dialog">
-                        {error}
-                    </Box>
-                ))}
-              </Box>
                 {models.map((model) => {
                     let links = model["mc:links"] as any;
                     if (Array.isArray(links)) {
