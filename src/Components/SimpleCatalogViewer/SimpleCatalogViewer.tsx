@@ -15,7 +15,7 @@ import Terrain from "../Terrain/Terrain";
 import { useQueryParams } from "../../Hooks/useQueryParams";
 
 import "./SimpleCatalogViewer.css";
-import { validateIDsQuery, validatePositionQuery } from "./utils/validateQueryParams";
+import { validateIDsQuery, validatePositionQuery, validateShowExtent } from "./utils/validateQueryParams";
 import { getFootprintsCollection } from "./utils";
 
 const MAXIMUM_SCREEN_SPACE_ERROR = 5;
@@ -33,6 +33,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
 
     let clientPosition: IClientFlyToPosition | undefined = undefined;
     let modelIds: string[] = [];
+    let shouldShowExtent = false;
     let idQueried: string | null = queryParams.get("model_ids");
     if (idQueried == null) {
         console.error(
@@ -72,9 +73,16 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
         );
     }
 
-    console.log(queryParams.get("show_extent"))
-
-    const shouldShowExtent = JSON.parse(queryParams.get("show_extent") || "false");
+    // const shouldShowExtent = JSON.parse(queryParams.get("show_extent") || "false");
+    const shouldShowExtentQueried = queryParams.get("show_extent");
+    if (shouldShowExtentQueried != null) {
+      if (!validateShowExtent(shouldShowExtentQueried)) {
+        console.error(
+            `Error: show_extent parameter does not fit the specification!\nA good example: http://url?token=true"`
+        );
+      }
+      shouldShowExtent = JSON.parse(shouldShowExtentQueried);
+    }
 
     useEffect(() => {
         if (modelIds.length > 2) {
