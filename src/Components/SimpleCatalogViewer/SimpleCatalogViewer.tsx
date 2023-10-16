@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { Box, Cesium3DTileset, CesiumMap, CesiumResource, CesiumSceneMode } from "@map-colonies/react-components";
+import { Cesium3DTileset, CesiumMap, CesiumSceneMode } from "@map-colonies/react-components";
 import { requestHandlerWithToken } from "./utils/requestHandler";
 import { getRecordsQueryByID, parseQueryResults } from "./utils/cswQueryBuilder";
 import appConfig from "../../Utils/Config";
@@ -19,24 +19,17 @@ interface IClientFlyToPosition {
 
 const SimpleCatalogViewer: React.FC = (): JSX.Element => {
     const [models, setModels] = useState<Record<string, unknown>[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [dialogErrors, setDialogErrors] = useState<string[]>([]);
+    // const [isLoading, setIsLoading] = useState(true);
     const queryParams = useQueryParams();
 
     let clientPosition: IClientFlyToPosition | undefined = undefined;
     let modelIds: string[] = [];
     let idQueried: string | null = queryParams.get("model_ids");
     if (idQueried == null) {
-        console.error({ msg: `didn't provide models_ids` });
-        alert(
-            `Error: model_ids does not exists in the query params!\nA good example: "http://url?model_ids=ID1,ID2"`
-        );
+        console.error(`Error: model_ids does not exists in the query params!\nA good example: "http://url?model_ids=ID1,ID2"`);
     } else {
         if (!validateIDsQuery(idQueried)) {
-            console.error({ msg: `models_ids param is not according to the specifications` });
-            alert(
-                `Error: model_ids does not fit the specification!\nA good example: "http://url?model_ids=ID1,ID2"`
-            );
+            console.error(`Error: model_ids does not fit the specification!\nA good example: "http://url?model_ids=ID1,ID2"`);
         } else {
             modelIds = idQueried.split(",");
 
@@ -48,10 +41,8 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
     const positionQueried: string | null = queryParams.get("position");
     if (positionQueried != null) {
         if (!validatePositionQuery(positionQueried)) {
-            console.error({ msg: `position param is not according to the specifications` });
-            alert(
-                `Error: position does not fit the specification!\nA good example: "http://url?position=lon,lat,height"\nP.S\nThe position param is optional`
-            );
+            console.error(`Error: position does not fit the specification!\nA good example: "http://url?position=lon,lat,height"\nP.S\nThe position param is optional`);
+
         } else {
             const parsedPosition = positionQueried.split(",");
             clientPosition = {
@@ -62,15 +53,12 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
     }
     const userToken = queryParams.get("token");
     if (userToken === null) {
-        console.error({ msg: `didn't provide token` });
-        alert(
-            `Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=TOKEN"`
-        );
+        console.error(`Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=TOKEN"`);
+
     }
 
     useEffect(() => {
         if(modelIds.length > 2) {
-        //   setDialogErrors((currentErrors) => [...currentErrors, "Warning: You provided more than 2 models. This is not recommended"]);
         console.warn("You provided more than 2 models. This is not recommended");
         }
 
@@ -89,17 +77,14 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                   let modelsResponse = parseQueryResults(res.data, "mc:MC3DRecord");
                   if (modelsResponse !== null) {
                       setModels(modelsResponse);
-                  } else {
-                    setDialogErrors((currentErrors) => [...currentErrors, "Didn't find matched IDs!"]);
                   }
               })
               .catch((e) => {
                   console.error(e);
-                  setDialogErrors((currentErrors) => [...currentErrors, e.message]);
               })
-              .finally(() => {
-                  setIsLoading(false);
-              });
+            //   .finally(() => {
+            //       setIsLoading(false);
+            //   });
         }
     }, []);
 
@@ -110,15 +95,8 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                 zoom={clientPosition?.zoom ?? appConfig.mapZoom}
                 sceneModes={[CesiumSceneMode.SCENE3D]}
                 baseMaps={appConfig.baseMaps}
-                className={`simpleViewer ${isLoading ? "loading" : ""}`}
+                // className={`simpleViewer ${isLoading ? "loading" : ""}`}
             >
-              <Box className="errors">
-                {dialogErrors.map((error, i) => (
-                    <Box key={error} className="Dialog">
-                        {error}
-                    </Box>
-                ))}
-              </Box>
                 {models.map((model) => {
                     let links = model["mc:links"] as any;
                     if (Array.isArray(links)) {
