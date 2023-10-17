@@ -101,7 +101,7 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 		<>
 			<Box>
 				<iframe
-					src={`${process.env.PUBLIC_URL}/Cesium-ion-SDK-1.110/Apps/HelloWorld.html?modelUrl=${url}&${buildBaseMapQueryParam(WMTSLayerFromActiveBaseMap as IRasterLayer)}`}
+					src={`/Cesium-ion-SDK-1.110/Apps/HelloWorld.html?modelUrl=${url}&${buildBaseMapQueryParam(WMTSLayerFromActiveBaseMap as IRasterLayer)}`}
 					title="Simple Viewer"
 					style={{ width: '100%', height: '89vh', border: 'none' }}
 				/>
