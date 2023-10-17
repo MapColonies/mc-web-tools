@@ -25,7 +25,6 @@ const Terrain: React.FC = () => {
           mapViewer.terrainProvider = new CesiumEllipsoidTerrainProvider({});
         } else {
           console.error('Terrain provider error: Tile problem.', e);
-          setMissingTiles(prev => [...prev, e.message as string]);
         }
       };
   
