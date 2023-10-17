@@ -29,7 +29,7 @@ export const requestHandlerWithToken = async (url: string, method: string, param
       ...reqConfig.headers,
       [attributeName]: token,
     } as Record<string, unknown>;
-  } else if (injectionType.toLowerCase() === 'queryParam') {
+  } else if (injectionType.toLowerCase() === 'queryparam') {
     reqConfig.params = {
       ...reqConfig.params,
       [attributeName]: token,
