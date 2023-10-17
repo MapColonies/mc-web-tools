@@ -92,16 +92,23 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 	const buildBaseMapQueryParam = (rasterLayer: IRasterLayer) => {
 		if (rasterLayer) {
 			const baseLayerEncoded = window.btoa(JSON.stringify(rasterLayer.options));
-			return `baseMapLayerEncoded=${baseLayerEncoded}`;
+			return `&baseMapLayerEncoded=${baseLayerEncoded}`;
 		}
 		return '';
-	}
+	};
+
+	const buildTerrainProviderParam = () => {
+		if (appConfig.terrainProviderUrl) {
+			return `&terrainProviderUrl=${appConfig.terrainProviderUrl}`;
+		}
+		return '';
+	};
 
 	return (
 		<>
 			<Box>
 				<iframe
-					src={`./Cesium-ion-SDK-1.110/Apps/HelloWorld.html?modelUrl=${url}&${buildBaseMapQueryParam(WMTSLayerFromActiveBaseMap as IRasterLayer)}`}
+					src={`./Cesium-ion-SDK-1.110/Apps/HelloWorld.htm?modelUrl=${url}${buildBaseMapQueryParam(WMTSLayerFromActiveBaseMap as IRasterLayer)}${buildTerrainProviderParam()}`}
 					title="Simple Viewer"
 					style={{ width: '100%', height: '89vh', border: 'none' }}
 				/>
