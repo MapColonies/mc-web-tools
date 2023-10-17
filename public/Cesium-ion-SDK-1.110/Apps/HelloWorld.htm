@@ -102,13 +102,20 @@
                 );
                 baseMapLayerWMTSOptions.tilingScheme = new Cesium.GeographicTilingScheme();
             }
+            if (searchParams.has("terrainProviderUrl")) {
+                terrainProviderUrl = searchParams.get("terrainProviderUrl");
+            }
 
-            const AddRasterLayer = async (viewer, options) => {
+            const addTerrainProvider = async (viewer, url, props) => {
+                viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(url, { ...(props ?? {}) });
+            };
+
+            const addRasterLayer = async (viewer, options) => {
                 const providerInstance = new Cesium.WebMapTileServiceImageryProvider(options);
                 viewer.imageryLayers.addImageryProvider(providerInstance);
             };
 
-            const Add3DModel = async (viewer, url, props, isZoomTo = true) => {
+            const add3DModel = async (viewer, url, props, isZoomTo = true) => {
                 const tileset = await Cesium.Cesium3DTileset.fromUrl(url, { ...(props ?? {}) });
                 viewer.scene.primitives.add(tileset);
                 if (isZoomTo) {
@@ -119,8 +126,7 @@
             const viewer = new Cesium.Viewer("cesiumContainer", {
                 imageryProvider: false,
                 // baseLayerPicker: false,
-                terrain: Cesium.Terrain.fromWorldTerrain(),
-
+                // terrain: Cesium.Terrain.fromWorldTerrain(),
             });
             viewer.extend(Cesium.viewerMeasureMixin, {
                 units: new Cesium.MeasureUnits({
@@ -212,11 +218,14 @@
             });
 
             try {
+                if (terrainProviderUrl) {
+                    addTerrainProvider(viewer, terrainProviderUrl, {});
+                }
                 if (baseMapLayerWMTSOptions) {
-                    AddRasterLayer(viewer, { ...baseMapLayerWMTSOptions });
+                    addRasterLayer(viewer, { ...baseMapLayerWMTSOptions });
                 }
                 if (queryModelUrl) {
-                    Add3DModel(viewer, queryModelUrl, {
+                    add3DModel(viewer, queryModelUrl, {
                         maximumScreenSpaceError: MAXIMUM_SCREEN_SPACE_ERROR,
                         cullRequestsWhileMovingMultiplier: CULL_REQUESTS_WHILE_MOVING_MULTIPLIER,
                         preloadFlightDestinations: true,
