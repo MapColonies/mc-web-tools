@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Use correct character set. -->
+        <meta charset="utf-8" />
+        <!-- Tell IE to use the latest, best version. -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+        />
+        <title>Simple Viewer</title>
+        <script src="../Build/CesiumUnminified/Cesium.js"></script>
+        <script src="./viewshed-utils.js"></script>
+        <style>
+            @import url(../Build/CesiumUnminified/Widgets/widgets.css);
+            html,
+            body,
+            #cesiumContainer {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                font-family: Helvetica
+            }
+
+            #viewshedConfigPanel {
+              z-index: 999;
+              position: absolute;
+              top:0;
+              left: 0;
+              width: 400px;
+              height: 500px;
+              color: white;
+              background-color: rgba(0,0,0,0.8);
+              padding: 10px;
+            }
+
+            .controlField {
+              display: flex;
+              align-items: center;
+              width: 100%;
+              gap: 5px;
+              margin: 10px;
+            }
+
+            .latitudeField, .longitudeField {
+              width: 100px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="cesiumContainer">
+          <div id="viewshedConfigPanel">
+            <h4>Viewshed Properties</h4>
+            <!-- Center Position -->
+            <div class="controlField">
+              <label for="latitudeField">Latitude</label>
+              <input name="latitudeField" class="latitudeField" type="number" />
+              <label for="longitudeField">Longitude</label>
+              <input name="longitudeField" class="longitudeField" type="number" />
+            </div>
+            
+            <!-- Rotation -->
+            <div class="controlField">
+              <label for="rotationField">View Angle</label>
+              <input type="range" name="rotationField" class="viewshedField rotationField" min="-360" max="360" steps="1" value="0"/>
+              <input class="controlValue rotationFieldValue" min="-360" max="360" type="number" value="0" />
+            </div>
+
+            <!-- Center Height -->
+            <div class="controlField">
+              <label for="viewHeight">View Height(m)</label>
+              <input name="viewHeight" class="viewHeightField" min="0" type="number" value="0" />
+            </div>
+
+          </div>
+        </div>
+        <script>
+
+            // Viewshed Inputs
+            const rotationField = document.querySelector('.rotationField');
+            const rotationFieldValue = document.querySelector('.rotationFieldValue');
+            
+            const viewHeightField = document.querySelector('.viewHeightField');
+            
+            const latField = document.querySelector('.latitudeField');
+            const lonField = document.querySelector('.longitudeField');
+            // ---------------
+
+            const MAXIMUM_SCREEN_SPACE_ERROR = 5;
+            const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
+            const searchParams = new URLSearchParams(window.location.search.substring(1));
+            const queryModelUrl = searchParams.get("modelUrl");
+            let baseMapLayerWMTSOptions = null;
+            if (searchParams.has("baseMapLayerEncoded")) {
+                baseMapLayerWMTSOptions = JSON.parse(
+                    window.atob(searchParams.get("baseMapLayerEncoded"))
+                );
+                baseMapLayerWMTSOptions.tilingScheme = new Cesium.GeographicTilingScheme();
+            }
+
+            const AddRasterLayer = async (viewer, options) => {
+                const providerInstance = new Cesium.WebMapTileServiceImageryProvider(options);
+                viewer.imageryLayers.addImageryProvider(providerInstance);
+            };
+
+            const Add3DModel = async (viewer, url, props, isZoomTo = true) => {
+                const tileset = await Cesium.Cesium3DTileset.fromUrl(url, { ...(props ?? {}) });
+                viewer.scene.primitives.add(tileset);
+                if (isZoomTo) {
+                    viewer.zoomTo(tileset);
+                }
+            };
+
+            const viewer = new Cesium.Viewer("cesiumContainer", {
+                imageryProvider: false,
+                // baseLayerPicker: false,
+                terrain: Cesium.Terrain.fromWorldTerrain(),
+
+            });
+            viewer.extend(Cesium.viewerMeasureMixin, {
+                units: new Cesium.MeasureUnits({
+                    distanceUnits: Cesium.DistanceUnits.METERS,
+                    areaUnits: Cesium.AreaUnits.SQUARE_METERS,
+                    volumeUnits: Cesium.VolumeUnits.CUBIC_METERS
+                })
+            });
+
+            viewer.scene.globe.shadows = Cesium.ShadowMode.ENABLED;
+
+            let lon = -75.597514;
+            let lat = 40.037648;
+            let height = 80;
+
+            const rectangularSensor = createRectangularSensor(
+                {
+                    center: Cesium.Cartesian3.fromDegrees(lon, lat, height),
+                    radius: 800.0,
+                    heading: -90,
+                    pitch: -90,
+                    roll: 0.0,
+                    xHalfAngle: 20,
+                    yHalfAngle: 20,
+                    // viewshedOccludedColor: Cesium.Color.BLACK.withAlpha(0.2),
+                    // viewshedVisibleColor: Cesium.Color.WHITE.withAlpha(0.4), 
+                    classificationType: Cesium.ClassificationType.BOTH,
+                },
+                viewer
+            );
+            
+            // ----- Init field Values -----
+            
+            // Set Initial orientation
+            setSensorOrientation(rectangularSensor, Cesium.Math.toRadians(rotationField.value));
+            viewHeightField.value = height;
+            latField.value = lat;
+            lonField.value = lon;
+
+            // ------------------------------
+
+            // ChangeEvents
+            rotationField.addEventListener('input', (e) => {
+              const rotationValue = e.target.value;
+              
+              setSensorOrientation(rectangularSensor, Cesium.Math.toRadians(rotationValue))
+              rotationFieldValue.value = rotationValue
+            });
+
+            rotationFieldValue.addEventListener('input', (e) => {
+              const rotationValue = e.target.value;
+              
+              setSensorOrientation(rectangularSensor, Cesium.Math.toRadians(rotationValue))
+              rotationField.value = rotationValue;
+            });
+
+            viewHeightField.addEventListener('input', (e) => {
+              const heightValue = e.target.valueAsNumber || 0;
+              height = heightValue;
+              const newPos = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+              rectangularSensor.position = newPos;
+            });
+
+            latField.addEventListener('input', (e) => {
+              lat = e.target.valueAsNumber || 0;
+              const newPos = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+              rectangularSensor.position = newPos;
+            });
+
+            lonField.addEventListener('input', (e) => {
+              lon = e.target.valueAsNumber || 0;
+              const newPos = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+              rectangularSensor.position = newPos;
+            });
+
+            // ------------
+
+            /* Example! */
+            Cesium.Cesium3DTileset.fromIonAssetId(40866).then((tileset) => {
+                viewer.scene.primitives.add(tileset);
+                viewer.zoomTo(tileset);
+            });
+
+            viewer.scene.postRender.addEventListener(function () {
+              lon += 0.00001;
+              lat += 0.00001;
+              const newPos = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+              rectangularSensor.position = newPos;
+            });
+
+            try {
+                if (baseMapLayerWMTSOptions) {
+                    AddRasterLayer(viewer, { ...baseMapLayerWMTSOptions });
+                }
+                if (queryModelUrl) {
+                    Add3DModel(viewer, queryModelUrl, {
+                        maximumScreenSpaceError: MAXIMUM_SCREEN_SPACE_ERROR,
+                        cullRequestsWhileMovingMultiplier: CULL_REQUESTS_WHILE_MOVING_MULTIPLIER,
+                        preloadFlightDestinations: true,
+                        preferLeaves: true,
+                        skipLevelOfDetail: true
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        </script>
+    </body>
+</html>
