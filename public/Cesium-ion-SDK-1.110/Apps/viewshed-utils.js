@@ -10,7 +10,6 @@ let clock = 0.0;
 let cone = Cesium.Math.toRadians(90.0);
 let twist = 0.0;
 let portion = Cesium.SensorVolumePortionToDisplay.COMPLETE;
-
 let showLateralSurfaces = false;
 let showEllipsoidHorizonSurfaces = false;
 let showDomeSurfaces = false;
@@ -18,8 +17,31 @@ let showEllipsoidSurfaces = false;
 let showViewshed =  true;
 let showIntersection = false;
 let showThroughEllipsoid =  true;
+let isViewshedModeOn = false;
+
+let yellowPoint;
+
 
 const viewModel = {
+  isViewshedModeOn: isViewshedModeOn,
+  toggleIsViewshedModeOn: function() {
+    this.isViewshedModeOn = !this.isViewshedModeOn;
+    isViewshedModeOn = this.isViewshedModeOn;
+
+      if(isViewshedModeOn) {
+        updateSensor();
+      } else {
+        viewModel.latitude = 0;
+        viewModel.longitude = 0;
+        viewModel.altitude = -10;
+
+        // Cesium.destroyObject(viewshedSensor);
+
+        viewer.scene.primitives.remove(this.sensor);
+        // handler && handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      }
+  },
+  sensor: undefined,
   longitude: longitude,
   latitude: latitude,
   altitude: altitude,
@@ -41,7 +63,154 @@ const viewModel = {
   selectedPortion: portion,
 };
 
-let yellowPoint;
+
+//#region KNOCKOUT: init
+Cesium.knockout.track(viewModel);
+
+const viewshedButton = document.querySelector(".toggle-viewshed-button");
+const viewshedConfigPanel = document.getElementById("viewshedConfigPanel");
+Cesium.knockout.applyBindings(viewModel, viewshedConfigPanel);
+Cesium.knockout.applyBindings(viewModel, viewshedButton);
+
+Cesium.knockout
+    .getObservable(viewModel, "longitude")
+    .subscribe(function (value) {
+      longitude = parseFloat(value) || 0;
+
+      updateModelMatrix();
+
+      const newPos = new Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
+      addYellowPoint(newPos, viewer);
+    });
+
+  Cesium.knockout
+    .getObservable(viewModel, "latitude")
+    .subscribe(function (value) {
+      latitude = parseFloat(value) || 0;
+      updateModelMatrix();
+
+      const newPos = new Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
+      addYellowPoint(newPos, viewer);
+    });
+
+  Cesium.knockout
+    .getObservable(viewModel, "altitude")
+    .subscribe(function (value) {
+      const heightWithoutTerrain = parseFloat(value) || 0;
+      const terrainHeightAtPos = viewer.scene.globe.getHeight(new Cesium.Cartographic.fromDegrees(longitude, latitude));
+      
+      altitude = heightWithoutTerrain + terrainHeightAtPos;
+      updateModelMatrix();
+
+      const newPos = new Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
+      addYellowPoint(newPos, viewer);
+    });
+
+  Cesium.knockout
+    .getObservable(viewModel, "radius")
+    .subscribe(function (value) {
+      radius = parseFloat(value) || 1;
+      updateSensor();     
+    });
+    
+  Cesium.knockout
+    .getObservable(viewModel, "xHalfAngle")
+    .subscribe(function (value) {
+      xHalfAngle = parseFloat(value) || 1;
+      updateSensor()
+    });
+
+  Cesium.knockout
+    .getObservable(viewModel, "yHalfAngle")
+    .subscribe(function (value) {
+      yHalfAngle = parseFloat(value) || 1;
+      updateSensor()
+    });
+  
+  Cesium.knockout
+    .getObservable(viewModel, "clock")
+    .subscribe(function (value) {
+      clock = parseFloat(value) || 0;
+      updateModelMatrix();
+    });
+
+  Cesium.knockout
+    .getObservable(viewModel, "cone")
+    .subscribe(function (value) {
+      cone = parseFloat(value) || 0;
+      updateModelMatrix();
+    });
+
+  Cesium.knockout
+    .getObservable(viewModel, "twist")
+    .subscribe(function (value) {
+      twist = parseFloat(value) || 0;
+      updateModelMatrix();
+    });
+
+  Cesium.knockout
+    .getObservable(viewModel, "selectedPortion")
+    .subscribe(function (value) {
+      switch (value) {
+        case "Below ellipsoid horizon":
+          portion =
+            Cesium.SensorVolumePortionToDisplay.BELOW_ELLIPSOID_HORIZON;
+          break;
+        case "Above ellipsoid horizon":
+          portion =
+            Cesium.SensorVolumePortionToDisplay.ABOVE_ELLIPSOID_HORIZON;
+          break;
+        default:
+          portion = Cesium.SensorVolumePortionToDisplay.COMPLETE;
+          break;
+      }
+
+     viewModel.sensor.portionToDisplay = portion;
+    });
+
+  Cesium.knockout
+    .getObservable(viewModel, "showLateralSurfaces")
+    .subscribe(function (value) {
+      showLateralSurfaces = value;
+      showDomeSurfaces = value;
+     viewModel.sensor.showLateralSurfaces = showLateralSurfaces;
+     viewModel.sensor.showDomeSurfaces = showLateralSurfaces;
+    });
+
+  Cesium.knockout
+    .getObservable(viewModel, "showEllipsoidHorizonSurfaces")
+    .subscribe(function (value) {
+      showEllipsoidHorizonSurfaces = value;
+     viewModel.sensor.showEllipsoidHorizonSurfaces = showEllipsoidHorizonSurfaces;
+    });
+
+  // Cesium.knockout
+  //   .getObservable(viewModel, "showDomeSurfaces")
+  //   .subscribe(function (value) {
+  //     showDomeSurfaces = value;
+  //    viewModel.sensor.showDomeSurfaces = showDomeSurfaces;
+  //   });
+
+  Cesium.knockout
+    .getObservable(viewModel, "showEllipsoidSurfaces")
+    .subscribe(function (value) {
+      showEllipsoidSurfaces = value;
+     viewModel.sensor.showEllipsoidSurfaces = showEllipsoidSurfaces;
+    });
+    //#endregion
+
+const viewshedEventHandler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+
+viewshedEventHandler.setInputAction((movement) => {
+  if(viewModel.isViewshedModeOn) {
+    const position = getPosition(movement, viewer);
+  
+    setModelValue("latitude", position.latitude);
+    setModelValue("longitude", position.longitude);
+    setModelValue("altitude", position.height);
+  }
+
+}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
 
 function getModelMatrix(ellipsoid) {
@@ -97,6 +266,20 @@ function getModelMatrix(ellipsoid) {
     new Cesium.Matrix4()
   );
 }
+
+function updateSensor() {
+  const ellipsoid = viewer.scene.globe.ellipsoid;
+
+  viewer.scene.primitives.remove(viewModel.sensor);
+  viewModel.sensor = addRectangularSensor(ellipsoid);
+  viewer.scene.primitives.add(viewModel.sensor);
+}
+
+function updateModelMatrix() {
+  const ellipsoid = viewer.scene.globe.ellipsoid;
+  viewModel.sensor.modelMatrix = getModelMatrix(ellipsoid);
+}
+
 
 function addRectangularSensor(ellipsoid) {
   const rectangularSensor = new Cesium.RectangularSensor();
@@ -177,153 +360,6 @@ function addRectangularSensor(ellipsoid) {
 }
 
 
-function createUserInterface(viewer) {
-  const scene = viewer.scene;
-  const ellipsoid = scene.globe.ellipsoid;
-  const primitives = scene.primitives;
-  let sensor;
-
-  function updateSensor() {
-    primitives.remove(sensor);
-    sensor = addRectangularSensor(ellipsoid);
-    primitives.add(sensor);
-  }
-
-  function updateModelMatrix() {
-    sensor.modelMatrix = getModelMatrix(ellipsoid);
-  }
-
-  Cesium.knockout.track(viewModel);
-  const viewshedConfigPanel = document.getElementById("viewshedConfigPanel");
-  Cesium.knockout.applyBindings(viewModel, viewshedConfigPanel);
-
-  Cesium.knockout
-    .getObservable(viewModel, "longitude")
-    .subscribe(function (value) {
-      longitude = parseFloat(value) || 0;
-
-      updateModelMatrix();
-
-      const newPos = new Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
-      addYellowPoint(newPos, viewer);
-    });
-
-  Cesium.knockout
-    .getObservable(viewModel, "latitude")
-    .subscribe(function (value) {
-      latitude = parseFloat(value) || 0;
-      updateModelMatrix();
-
-      const newPos = new Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
-      addYellowPoint(newPos, viewer);
-    });
-
-  Cesium.knockout
-    .getObservable(viewModel, "altitude")
-    .subscribe(function (value) {
-      const heightWithoutTerrain = parseFloat(value) || 0;
-      const terrainHeightAtPos = viewer.scene.globe.getHeight(new Cesium.Cartographic.fromDegrees(longitude, latitude));
-      
-      altitude = heightWithoutTerrain + terrainHeightAtPos;
-      updateModelMatrix();
-
-      const newPos = new Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
-      addYellowPoint(newPos, viewer);
-    });
-
-  Cesium.knockout
-    .getObservable(viewModel, "radius")
-    .subscribe(function (value) {
-      radius = parseFloat(value) || 1;
-      updateSensor()
-    });
-    
-  Cesium.knockout
-    .getObservable(viewModel, "xHalfAngle")
-    .subscribe(function (value) {
-      xHalfAngle = parseFloat(value) || 1;
-      updateSensor()
-    });
-
-  Cesium.knockout
-    .getObservable(viewModel, "yHalfAngle")
-    .subscribe(function (value) {
-      yHalfAngle = parseFloat(value) || 1;
-      updateSensor()
-    });
-  
-  Cesium.knockout
-    .getObservable(viewModel, "clock")
-    .subscribe(function (value) {
-      clock = parseFloat(value) || 0;
-      updateModelMatrix();
-    });
-
-  Cesium.knockout
-    .getObservable(viewModel, "cone")
-    .subscribe(function (value) {
-      cone = parseFloat(value) || 0;
-      updateModelMatrix();
-    });
-
-  Cesium.knockout
-    .getObservable(viewModel, "twist")
-    .subscribe(function (value) {
-      twist = parseFloat(value) || 0;
-      updateModelMatrix();
-    });
-
-  Cesium.knockout
-    .getObservable(viewModel, "selectedPortion")
-    .subscribe(function (value) {
-      switch (value) {
-        case "Below ellipsoid horizon":
-          portion =
-            Cesium.SensorVolumePortionToDisplay.BELOW_ELLIPSOID_HORIZON;
-          break;
-        case "Above ellipsoid horizon":
-          portion =
-            Cesium.SensorVolumePortionToDisplay.ABOVE_ELLIPSOID_HORIZON;
-          break;
-        default:
-          portion = Cesium.SensorVolumePortionToDisplay.COMPLETE;
-          break;
-      }
-
-      sensor.portionToDisplay = portion;
-    });
-
-  Cesium.knockout
-    .getObservable(viewModel, "showLateralSurfaces")
-    .subscribe(function (value) {
-      showLateralSurfaces = value;
-      sensor.showLateralSurfaces = showLateralSurfaces;
-    });
-
-  Cesium.knockout
-    .getObservable(viewModel, "showEllipsoidHorizonSurfaces")
-    .subscribe(function (value) {
-      showEllipsoidHorizonSurfaces = value;
-      sensor.showEllipsoidHorizonSurfaces = showEllipsoidHorizonSurfaces;
-    });
-
-  Cesium.knockout
-    .getObservable(viewModel, "showDomeSurfaces")
-    .subscribe(function (value) {
-      showDomeSurfaces = value;
-      sensor.showDomeSurfaces = showDomeSurfaces;
-    });
-
-  Cesium.knockout
-    .getObservable(viewModel, "showEllipsoidSurfaces")
-    .subscribe(function (value) {
-      showEllipsoidSurfaces = value;
-      sensor.showEllipsoidSurfaces = showEllipsoidSurfaces;
-    });
-
-  updateSensor();
-}
-
 function addYellowPoint(cartesian, viewer) {
   viewer.entities.remove(yellowPoint);
 
@@ -368,7 +404,7 @@ function getPosition(movement, viewer) {
       //     eyeOffset : new Cesium.Cartesian3(0.0, 0.0, -1.0)
       // });
 
-      addYellowPoint(cartesian, viewer)
+      addYellowPoint(cartesian, viewer);
 
       return getCorrectHeightCartographicDegree(cartographic, viewer);
   }

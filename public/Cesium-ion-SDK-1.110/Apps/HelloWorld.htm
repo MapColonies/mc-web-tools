@@ -12,7 +12,8 @@
         />
         <title>Simple Viewer</title>
         <script src="../Build/CesiumUnminified/Cesium.js"></script>
-        <script sync src="./viewshed-utils.js"></script>
+        <script src="./utils.js"></script>
+        <script defer src="./viewshed-utils.js"></script>
         <style>
             @import url(../Build/CesiumUnminified/Widgets/widgets.css);
             html,
@@ -38,6 +39,7 @@
               padding: 10px;
               border-radius: 8px;
               transform: translate(0, -50%);
+              display: none;
             }
 
             #closePanel {
@@ -47,11 +49,27 @@
               right: 20px;
             }
 
+            .toggle-viewshed-button.toggled {
+              color: #fff;
+              fill: #fff;
+              background: rgba(0, 255, 0, 0.6);
+              border-color: lime;
+              box-shadow: 0 0 8px lime;          
+            }
+
+            .cesium-viewer-bottom, .cesium-viewer-animationContainer {
+              display: none;
+            }
+
         </style>
     </head>
     <body>
         <div id="cesiumContainer">
-          <div id="viewshedConfigPanel">
+          <template id="viewshedButtonTemplate">
+            <div class="cesium-button cesium-toolbar-button toggle-viewshed-button" title="Viewshed" data-bind="css: { toggled: isViewshedModeOn },click: toggleIsViewshedModeOn">
+              <img src="./viewshed.svg" alt="viewshed"/>
+            </template>
+          <div id="viewshedConfigPanel" data-bind="style: { display: isViewshedModeOn ? 'block' : 'none'  }">
             <div id="panelTitle"><h2>Manipulate Sensor</h2></div>
             <p id="closePanel">&#10060;</p>
             <div id="panel">
@@ -60,7 +78,7 @@
                   <tr>
                     <td>Longitude</td>
                     <td id="longitudeSlider">
-                      <input type="range" min="-180.0" max="180.0" step="1" data-bind="value:longitude, valueUpdate: 'input'" style="width: 150px">
+                      <input type="range" min="-180.0" max="180.0" step="1" data-bind="style: {display: isViewshedModeOn ? 'block' : 'none'}, valueUpdate: 'input'" style="width: 150px">
                     </td>
                     <td>
                       <input type="number" size="5" step="1" data-bind="value: longitude, valueUpdate: 'input'" style="width: 80px">
@@ -94,7 +112,7 @@
                     </td>
                   </tr>
                    <tr>
-                    <td>X Half Angle</td>
+                    <td>Hor. half Angle of FOV</td>
                     <td id="xHalfAngleSlider">
                       <input type="range" min="1.0" max="90.0" step="0.1" data-bind="value:xHalfAngle, valueUpdate: 'input'" style="width: 150px">
                     </td>
@@ -103,7 +121,7 @@
                     </td>
                   </tr>
                    <tr>
-                    <td>Y Half Angle</td>
+                    <td>Vert. half Angle of FOV</td>
                     <td id="yHalfAngleSlider">
                       <input type="range" min="1.0" max="90.0" step="0.1" data-bind="value:yHalfAngle, valueUpdate: 'input'" style="width: 150px">
                     </td>
@@ -112,7 +130,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Clock</td>
+                    <td>Rotate Horizontally</td>
                     <td id="clockSlider">
                       <input type="range" min="-3.14" max="3.14" step="0.01" data-bind="value:clock, valueUpdate: 'input'" style="width: 150px">
                     </td>
@@ -121,7 +139,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Cone</td>
+                    <td>Rotate Vertically</td>
                     <td id="coneSlider">
                       <input type="range" min="-3.14" max="3.14" step="0.01" data-bind="value:cone, valueUpdate: 'input'" style="width: 150px">
                     </td>
@@ -129,7 +147,7 @@
                       <input type="number" size="5" step="0.01" data-bind="value: cone, valueUpdate: 'input'" style="width: 80px">
                     </td>
                   </tr>
-                  <tr>
+                  <!-- <tr>
                     <td>Twist</td>
                     <td id="twistSlider">
                       <input type="range" min="-3.14" max="3.14" step="0.01" data-bind="value:twist, valueUpdate: 'input'" style="width: 150px">
@@ -137,7 +155,7 @@
                     <td>
                       <input type="number" size="5" step="0.01" data-bind="value: twist, valueUpdate: 'input'" style="width: 80px">
                     </td>
-                  </tr>
+                  </tr> -->
                   <tr>
                     <td>
                       <label for="portionMenu">Select portion to display</label>
@@ -151,29 +169,29 @@
               <table>
                 <tbody>
                   <tr>
-                    <td>Show Lateral Surfaces</td>
+                    <td>Show Volume of FOV</td>
                     <td id="lateralCheckBox" colspan="2">
                       <input type="checkbox" data-bind="checked: showLateralSurfaces">
                     </td>
                   </tr>
-                  <tr>
+                  <!-- <tr>
                     <td>Show Ellipsoid Horizon Surfaces</td>
                     <td id="ellipsoidHorizonCheckBox" colspan="2">
                       <input type="checkbox" data-bind="checked: showEllipsoidHorizonSurfaces">
                     </td>
-                  </tr>
-                  <tr>
+                  </tr> -->
+                  <!-- <tr>
                     <td>Show Dome Surfaces</td>
                     <td id="domeCheckBox" colspan="2">
                       <input type="checkbox" data-bind="checked: showDomeSurfaces">
                     </td>
-                  </tr>
-                  <tr>
+                  </tr> -->
+                  <!-- <tr>
                     <td>Show Ellipsoid Surfaces</td>
                     <td id="ellipsoidCheckBox" colspan="2">
                       <input type="checkbox" data-bind="checked: showEllipsoidSurfaces">
                     </td>
-                  </tr>
+                  </tr> -->
                 </tbody>
               </table>
             </div>
@@ -183,37 +201,20 @@
             const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
             const searchParams = new URLSearchParams(window.location.search.substring(1));
             const queryModelUrl = searchParams.get("modelUrl");
-            let baseMapLayerWMTSOptions = null;
-            if (searchParams.has("baseMapLayerEncoded")) {
-                baseMapLayerWMTSOptions = JSON.parse(
-                    window.atob(searchParams.get("baseMapLayerEncoded"))
-                );
-                baseMapLayerWMTSOptions.tilingScheme = new Cesium.GeographicTilingScheme();
-            }
-            if (searchParams.has("terrainProviderUrl")) {
-                terrainProviderUrl = searchParams.get("terrainProviderUrl");
-            }
+           
 
-            const addTerrainProvider = async (viewer, url, props) => {
-                viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(url, { ...(props ? props : {}) });
-            };
-
-            const addRasterLayer = async (viewer, options) => {
-                const providerInstance = new Cesium.WebMapTileServiceImageryProvider(options);
-                viewer.imageryLayers.addImageryProvider(providerInstance);
-            };
-
-            const add3DModel = async (viewer, url, props, isZoomTo = true) => {
-                const tileset = await Cesium.Cesium3DTileset.fromUrl(url, { ...(props ? props : {}) });
-                viewer.scene.primitives.add(tileset);
-                if (isZoomTo) {
-                    viewer.zoomTo(tileset);
-                }
-            };
-
+            // ----- Viewer Config -----
             const viewer = new Cesium.Viewer("cesiumContainer", {
                 imageryProvider: false,
-                // baseLayerPicker: false,
+                navigationHelpButton: false,
+                geocoder: false,
+                homeButton: true,
+                infoBox: false,
+                sceneModePicker: false,
+                timeline: false,
+                navigationInstructionsInitiallyVisible: false,
+                scene3DOnly: true,
+                baseLayerPicker: false,
                 // terrain: Cesium.Terrain.fromWorldTerrain(),
             });
             viewer.extend(Cesium.viewerMeasureMixin, {
@@ -227,54 +228,42 @@
             const canvas = viewer.canvas;
             const handler = new Cesium.ScreenSpaceEventHandler(canvas);
             viewer.scene.globe.shadows = Cesium.ShadowMode.ENABLED;
-                        
-            handler.setInputAction((movement) => {
-              const position = getPosition(movement, viewer);
 
-              setModelValue("latitude", position.latitude);
-              setModelValue("longitude", position.longitude);
-              setModelValue("altitude", position.height);
+            const cesiumToolbarContainer = document.querySelector('.cesium-viewer-toolbar');
+            const viewshedToolButtonTemplate = document.getElementById('viewshedButtonTemplate');
+            cesiumToolbarContainer.prepend(viewshedToolButtonTemplate.content.cloneNode(true));
+            // ----- View Config -----
 
-            },Cesium.ScreenSpaceEventType.LEFT_CLICK);
+            let baseMapLayerWMTSOptions = null;
+            if (searchParams.has("baseMapLayerEncoded")) {
+                baseMapLayerWMTSOptions = JSON.parse(
+                    window.atob(searchParams.get("baseMapLayerEncoded"))
+                );
+                baseMapLayerWMTSOptions.tilingScheme = new Cesium.GeographicTilingScheme();
+            }
+            if (searchParams.has("terrainProviderUrl")) {
+                terrainProviderUrl = searchParams.get("terrainProviderUrl");
+            }
+             
+            // handler.setInputAction((movement) => {
+            //   const position = getPosition(movement, viewer);
+
+            //   setModelValue("latitude", position.latitude);
+            //   setModelValue("longitude", position.longitude);
+            //   setModelValue("altitude", position.height);
+
+            // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
             // -------------- Handle viewshed center point dragging ------------
-
-            let centerPointDrag;
-            
-            handler.setInputAction((click) => {
-              const pickedFeature = viewer.scene.pick(click.position);
-              if(Cesium.defined(pickedFeature) && viewer.scene.pickPositionSupported) {
-                if(pickedFeature && pickedFeature.id && pickedFeature.id.id === 'viewshedCenterPoint') {
-                  centerPointDrag = pickedFeature;
-
-                  // Disable camera rotate while dragging.
-                  viewer.scene.screenSpaceCameraController.enableRotate = false;
-                }
-              }
-            }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-
-            handler.setInputAction(function() {
-              if (Cesium.defined(centerPointDrag)) {
-                centerPointDrag = undefined;
-                viewer.scene.screenSpaceCameraController.enableRotate = true;
-              }
-            }, Cesium.ScreenSpaceEventType.LEFT_UP);
-
-
-            handler.setInputAction((draggingMovement) => {
-              const position = viewer.camera.pickEllipsoid(draggingMovement.endPosition);
-              if(!Cesium.defined(position) || !centerPointDrag) return;
-
+            onCesiumObjectDrag(viewer, 'viewshedCenterPoint', (draggingMovement) => {
               const positionCartographic = getPosition({position: draggingMovement.endPosition}, viewer);
 
               setModelValue("latitude", positionCartographic.latitude);
               setModelValue("longitude", positionCartographic.longitude);
               setModelValue("altitude", positionCartographic.height);
-            },Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+            });
 
-             // ------------ Handle viewshed center point dragging ---------------
-
-            createUserInterface(viewer);
+            // initViewshedMode(viewer);
 
             /* Example! */
             Cesium.Cesium3DTileset.fromIonAssetId(40866).then((tileset) => {
