@@ -30,26 +30,63 @@
             #viewshedConfigPanel {
               z-index: 2;
               position: absolute;
-              top: 50%;
-              left: 10px;
-              width: 450px;
-              height: 500px;
+              top: 20px;
+              left: 20px;
+              height: 50px;
+              width: 50px;
               color: white;
               background-color: rgba(0,0,0,0.8);
               padding: 10px;
               border-radius: 8px;
-              transform: translate(0, -50%);
+              /* transform: translate(0, -50%); */
+              display: none;
+              /* transition: all ease-in-out 0.5s; */
+            }
+            
+            #viewshedConfigPanel #panel, #viewshedConfigPanel #panelTitle {
               display: none;
             }
 
-            #closePanel {
-              cursor: pointer;
-              position: absolute;
+            #viewshedConfigPanel #closePanel {
+              display: block;
+            } 
+
+            #viewshedConfigPanel.open #panel {
+              display: block;
+            } 
+
+            #viewshedConfigPanel.open #panelTitle {
+              display: flex;
+              align-items: center;
+              /* justify-content: space-between; */
+              gap: 30px;
+              width: 90%;
+            }
+
+            #viewshedConfigPanel.open {
+              width: 450px;
+              height: 500px;
+              /* transition: all ease-in-out 0.5s; */
+            }
+
+            #viewshedConfigPanel.open #closePanel {
+              transform: unset;
+              left: unset;
               top: 20px;
               right: 20px;
             }
 
-            .toggle-viewshed-button.toggled {
+            #viewshedConfigPanel #closePanel {
+              cursor: pointer;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              padding: 0;
+              margin: 0;
+            }
+
+            .cesium-button.cesium-toolbar-button.toggled {
               color: #fff;
               fill: #fff;
               background: rgba(0, 255, 0, 0.6);
@@ -61,6 +98,22 @@
               display: none;
             }
 
+            #toggleAdvancedFields {
+              user-select: none;
+              float: left;
+              text-decoration: underline;
+              color: white;
+              cursor: pointer;
+            }
+
+            #viewshedConfigTable td {
+              min-width: 170px;
+            }
+
+            .toolButton {
+              filter: invert(100%);
+            }
+
         </style>
     </head>
     <body>
@@ -69,11 +122,21 @@
             <div class="cesium-button cesium-toolbar-button toggle-viewshed-button" title="Viewshed" data-bind="css: { toggled: isViewshedModeOn },click: toggleIsViewshedModeOn">
               <img src="./viewshed.svg" alt="viewshed"/>
             </template>
-          <div id="viewshedConfigPanel" data-bind="style: { display: isViewshedModeOn ? 'block' : 'none'  }">
-            <div id="panelTitle"><h2>Manipulate Sensor</h2></div>
-            <p id="closePanel">&#10060;</p>
+          <div id="viewshedConfigPanel" data-bind="style: { display: isViewshedModeOn ? 'block' : 'none'  }, css: { open: !isPanelCollapsed, 'cesium-button cesium-toolbar-button': isPanelCollapsed }">
+            <div id="panelTitle">
+              <h2>Viewshed</h2>
+              <div class="viewshedToolsContainer">
+                <div data-bind="click: toggle360View, css: { toggled: is360View }" class="cesium-button cesium-toolbar-button">
+                  <img class="toolButton" width="30" height="30" title="Toggle 360° View" src="./360-degrees.png" alt="toggle_360_view"/>
+                </div>
+                <div data-bind="click: toggleFOVVolume, css: { toggled: showLateralSurfaces }" class="cesium-button cesium-toolbar-button">
+                  <img class="toolButton" width="30" height="30" title="Toggle FOV Volume" src="./field-of-view.png" alt="toggle_show_fov_volume"/>
+                </div>
+              </div>
+            </div>
+            <p id="closePanel" data-bind="click: togglePanelCollapsed"><sup>⇱</sup><sub>⇲</sub></p>
             <div id="panel">
-              <table id="layerTable">
+              <table id="viewshedConfigTable">
                 <tbody>
                   <tr>
                     <td>Longitude</td>
@@ -111,40 +174,49 @@
                       <input type="number" size="5" step="0.1" data-bind="value: radius, valueUpdate: 'input'" style="width: 80px">
                     </td>
                   </tr>
-                   <tr>
-                    <td>Hor. half Angle of FOV</td>
-                    <td id="xHalfAngleSlider">
-                      <input type="range" min="1.0" max="90.0" step="0.1" data-bind="value:xHalfAngle, valueUpdate: 'input'" style="width: 150px">
-                    </td>
-                    <td>
-                      <input type="number" size="5" step="0.1" data-bind="value: xHalfAngle, valueUpdate: 'input'" style="width: 80px">
-                    </td>
-                  </tr>
-                   <tr>
-                    <td>Vert. half Angle of FOV</td>
-                    <td id="yHalfAngleSlider">
-                      <input type="range" min="1.0" max="90.0" step="0.1" data-bind="value:yHalfAngle, valueUpdate: 'input'" style="width: 150px">
-                    </td>
-                    <td>
-                      <input type="number" size="5" step="0.1" data-bind="value: yHalfAngle, valueUpdate: 'input'" style="width: 80px">
-                    </td>
-                  </tr>
                   <tr>
                     <td>Rotate Horizontally</td>
                     <td id="clockSlider">
-                      <input type="range" min="-3.14" max="3.14" step="0.01" data-bind="value:clock, valueUpdate: 'input'" style="width: 150px">
+                      <input type="range" min="-3.14" max="3.14" step="0.01" data-bind="value:clock, valueUpdate: 'input', disable: is360View" style="width: 150px">
                     </td>
                     <td>
-                      <input type="number" size="5" step="0.01" data-bind="value: clock, valueUpdate: 'input'" style="width: 80px">
+                      <input type="number" size="5" step="0.01" data-bind="value: clock, valueUpdate: 'input', disable: is360View" style="width: 80px">
                     </td>
                   </tr>
                   <tr>
                     <td>Rotate Vertically</td>
                     <td id="coneSlider">
-                      <input type="range" min="-3.14" max="3.14" step="0.01" data-bind="value:cone, valueUpdate: 'input'" style="width: 150px">
+                      <input type="range" min="-3.14" max="3.14" step="0.01" data-bind="value:cone, valueUpdate: 'input', disable: is360View" style="width: 150px">
                     </td>
                     <td>
-                      <input type="number" size="5" step="0.01" data-bind="value: cone, valueUpdate: 'input'" style="width: 80px">
+                      <input type="number" size="5" step="0.01" data-bind="value: cone, valueUpdate: 'input', disable: is360View" style="width: 80px">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p data-bind="click: toggleShowAdvancedFields" id="toggleAdvancedFields">
+                        Advanced 
+                        <span data-bind="if: !showAdvancedFields">+</span>
+                        <span data-bind="if: showAdvancedFields">-</span>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr data-bind="if: showAdvancedFields">
+                    <td>Hor. half Angle of FOV</td>
+                    <td id="xHalfAngleSlider">
+                      <input type="range" min="1.0" max="90.0" step="0.1" data-bind="value:xHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
+                    </td>
+                    <td>
+                      <input type="number" size="5" step="0.1" data-bind="value: xHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 80px">
+                    </td>
+                  </tr>
+                   <tr data-bind="if: showAdvancedFields">
+                    <td>Vert. half Angle of FOV</td>
+                    <td id="yHalfAngleSlider">
+                      <input type="range" min="1.0" max="90.0" step="0.1" data-bind="value:yHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
+                    </td>
+                    <td>
+                      <input type="number" size="5" step="0.1" data-bind="value: yHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 80px">
                     </td>
                   </tr>
                   <!-- <tr>
@@ -156,44 +228,38 @@
                       <input type="number" size="5" step="0.01" data-bind="value: twist, valueUpdate: 'input'" style="width: 80px">
                     </td>
                   </tr> -->
-                  <tr>
+                  <!-- <tr>
                     <td>
                       <label for="portionMenu">Select portion to display</label>
                     </td>
                     <td colspan="2">
                       <select id="portionMenu" data-bind="options: portionOptions, value: selectedPortion"></select>
                     </td>
-                  </tr>
+                  </tr> -->
                 </tbody>
               </table>
-              <table>
+              <!-- <table>
                 <tbody>
                   <tr>
-                    <td>Show Volume of FOV</td>
-                    <td id="lateralCheckBox" colspan="2">
-                      <input type="checkbox" data-bind="checked: showLateralSurfaces">
-                    </td>
-                  </tr>
-                  <!-- <tr>
                     <td>Show Ellipsoid Horizon Surfaces</td>
                     <td id="ellipsoidHorizonCheckBox" colspan="2">
                       <input type="checkbox" data-bind="checked: showEllipsoidHorizonSurfaces">
                     </td>
-                  </tr> -->
-                  <!-- <tr>
+                  </tr> 
+                  <tr>
                     <td>Show Dome Surfaces</td>
                     <td id="domeCheckBox" colspan="2">
                       <input type="checkbox" data-bind="checked: showDomeSurfaces">
                     </td>
-                  </tr> -->
-                  <!-- <tr>
+                  </tr>
+                  <tr>
                     <td>Show Ellipsoid Surfaces</td>
                     <td id="ellipsoidCheckBox" colspan="2">
                       <input type="checkbox" data-bind="checked: showEllipsoidSurfaces">
                     </td>
-                  </tr> -->
+                  </tr>
                 </tbody>
-              </table>
+              </table> -->
             </div>
         </div>
         <script>

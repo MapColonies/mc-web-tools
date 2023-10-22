@@ -1,13 +1,16 @@
+const DEFAULT_X_HALF_ANGLE = 20;
+const DEFAULT_Y_HALF_ANGLE = 20;
+const DEFUALT_CONE = Cesium.Math.toRadians(90.0);
 
 let longitude = 0;
 let latitude = 0;
-let altitude = -10;
+let altitude = -1000;
 let radius = 100;
-let xHalfAngle = 20;
-let yHalfAngle = 20;
+let xHalfAngle = DEFAULT_X_HALF_ANGLE;
+let yHalfAngle = DEFAULT_Y_HALF_ANGLE;
 let classificationType = Cesium.ClassificationType.BOTH;
 let clock = 0.0;
-let cone = Cesium.Math.toRadians(90.0);
+let cone = DEFUALT_CONE;
 let twist = 0.0;
 let portion = Cesium.SensorVolumePortionToDisplay.COMPLETE;
 let showLateralSurfaces = false;
@@ -17,7 +20,10 @@ let showEllipsoidSurfaces = false;
 let showViewshed =  true;
 let showIntersection = false;
 let showThroughEllipsoid =  true;
+let is360View = false;
 let isViewshedModeOn = false;
+let isPanelCollapsed = false;
+let showAdvancedFields = false;
 
 let yellowPoint;
 
@@ -29,18 +35,47 @@ const viewModel = {
     isViewshedModeOn = this.isViewshedModeOn;
 
       if(isViewshedModeOn) {
+        this.isPanelCollapsed = false;
+        this.is360View = false;
+        this.showLateralSurfaces = false;
+
         updateSensor();
       } else {
         viewModel.latitude = 0;
         viewModel.longitude = 0;
-        viewModel.altitude = -10;
-
-        // Cesium.destroyObject(viewshedSensor);
-
+        viewModel.altitude = -1000;
+        
         viewer.scene.primitives.remove(this.sensor);
-        // handler && handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
       }
+    },
+  isPanelCollapsed: isPanelCollapsed,
+  togglePanelCollapsed: function () {
+    this.isPanelCollapsed = !this.isPanelCollapsed;
   },
+  toggleFOVVolume: function () {
+    this.showLateralSurfaces = !this.showLateralSurfaces;
+  },
+  toggle360View: function () {
+    const X_HALF_ANGLE_360 = 90;
+    const y_HALF_ANGLE_360 = 90;
+    const CONE_360 = Cesium.Math.toRadians(180.0);
+
+    this.is360View = !this.is360View;
+    if(this.is360View) {
+      this.xHalfAngle = X_HALF_ANGLE_360;
+      this.yHalfAngle = y_HALF_ANGLE_360;
+      this.cone = CONE_360;
+    } else {
+      this.xHalfAngle = DEFAULT_X_HALF_ANGLE;
+      this.yHalfAngle = DEFAULT_Y_HALF_ANGLE;
+      this.cone = DEFUALT_CONE;
+    }
+  },
+  toggleShowAdvancedFields: function () {
+   this.showAdvancedFields = !this.showAdvancedFields;
+  },
+  is360View: is360View,
+  showAdvancedFields: showAdvancedFields,
   sensor: undefined,
   longitude: longitude,
   latitude: latitude,
