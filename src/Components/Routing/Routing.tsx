@@ -37,7 +37,7 @@ const Routing: React.FC = (): JSX.Element => {
         </Route>
 
         {/* Simple Viewer */}
-        <Route path="/simple-viewer">
+        <Route path="/3d-analysis">
           <SimpleViewer />
         </Route>
 

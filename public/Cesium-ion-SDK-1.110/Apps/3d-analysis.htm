@@ -12,6 +12,7 @@
         />
         <title>Simple Viewer</title>
         <script src="../Build/CesiumUnminified/Cesium.js"></script>
+        <script src="../../viewerCesiumNavigationMixin.js"></script>
         <script src="./utils.js"></script>
         <script defer src="./viewshed-utils.js"></script>
         <style>
@@ -31,7 +32,7 @@
               z-index: 2;
               position: absolute;
               top: 20px;
-              left: 20px;
+              right: 20px;
               height: 50px;
               width: 50px;
               color: white;
@@ -40,6 +41,7 @@
               border-radius: 8px;
               /* transform: translate(0, -50%); */
               display: none;
+              cursor: initial;
               /* transition: all ease-in-out 0.5s; */
             }
             
@@ -49,6 +51,7 @@
 
             #viewshedConfigPanel #closePanel {
               display: block;
+              direction: ltr;
             } 
 
             #viewshedConfigPanel.open #panel {
@@ -66,6 +69,7 @@
             #viewshedConfigPanel.open {
               width: 450px;
               height: 500px;
+              direction: rtl;
               /* transition: all ease-in-out 0.5s; */
             }
 
@@ -73,7 +77,7 @@
               transform: unset;
               left: unset;
               top: 20px;
-              right: 20px;
+              left: 20px;
             }
 
             #viewshedConfigPanel #closePanel {
@@ -100,7 +104,6 @@
 
             #toggleAdvancedFields {
               user-select: none;
-              float: left;
               text-decoration: underline;
               color: white;
               cursor: pointer;
@@ -110,9 +113,56 @@
               min-width: 170px;
             }
 
+            #viewshedConfigTable input[type="number"] {
+              direction: ltr;
+            }
+
+            #viewshedConfigTable .coordinatesRow td {
+              min-width: 0px!important;
+            }
             .toolButton {
               filter: invert(100%);
             }
+
+            .cesium-viewer-toolbar {
+              right: unset;
+              left: 5px;
+              direction: rtl;
+            }
+
+            .compass {
+              right: unset;
+              left: 0px;
+            }
+
+            .cesium-button.disabled {
+              position: relative;
+            }
+
+            .cesium-button.disabled::after {
+              content: '';
+              position: absolute;
+              z-index: 999;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(0,0,0,0.5);
+              cursor: not-allowed;
+              display: block;
+            }
+
+            .customPerspectivesContainer {
+              display: inline-block;
+            }
+
+            #customPerspectiveCell {
+              display: flex;
+              gap: 10px;
+              align-items: center;
+            }
+
+
 
         </style>
     </head>
@@ -124,13 +174,13 @@
             </template>
           <div id="viewshedConfigPanel" data-bind="style: { display: isViewshedModeOn ? 'block' : 'none'  }, css: { open: !isPanelCollapsed, 'cesium-button cesium-toolbar-button': isPanelCollapsed }">
             <div id="panelTitle">
-              <h2>Viewshed</h2>
+              <h2>שטח נצפה</h2>
               <div class="viewshedToolsContainer">
                 <div data-bind="click: toggle360View, css: { toggled: is360View }" class="cesium-button cesium-toolbar-button">
-                  <img class="toolButton" width="30" height="30" title="Toggle 360° View" src="./360-degrees.png" alt="toggle_360_view"/>
+                  <img class="toolButton" width="30" height="30" title="צפה ב-360°" src="./360-degrees.png" alt="toggle_360_view"/>
                 </div>
                 <div data-bind="click: toggleFOVVolume, css: { toggled: showLateralSurfaces }" class="cesium-button cesium-toolbar-button">
-                  <img class="toolButton" width="30" height="30" title="Toggle FOV Volume" src="./field-of-view.png" alt="toggle_show_fov_volume"/>
+                  <img class="toolButton" width="30" height="30" title="הצג אזור לחישוב" src="./field-of-view.png" alt="toggle_show_fov_volume"/>
                 </div>
               </div>
             </div>
@@ -138,71 +188,84 @@
             <div id="panel">
               <table id="viewshedConfigTable">
                 <tbody>
-                  <tr>
-                    <td>Longitude</td>
-                    <td id="longitudeSlider">
-                      <input type="range" min="-180.0" max="180.0" step="1" data-bind="style: {display: isViewshedModeOn ? 'block' : 'none'}, valueUpdate: 'input'" style="width: 150px">
-                    </td>
+                  <!-- <tr>
+                    <td>נקודות מבט מעל הקרקע</td>
                     <td>
-                      <input type="number" size="5" step="1" data-bind="value: longitude, valueUpdate: 'input'" style="width: 80px">
+                      <div class="viewshedToolsContainer customPerspectivesContainer" data-bind="foreach: perspectivePresets">
+                        <div data-bind="click: onClick, css: { toggled: $parent.chosenPerspective && $parent.chosenPerspective.perspective === perspective , disabled: !$parent.isAltitudeAttachedToTerrain}" class="cesium-button cesium-toolbar-button">
+                          <img class="toolButton" width="30" height="30" data-bind="attr: {src: icon, title: height + ' ' + `מ'`}"/>
+                        </div>
+                      </div>
+                    </td>
+                  </tr> -->
+                  <tr>
+                    <td>הצמד גובה למודל</td>
+                    <td id="customPerspectiveCell">
+                      <input data-bind="checked: isAltitudeAttachedToTerrain" type="checkbox" name="attachHeightToModel" align="">
+                      <span>לפי: </span>
+                      <div class="viewshedToolsContainer customPerspectivesContainer" data-bind="foreach: perspectivePresets">
+                        <div data-bind="click: onClick, css: { toggled: $parent.chosenPerspective && $parent.chosenPerspective.perspective === perspective , disabled: !$parent.isAltitudeAttachedToTerrain}" class="cesium-button cesium-toolbar-button">
+                          <img class="toolButton" width="30" height="30" data-bind="attr: {src: icon, title: height + ' ' + `מ'`}"/>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                   <tr>
-                    <td>Latitude</td>
-                    <td id="latitudeSlider">
-                      <input type="range" min="-90.0" max="90.0" step="1" data-bind="value:latitude, valueUpdate: 'input'" style="width: 150px">
-                    </td>
-                    <td>
-                      <input type="number" size="5" step="1" data-bind="value: latitude, valueUpdate: 'input'" style="width: 80px">
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Altitude (Model)</td>
+                    <td>גובה לפי מודל (מ')</td>
                     <td id="altitudeSlider">
-                      <input type="range" min="0.0" max="1000.0" step="0.1" data-bind="value:altitude, valueUpdate: 'input'" style="width: 150px">
+                      <input type="range" min="0.0" max="1000.0" step="0.1" data-bind="value:altitude, valueUpdate: 'input', disable: isAltitudeAttachedToTerrain" style="width: 150px">
                     </td>
                     <td>
-                      <input type="number" size="5" step="1" data-bind="value: altitude, valueUpdate: 'input'" style="width: 80px">
+                      <input type="number" size="5" step="1" data-bind="value: altitude, valueUpdate: 'input', disable: isAltitudeAttachedToTerrain" style="width: 80px">
                     </td>
                   </tr>
                    <tr>
-                    <td>Radius</td>
+                    <td>מרחק חישוב (מ')</td>
                     <td id="radiusSlider">
-                      <input type="range" min="0.0" max="1000.0" step="0.1" data-bind="value:radius, valueUpdate: 'input'" style="width: 150px">
+                      <input type="range" min="0.0" max="1000.0" step="100" data-bind="value:radius, valueUpdate: 'input'" style="width: 150px">
                     </td>
                     <td>
-                      <input type="number" size="5" step="0.1" data-bind="value: radius, valueUpdate: 'input'" style="width: 80px">
+                      <input type="number" size="5" step="10" data-bind="value: radius, valueUpdate: 'input'" style="width: 80px">
                     </td>
                   </tr>
                   <tr>
-                    <td>Rotate Horizontally</td>
+                    <td>אזימוט°</td>
                     <td id="clockSlider">
-                      <input type="range" min="-3.14" max="3.14" step="0.01" data-bind="value:clock, valueUpdate: 'input', disable: is360View" style="width: 150px">
+                      <input type="range" min="0" max="360" step="0.01" data-bind="value:clock, valueUpdate: 'input', disable: is360View" style="width: 150px">
                     </td>
                     <td>
                       <input type="number" size="5" step="0.01" data-bind="value: clock, valueUpdate: 'input', disable: is360View" style="width: 80px">
                     </td>
                   </tr>
                   <tr>
-                    <td>Rotate Vertically</td>
+                    <td>כיוון צפייה אנכי°</td>
                     <td id="coneSlider">
-                      <input type="range" min="-3.14" max="3.14" step="0.01" data-bind="value:cone, valueUpdate: 'input', disable: is360View" style="width: 150px">
+                      <input type="range" min="0" max="360" step="0.01" data-bind="value:cone, valueUpdate: 'input'" style="width: 150px">
                     </td>
                     <td>
-                      <input type="number" size="5" step="0.01" data-bind="value: cone, valueUpdate: 'input', disable: is360View" style="width: 80px">
+                      <input type="number" size="5" step="0.01" data-bind="value: cone, valueUpdate: 'input'" style="width: 80px">
                     </td>
                   </tr>
                   <tr>
                     <td>
                       <p data-bind="click: toggleShowAdvancedFields" id="toggleAdvancedFields">
-                        Advanced 
+                      שימוש מתקדם 
                         <span data-bind="if: !showAdvancedFields">+</span>
                         <span data-bind="if: showAdvancedFields">-</span>
                       </p>
                     </td>
                   </tr>
+                  <tr class="coordinatesRow" data-bind="if: showAdvancedFields">
+                    <td>
+                      נקודת אורך <input type="number" size="5" step="1" data-bind="value: longitude, valueUpdate: 'input'" style="width: 80px">
+                    </td>
+      
+                    <td>
+                      נקודת רוחב <input type="number" size="5" step="1" data-bind="value: latitude, valueUpdate: 'input'" style="width: 80px">
+                    </td>
+                  </tr>
                   <tr data-bind="if: showAdvancedFields">
-                    <td>Hor. half Angle of FOV</td>
+                    <td>חצי זווית צפיה לרוחב</td>
                     <td id="xHalfAngleSlider">
                       <input type="range" min="1.0" max="90.0" step="0.1" data-bind="value:xHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
                     </td>
@@ -211,7 +274,7 @@
                     </td>
                   </tr>
                    <tr data-bind="if: showAdvancedFields">
-                    <td>Vert. half Angle of FOV</td>
+                    <td>חצי זווית צפיה לאורך</td>
                     <td id="yHalfAngleSlider">
                       <input type="range" min="1.0" max="90.0" step="0.1" data-bind="value:yHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
                     </td>
@@ -271,17 +334,17 @@
 
             // ----- Viewer Config -----
             const viewer = new Cesium.Viewer("cesiumContainer", {
-                imageryProvider: false,
+                // imageryProvider: false,
                 navigationHelpButton: false,
                 geocoder: false,
-                homeButton: true,
+                homeButton: false,
                 infoBox: false,
                 sceneModePicker: false,
                 timeline: false,
                 navigationInstructionsInitiallyVisible: false,
                 scene3DOnly: true,
                 baseLayerPicker: false,
-                // terrain: Cesium.Terrain.fromWorldTerrain(),
+                terrain: Cesium.Terrain.fromWorldTerrain(),
             });
             viewer.extend(Cesium.viewerMeasureMixin, {
                 units: new Cesium.MeasureUnits({
@@ -290,8 +353,14 @@
                     volumeUnits: Cesium.VolumeUnits.CUBIC_METERS
                 })
             });
+
+            viewer.extend(Cesium.viewerCesiumNavigationMixin, {
+              enableZoomControls: false
+            });
+
             
             const canvas = viewer.canvas;
+
             const handler = new Cesium.ScreenSpaceEventHandler(canvas);
             viewer.scene.globe.shadows = Cesium.ShadowMode.ENABLED;
 
@@ -326,7 +395,10 @@
 
               setModelValue("latitude", positionCartographic.latitude);
               setModelValue("longitude", positionCartographic.longitude);
-              setModelValue("altitude", positionCartographic.height);
+
+              if(viewModel.isAltitudeAttachedToTerrain) {
+                setModelValue("altitude", positionCartographic.height);
+              }
             });
 
             // initViewshedMode(viewer);

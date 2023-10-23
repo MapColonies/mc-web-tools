@@ -1,6 +1,9 @@
-const DEFAULT_X_HALF_ANGLE = 20;
-const DEFAULT_Y_HALF_ANGLE = 20;
-const DEFUALT_CONE = Cesium.Math.toRadians(90.0);
+const DEFAULT_X_HALF_ANGLE = 45;
+const DEFAULT_Y_HALF_ANGLE = 45;
+const DEFUALT_CONE = 90.0;
+const DEFAULT_360_VIEW = true;
+const DEFAULT_PANEL_COLLAPSED = true;
+const DEFAULT_CHOSEN_PERSPECTIVE = 'solider';
 
 let longitude = 0;
 let latitude = 0;
@@ -20,31 +23,55 @@ let showEllipsoidSurfaces = false;
 let showViewshed =  true;
 let showIntersection = false;
 let showThroughEllipsoid =  true;
-let is360View = false;
+let is360View = DEFAULT_360_VIEW;
 let isViewshedModeOn = false;
-let isPanelCollapsed = false;
+let isPanelCollapsed = DEFAULT_PANEL_COLLAPSED;
 let showAdvancedFields = false;
+let isAltitudeAttachedToTerrain = true;
+let chosenPerspective = DEFAULT_CHOSEN_PERSPECTIVE;
 
-let yellowPoint;
+let sensorPawn;
 
 
 const viewModel = {
+  hasChosenPosition: false,
+  chosenPerspective: chosenPerspective,
+  perspectivePresets: [{
+    icon: './solider.png',
+    pawn: './solider-pawn.png',
+    height: 1.7,
+    perspective: 'solider',
+    onClick: handleCustomPerspectiveClick
+  }, {
+    icon: './tank.png',
+    pawn: './tank-pawn.png',
+    height: 2.66,
+    perspective: 'tank',
+    onClick: handleCustomPerspectiveClick
+  }],
   isViewshedModeOn: isViewshedModeOn,
   toggleIsViewshedModeOn: function() {
     this.isViewshedModeOn = !this.isViewshedModeOn;
     isViewshedModeOn = this.isViewshedModeOn;
 
       if(isViewshedModeOn) {
-        this.isPanelCollapsed = false;
-        this.is360View = false;
+        this.isPanelCollapsed = DEFAULT_PANEL_COLLAPSED;
+        this.is360View = DEFAULT_360_VIEW;
         this.showLateralSurfaces = false;
+        this.isAltitudeAttachedToTerrain = true;
+        this.hasChosenPosition = false;
+        this.chosenPerspective = this.perspectivePresets.find(perspectiveItem => perspectiveItem.perspective === DEFAULT_CHOSEN_PERSPECTIVE);
 
+        viewer._container.style.cursor = "cell";
+
+        handle360View(this.is360View);
         updateSensor();
       } else {
         viewModel.latitude = 0;
         viewModel.longitude = 0;
         viewModel.altitude = -1000;
-        
+
+        viewer._container.style.cursor = "initial";
         viewer.scene.primitives.remove(this.sensor);
       }
     },
@@ -61,6 +88,17 @@ const viewModel = {
     const CONE_360 = Cesium.Math.toRadians(180.0);
 
     this.is360View = !this.is360View;
+    this.is360View = !this.is360View;
+    if(this.is360View) {
+      this.xHalfAngle = X_HALF_ANGLE_360;
+      this.yHalfAngle = y_HALF_ANGLE_360;
+      this.cone = CONE_360;
+    } else {
+      this.xHalfAngle = DEFAULT_X_HALF_ANGLE;
+      this.yHalfAngle = DEFAULT_Y_HALF_ANGLE;
+      this.cone = DEFUALT_CONE;
+    }
+      this.is360View = !this.is360View;
     if(this.is360View) {
       this.xHalfAngle = X_HALF_ANGLE_360;
       this.yHalfAngle = y_HALF_ANGLE_360;
@@ -74,6 +112,8 @@ const viewModel = {
   toggleShowAdvancedFields: function () {
    this.showAdvancedFields = !this.showAdvancedFields;
   },
+  isAltitudeAttachedToTerrain: isAltitudeAttachedToTerrain,
+  modelHeightAtPos: 0,
   is360View: is360View,
   showAdvancedFields: showAdvancedFields,
   sensor: undefined,
@@ -98,16 +138,49 @@ const viewModel = {
   selectedPortion: portion,
 };
 
-
 //#region KNOCKOUT: init
 Cesium.knockout.track(viewModel);
 
 const viewshedButton = document.querySelector(".toggle-viewshed-button");
 const viewshedConfigPanel = document.getElementById("viewshedConfigPanel");
-Cesium.knockout.applyBindings(viewModel, viewshedConfigPanel);
-Cesium.knockout.applyBindings(viewModel, viewshedButton);
 
-Cesium.knockout
+if(viewshedButton && viewshedConfigPanel) {
+  Cesium.knockout.applyBindings(viewModel, viewshedConfigPanel);
+  Cesium.knockout.applyBindings(viewModel, viewshedButton);
+}
+
+
+  Cesium.knockout
+    .getObservable(viewModel, "hasChosenPosition")
+    .subscribe(function (value) {
+      if(value) {
+        viewModel.isPanelCollapsed = false;
+      }
+    });
+
+  Cesium.knockout
+    .getObservable(viewModel, "isAltitudeAttachedToTerrain")
+    .subscribe(function (value) {
+      if(value) {
+        setModelValue("altitude", viewModel.modelHeightAtPos);
+      } else {
+        console.log(viewModel.altitude, viewModel.chosenPerspective)
+        if(viewModel.chosenPerspective) {
+          const cartographicDegrees = getCorrectHeightCartographicDegree(Cesium.Cartographic.fromDegrees(viewModel.longitude, viewModel.latitude, viewModel.altitude), viewer);
+          
+          setModelValue('altitude', cartographicDegrees.height)
+          setModelValue('chosenPerspective', undefined);
+        }
+      }
+    });
+  
+    Cesium.knockout
+    .getObservable(viewModel, "is360View")
+    .subscribe(function (value) {
+      handle360View(value);
+    });
+
+  Cesium.knockout
     .getObservable(viewModel, "longitude")
     .subscribe(function (value) {
       longitude = parseFloat(value) || 0;
@@ -115,7 +188,7 @@ Cesium.knockout
       updateModelMatrix();
 
       const newPos = new Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
-      addYellowPoint(newPos, viewer);
+      addSensorPawn(newPos, viewer);
     });
 
   Cesium.knockout
@@ -125,7 +198,7 @@ Cesium.knockout
       updateModelMatrix();
 
       const newPos = new Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
-      addYellowPoint(newPos, viewer);
+      addSensorPawn(newPos, viewer);
     });
 
   Cesium.knockout
@@ -134,11 +207,11 @@ Cesium.knockout
       const heightWithoutTerrain = parseFloat(value) || 0;
       const terrainHeightAtPos = viewer.scene.globe.getHeight(new Cesium.Cartographic.fromDegrees(longitude, latitude));
       
-      altitude = heightWithoutTerrain + terrainHeightAtPos;
+      altitude = viewModel.isAltitudeAttachedToTerrain ? heightWithoutTerrain + terrainHeightAtPos : heightWithoutTerrain;
       updateModelMatrix();
 
       const newPos = new Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
-      addYellowPoint(newPos, viewer);
+      addSensorPawn(newPos, viewer);
     });
 
   Cesium.knockout
@@ -242,11 +315,53 @@ viewshedEventHandler.setInputAction((movement) => {
   
     setModelValue("latitude", position.latitude);
     setModelValue("longitude", position.longitude);
-    setModelValue("altitude", position.height);
+    if(viewModel.isAltitudeAttachedToTerrain) {
+      setModelValue("altitude", position.height);
+    }
+
+    if(!viewModel.hasChosenPosition) {
+      setModelValue("hasChosenPosition", true);
+    }
   }
 
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
+function handleCustomPerspectiveClick() {
+  if(!viewModel.isAltitudeAttachedToTerrain) return;
+
+  if(viewModel.chosenPerspective && viewModel.chosenPerspective.perspective === this.perspective) {
+    setModelValue("chosenPerspective", undefined);
+    setModelValue("altitude", viewModel.altitude - this.height);
+    
+  } else {
+    let newHeight = viewModel.altitude + this.height;
+
+    if(viewModel.chosenPerspective) {
+      const currentPresetHeight = viewModel.chosenPerspective.height;
+      newHeight -= currentPresetHeight;
+    }
+
+    setModelValue("chosenPerspective", this);    
+    setModelValue("altitude", newHeight);
+  }
+  
+}
+
+function handle360View(is360View) {
+  const X_HALF_ANGLE_360 = 90;
+  const y_HALF_ANGLE_360 = 90;
+  const CONE_360 = 180.0;
+
+  if(is360View) {
+    setModelValue("xHalfAngle", X_HALF_ANGLE_360);
+    setModelValue("yHalfAngle", y_HALF_ANGLE_360);
+    setModelValue("cone", CONE_360);
+  } else {
+    setModelValue("xHalfAngle", DEFAULT_X_HALF_ANGLE);
+    setModelValue("yHalfAngle", DEFAULT_Y_HALF_ANGLE);
+    setModelValue("cone", DEFUALT_CONE);
+  }
+}
 
 function getModelMatrix(ellipsoid) {
   const location = Cesium.Cartesian3.fromDegrees(
@@ -285,8 +400,8 @@ function getModelMatrix(ellipsoid) {
   }
   const orientation = Cesium.Matrix3.multiply(
     Cesium.Matrix3.multiply(
-      Cesium.Matrix3.fromRotationZ(clock),
-      Cesium.Matrix3.fromRotationY(cone),
+      Cesium.Matrix3.fromRotationZ(Cesium.Math.toRadians(clock)),
+      Cesium.Matrix3.fromRotationY(Cesium.Math.toRadians(cone)),
       new Cesium.Matrix3()
     ),
     Cesium.Matrix3.fromRotationX(twist),
@@ -395,19 +510,36 @@ function addRectangularSensor(ellipsoid) {
 }
 
 
-function addYellowPoint(cartesian, viewer) {
-  viewer.entities.remove(yellowPoint);
+function addSensorPawn(cartesian, viewer) {
+  const SHOW_PAWN_ICON = false;
 
-    if (Cesium.defined(cartesian)) {
-      yellowPoint = viewer.entities.add({
+  viewer.entities.remove(sensorPawn);
+  if (Cesium.defined(cartesian)) {
+    if(viewModel.chosenPerspective && SHOW_PAWN_ICON) {
+      const customPresetPawn = viewModel.chosenPerspective.pawn;
+
+      sensorPawn = viewer.entities.add({
         id: 'viewshedCenterPoint',
         position: cartesian,
-        point: {
-          color: Cesium.Color.YELLOW,
-          pixelSize: 24,
-          outlineWidth: 0
+       billboard: {
+          image: customPresetPawn, // default: undefined
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM, // default: CENTER
+          width: 50, // default: undefined
+          height: 50, // default: undefined
         },
       });
+    } else {
+        sensorPawn = viewer.entities.add({
+          id: 'viewshedCenterPoint',
+          position: cartesian,
+          point: {
+            color: Cesium.Color.YELLOW,
+            pixelSize: 24,
+            outlineWidth: 0,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM, // default: CENTER
+          },
+        });
+      }
     }
 }
 
@@ -416,10 +548,19 @@ function setModelValue(key, val) {
 }
 
 function getCorrectHeightCartographicDegree(cartographic, viewer) {
+  let correctHeight = +(cartographic.height - viewer.scene.globe.getHeight(cartographic)).toFixed(2);
+  
+  if(viewModel.isAltitudeAttachedToTerrain && viewModel.chosenPerspective) {
+    correctHeight += viewModel.chosenPerspective.height;
+  }
+  setModelValue("modelHeightAtPos", correctHeight);
+
+
+
   return {
     latitude: toDegrees(cartographic.latitude),
     longitude: toDegrees(cartographic.longitude),
-    height: +(cartographic.height - viewer.scene.globe.getHeight(cartographic)).toFixed(2)
+    height: correctHeight,
   };
 }
 
@@ -428,6 +569,12 @@ function getPosition(movement, viewer) {
   if (Cesium.defined(feature) && viewer.scene.pickPositionSupported) {
       const cartesian = viewer.scene.pickPosition(movement.position);
       const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+
+      const cartographicDegrees = getCorrectHeightCartographicDegree(cartographic, viewer);
+
+      if(!viewModel.isAltitudeAttachedToTerrain) {
+        cartographicDegrees.height = viewModel.altitude;
+      }
     
       // const height = (cartographic.height - scene.globe.getHeight(cartographic)).toFixed(2) + ' m';
     
@@ -439,9 +586,9 @@ function getPosition(movement, viewer) {
       //     eyeOffset : new Cesium.Cartesian3(0.0, 0.0, -1.0)
       // });
 
-      addYellowPoint(cartesian, viewer);
+      addSensorPawn(cartesian, viewer);
 
-      return getCorrectHeightCartographicDegree(cartographic, viewer);
+      return cartographicDegrees;
   }
 
 }
