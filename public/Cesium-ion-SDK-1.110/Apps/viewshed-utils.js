@@ -1,9 +1,10 @@
 const DEFAULT_X_HALF_ANGLE = 45;
 const DEFAULT_Y_HALF_ANGLE = 45;
-const DEFUALT_CONE = 90.0;
 const DEFAULT_360_VIEW = true;
 const DEFAULT_PANEL_COLLAPSED = true;
 const DEFAULT_CHOSEN_PERSPECTIVE = 'solider';
+const REAL_WORLD_VERTICAL_DEGREE_OFFSET = 90;
+const DEFUALT_CONE = 90 - REAL_WORLD_VERTICAL_DEGREE_OFFSET;
 
 let longitude = 0;
 let latitude = 0;
@@ -85,20 +86,9 @@ const viewModel = {
   toggle360View: function () {
     const X_HALF_ANGLE_360 = 90;
     const y_HALF_ANGLE_360 = 90;
-    const CONE_360 = Cesium.Math.toRadians(180.0);
+    const CONE_360 = 180 - REAL_WORLD_VERTICAL_DEGREE_OFFSET;
 
     this.is360View = !this.is360View;
-    this.is360View = !this.is360View;
-    if(this.is360View) {
-      this.xHalfAngle = X_HALF_ANGLE_360;
-      this.yHalfAngle = y_HALF_ANGLE_360;
-      this.cone = CONE_360;
-    } else {
-      this.xHalfAngle = DEFAULT_X_HALF_ANGLE;
-      this.yHalfAngle = DEFAULT_Y_HALF_ANGLE;
-      this.cone = DEFUALT_CONE;
-    }
-      this.is360View = !this.is360View;
     if(this.is360View) {
       this.xHalfAngle = X_HALF_ANGLE_360;
       this.yHalfAngle = y_HALF_ANGLE_360;
@@ -164,11 +154,8 @@ if(viewshedButton && viewshedConfigPanel) {
       if(value) {
         setModelValue("altitude", viewModel.modelHeightAtPos);
       } else {
-        console.log(viewModel.altitude, viewModel.chosenPerspective)
         if(viewModel.chosenPerspective) {
-          const cartographicDegrees = getCorrectHeightCartographicDegree(Cesium.Cartographic.fromDegrees(viewModel.longitude, viewModel.latitude, viewModel.altitude), viewer);
-          
-          setModelValue('altitude', cartographicDegrees.height)
+          setModelValue('altitude', viewModel.altitude - viewModel.chosenPerspective.height)
           setModelValue('chosenPerspective', undefined);
         }
       }
@@ -207,7 +194,7 @@ if(viewshedButton && viewshedConfigPanel) {
       const heightWithoutTerrain = parseFloat(value) || 0;
       const terrainHeightAtPos = viewer.scene.globe.getHeight(new Cesium.Cartographic.fromDegrees(longitude, latitude));
       
-      altitude = viewModel.isAltitudeAttachedToTerrain ? heightWithoutTerrain + terrainHeightAtPos : heightWithoutTerrain;
+      altitude = heightWithoutTerrain + terrainHeightAtPos;
       updateModelMatrix();
 
       const newPos = new Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
@@ -224,14 +211,14 @@ if(viewshedButton && viewshedConfigPanel) {
   Cesium.knockout
     .getObservable(viewModel, "xHalfAngle")
     .subscribe(function (value) {
-      xHalfAngle = parseFloat(value) || 1;
+      xHalfAngle = Math.max(parseFloat(value || 1), 1);
       updateSensor()
     });
 
   Cesium.knockout
     .getObservable(viewModel, "yHalfAngle")
     .subscribe(function (value) {
-      yHalfAngle = parseFloat(value) || 1;
+      yHalfAngle = Math.max(parseFloat(value || 1), 1);
       updateSensor()
     });
   
@@ -313,15 +300,17 @@ viewshedEventHandler.setInputAction((movement) => {
   if(viewModel.isViewshedModeOn) {
     const position = getPosition(movement, viewer);
   
-    setModelValue("latitude", position.latitude);
-    setModelValue("longitude", position.longitude);
-    if(viewModel.isAltitudeAttachedToTerrain) {
-      setModelValue("altitude", position.height);
+    if(position) {
+      setModelValue("latitude", position.latitude);
+      setModelValue("longitude", position.longitude);
+      // if(viewModel.isAltitudeAttachedToTerrain) {
+        setModelValue("altitude", position.height);
+      // }
+      if(!viewModel.hasChosenPosition) {
+        setModelValue("hasChosenPosition", true);
+      }
     }
 
-    if(!viewModel.hasChosenPosition) {
-      setModelValue("hasChosenPosition", true);
-    }
   }
 
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -350,7 +339,7 @@ function handleCustomPerspectiveClick() {
 function handle360View(is360View) {
   const X_HALF_ANGLE_360 = 90;
   const y_HALF_ANGLE_360 = 90;
-  const CONE_360 = 180.0;
+  const CONE_360 = 180 - REAL_WORLD_VERTICAL_DEGREE_OFFSET;
 
   if(is360View) {
     setModelValue("xHalfAngle", X_HALF_ANGLE_360);
@@ -370,6 +359,7 @@ function getModelMatrix(ellipsoid) {
     altitude,
     ellipsoid
   );
+
   let modelMatrix;
   if (Math.abs(latitude) === 90.0) {
     // Handle cases where north-east-down at the poles becomes undefined for Cartesian coordinates but is defined for cartographic coordinates.
@@ -401,7 +391,7 @@ function getModelMatrix(ellipsoid) {
   const orientation = Cesium.Matrix3.multiply(
     Cesium.Matrix3.multiply(
       Cesium.Matrix3.fromRotationZ(Cesium.Math.toRadians(clock)),
-      Cesium.Matrix3.fromRotationY(Cesium.Math.toRadians(cone)),
+      Cesium.Matrix3.fromRotationY(Cesium.Math.toRadians(cone + REAL_WORLD_VERTICAL_DEGREE_OFFSET)),
       new Cesium.Matrix3()
     ),
     Cesium.Matrix3.fromRotationX(twist),
@@ -571,6 +561,8 @@ function getPosition(movement, viewer) {
       const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
 
       const cartographicDegrees = getCorrectHeightCartographicDegree(cartographic, viewer);
+
+      console.log(cartographicDegrees)
 
       if(!viewModel.isAltitudeAttachedToTerrain) {
         cartographicDegrees.height = viewModel.altitude;

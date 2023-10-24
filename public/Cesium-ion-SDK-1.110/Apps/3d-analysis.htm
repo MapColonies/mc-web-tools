@@ -15,156 +15,7 @@
         <script src="../../viewerCesiumNavigationMixin.js"></script>
         <script src="./utils.js"></script>
         <script defer src="./viewshed-utils.js"></script>
-        <style>
-            @import url(../Build/CesiumUnminified/Widgets/widgets.css);
-            html,
-            body,
-            #cesiumContainer {
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                padding: 0;
-                overflow: hidden;
-                font-family: Helvetica;
-            }
-
-            #viewshedConfigPanel {
-              z-index: 2;
-              position: absolute;
-              top: 20px;
-              right: 20px;
-              height: 50px;
-              width: 50px;
-              color: white;
-              background-color: rgba(0,0,0,0.8);
-              padding: 10px;
-              border-radius: 8px;
-              /* transform: translate(0, -50%); */
-              display: none;
-              cursor: initial;
-              /* transition: all ease-in-out 0.5s; */
-            }
-            
-            #viewshedConfigPanel #panel, #viewshedConfigPanel #panelTitle {
-              display: none;
-            }
-
-            #viewshedConfigPanel #closePanel {
-              display: block;
-              direction: ltr;
-            } 
-
-            #viewshedConfigPanel.open #panel {
-              display: block;
-            } 
-
-            #viewshedConfigPanel.open #panelTitle {
-              display: flex;
-              align-items: center;
-              /* justify-content: space-between; */
-              gap: 30px;
-              width: 90%;
-            }
-
-            #viewshedConfigPanel.open {
-              width: 450px;
-              height: 500px;
-              direction: rtl;
-              /* transition: all ease-in-out 0.5s; */
-            }
-
-            #viewshedConfigPanel.open #closePanel {
-              transform: unset;
-              left: unset;
-              top: 20px;
-              left: 20px;
-            }
-
-            #viewshedConfigPanel #closePanel {
-              cursor: pointer;
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              padding: 0;
-              margin: 0;
-            }
-
-            .cesium-button.cesium-toolbar-button.toggled {
-              color: #fff;
-              fill: #fff;
-              background: rgba(0, 255, 0, 0.6);
-              border-color: lime;
-              box-shadow: 0 0 8px lime;          
-            }
-
-            .cesium-viewer-bottom, .cesium-viewer-animationContainer {
-              display: none;
-            }
-
-            #toggleAdvancedFields {
-              user-select: none;
-              text-decoration: underline;
-              color: white;
-              cursor: pointer;
-            }
-
-            #viewshedConfigTable td {
-              min-width: 170px;
-            }
-
-            #viewshedConfigTable input[type="number"] {
-              direction: ltr;
-            }
-
-            #viewshedConfigTable .coordinatesRow td {
-              min-width: 0px!important;
-            }
-            .toolButton {
-              filter: invert(100%);
-            }
-
-            .cesium-viewer-toolbar {
-              right: unset;
-              left: 5px;
-              direction: rtl;
-            }
-
-            .compass {
-              right: unset;
-              left: 0px;
-            }
-
-            .cesium-button.disabled {
-              position: relative;
-            }
-
-            .cesium-button.disabled::after {
-              content: '';
-              position: absolute;
-              z-index: 999;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              background-color: rgba(0,0,0,0.5);
-              cursor: not-allowed;
-              display: block;
-            }
-
-            .customPerspectivesContainer {
-              display: inline-block;
-            }
-
-            #customPerspectiveCell {
-              display: flex;
-              gap: 10px;
-              align-items: center;
-            }
-
-
-
-        </style>
+        <link rel="stylesheet" href="./3d-analysis.css">
     </head>
     <body>
         <div id="cesiumContainer">
@@ -205,7 +56,7 @@
                       <span>לפי: </span>
                       <div class="viewshedToolsContainer customPerspectivesContainer" data-bind="foreach: perspectivePresets">
                         <div data-bind="click: onClick, css: { toggled: $parent.chosenPerspective && $parent.chosenPerspective.perspective === perspective , disabled: !$parent.isAltitudeAttachedToTerrain}" class="cesium-button cesium-toolbar-button">
-                          <img class="toolButton" width="30" height="30" data-bind="attr: {src: icon, title: height + ' ' + `מ'`}"/>
+                          <img class="toolButton" width="30" height="30" data-bind="attr: {src: icon, title: '+' + height + ' ' + `מ'`}"/>
                         </div>
                       </div>
                     </td>
@@ -231,19 +82,19 @@
                   <tr>
                     <td>אזימוט°</td>
                     <td id="clockSlider">
-                      <input type="range" min="0" max="360" step="0.01" data-bind="value:clock, valueUpdate: 'input', disable: is360View" style="width: 150px">
+                      <input type="range" min="0" max="360" step="1" data-bind="value:clock, valueUpdate: 'input', disable: is360View" style="width: 150px">
                     </td>
                     <td>
-                      <input type="number" size="5" step="0.01" data-bind="value: clock, valueUpdate: 'input', disable: is360View" style="width: 80px">
+                      <input type="number" size="5" step="1" data-bind="value: clock, valueUpdate: 'input', disable: is360View" style="width: 80px">
                     </td>
                   </tr>
                   <tr>
                     <td>כיוון צפייה אנכי°</td>
                     <td id="coneSlider">
-                      <input type="range" min="0" max="360" step="0.01" data-bind="value:cone, valueUpdate: 'input'" style="width: 150px">
+                      <input type="range" min="-90" max="90" step="1" data-bind="value:cone, valueUpdate: 'input'" style="width: 150px">
                     </td>
                     <td>
-                      <input type="number" size="5" step="0.01" data-bind="value: cone, valueUpdate: 'input'" style="width: 80px">
+                      <input type="number" min="-90" max="90" size="5" step="1" data-bind="value: cone, valueUpdate: 'input'" style="width: 80px">
                     </td>
                   </tr>
                   <tr>
@@ -267,19 +118,19 @@
                   <tr data-bind="if: showAdvancedFields">
                     <td>חצי זווית צפיה לרוחב</td>
                     <td id="xHalfAngleSlider">
-                      <input type="range" min="1.0" max="90.0" step="0.1" data-bind="value:xHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
+                      <input type="range" min="1.0" max="90.0" step="1" data-bind="value:xHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
                     </td>
                     <td>
-                      <input type="number" size="5" step="0.1" data-bind="value: xHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 80px">
+                      <input type="number" min="1.0" max="90.0" size="5" step="1" data-bind="value: xHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 80px">
                     </td>
                   </tr>
                    <tr data-bind="if: showAdvancedFields">
                     <td>חצי זווית צפיה לאורך</td>
                     <td id="yHalfAngleSlider">
-                      <input type="range" min="1.0" max="90.0" step="0.1" data-bind="value:yHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
+                      <input type="range" min="1.0" max="90.0" step="1" data-bind="value:yHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
                     </td>
                     <td>
-                      <input type="number" size="5" step="0.1" data-bind="value: yHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 80px">
+                      <input type="number" min="1.0" max="90.0" size="5" step="1" data-bind="value: yHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 80px">
                     </td>
                   </tr>
                   <!-- <tr>
@@ -396,9 +247,9 @@
               setModelValue("latitude", positionCartographic.latitude);
               setModelValue("longitude", positionCartographic.longitude);
 
-              if(viewModel.isAltitudeAttachedToTerrain) {
+              // if(viewModel.isAltitudeAttachedToTerrain) {
                 setModelValue("altitude", positionCartographic.height);
-              }
+              // }
             });
 
             // initViewshedMode(viewer);

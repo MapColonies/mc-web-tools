@@ -22,7 +22,7 @@ const Tools: React.FC = (): JSX.Element => {
   const [apps] = useState({
     'terrain-verification': { category: 'DEM', name: 'Terrain Verification Tool', icon: 'map-marker.gif', url: '/terrain-verification', description: 'A Terrain Verification Tool', isInternal: true },
     'simple-catalog-viewer': { category: 'CATALOG', name: 'Simple Catalog Viewer', icon: 'globe.gif', width: '120px', url: '/simple-catalog-viewer', description: 'A Simple Catalog Viewer', isInternal: true },
-    'simple-viewer': { category: 'CATALOG', name: 'Simple Viewer', icon: 'globe.gif', width: '120px', url: '/simple-viewer', description: 'A Simple Viewer', isInternal: true },
+    '3d-analysis': { category: 'Analysis', name: '3D Analysis', icon: 'globe.gif', width: '120px', url: '/3d-analysis', description: 'A Simple Viewer', isInternal: true },
     ...appConfig.apps
   });
 
