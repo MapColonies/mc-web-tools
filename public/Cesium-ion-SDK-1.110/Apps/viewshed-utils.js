@@ -1,10 +1,11 @@
-const DEFAULT_X_HALF_ANGLE = 45;
-const DEFAULT_Y_HALF_ANGLE = 45;
+const DEFAULT_X_HALF_ANGLE = 25;
+const DEFAULT_Y_HALF_ANGLE = 30;
 const DEFAULT_360_VIEW = true;
 const DEFAULT_PANEL_COLLAPSED = true;
 const DEFAULT_CHOSEN_PERSPECTIVE = 'solider';
 const REAL_WORLD_VERTICAL_DEGREE_OFFSET = 90;
 const DEFUALT_CONE = 90 - REAL_WORLD_VERTICAL_DEGREE_OFFSET;
+const ENABLE_SENSOR_POINT_DRAGGING = true;
 
 let longitude = 0;
 let latitude = 0;
@@ -38,14 +39,14 @@ const viewModel = {
   hasChosenPosition: false,
   chosenPerspective: chosenPerspective,
   perspectivePresets: [{
-    icon: './solider.png',
-    pawn: './solider-pawn.png',
+    icon: './assets/solider.png',
+    pawn: './assets/solider-pawn.png',
     height: 1.7,
     perspective: 'solider',
     onClick: handleCustomPerspectiveClick
   }, {
-    icon: './tank.png',
-    pawn: './tank-pawn.png',
+    icon: './assets/tank.png',
+    pawn: './assets/tank-pawn.png',
     height: 2.66,
     perspective: 'tank',
     onClick: handleCustomPerspectiveClick
@@ -211,14 +212,14 @@ if(viewshedButton && viewshedConfigPanel) {
   Cesium.knockout
     .getObservable(viewModel, "xHalfAngle")
     .subscribe(function (value) {
-      xHalfAngle = Math.max(parseFloat(value || 1), 1);
+      xHalfAngle = Math.min(Math.max(parseFloat(value || 1), 1), 90);
       updateSensor()
     });
 
   Cesium.knockout
     .getObservable(viewModel, "yHalfAngle")
     .subscribe(function (value) {
-      yHalfAngle = Math.max(parseFloat(value || 1), 1);
+      yHalfAngle = Math.min(Math.max(parseFloat(value || 1), 1), 90);
       updateSensor()
     });
   
@@ -279,13 +280,6 @@ if(viewshedButton && viewshedConfigPanel) {
      viewModel.sensor.showEllipsoidHorizonSurfaces = showEllipsoidHorizonSurfaces;
     });
 
-  // Cesium.knockout
-  //   .getObservable(viewModel, "showDomeSurfaces")
-  //   .subscribe(function (value) {
-  //     showDomeSurfaces = value;
-  //    viewModel.sensor.showDomeSurfaces = showDomeSurfaces;
-  //   });
-
   Cesium.knockout
     .getObservable(viewModel, "showEllipsoidSurfaces")
     .subscribe(function (value) {
@@ -296,6 +290,8 @@ if(viewshedButton && viewshedConfigPanel) {
 
 const viewshedEventHandler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
 
+
+// -------------- Handle pick position ------------
 viewshedEventHandler.setInputAction((movement) => {
   if(viewModel.isViewshedModeOn) {
     const position = getPosition(movement, viewer);
@@ -303,9 +299,7 @@ viewshedEventHandler.setInputAction((movement) => {
     if(position) {
       setModelValue("latitude", position.latitude);
       setModelValue("longitude", position.longitude);
-      // if(viewModel.isAltitudeAttachedToTerrain) {
-        setModelValue("altitude", position.height);
-      // }
+      setModelValue("altitude", position.height);
       if(!viewModel.hasChosenPosition) {
         setModelValue("hasChosenPosition", true);
       }
@@ -314,6 +308,18 @@ viewshedEventHandler.setInputAction((movement) => {
   }
 
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+
+if(ENABLE_SENSOR_POINT_DRAGGING) {
+  // -------------- Handle viewshed center point dragging ------------
+  onCesiumObjectDrag(viewer, 'viewshedCenterPoint', (draggingMovement) => {
+    const positionCartographic = getPosition({position: draggingMovement.endPosition}, viewer);
+  
+    setModelValue("latitude", positionCartographic.latitude);
+    setModelValue("longitude", positionCartographic.longitude);
+    setModelValue("altitude", positionCartographic.height);
+  });
+}
 
 function handleCustomPerspectiveClick() {
   if(!viewModel.isAltitudeAttachedToTerrain) return;
@@ -339,7 +345,7 @@ function handleCustomPerspectiveClick() {
 function handle360View(is360View) {
   const X_HALF_ANGLE_360 = 90;
   const y_HALF_ANGLE_360 = 90;
-  const CONE_360 = 180 - REAL_WORLD_VERTICAL_DEGREE_OFFSET;
+  const CONE_360 = 90 - REAL_WORLD_VERTICAL_DEGREE_OFFSET;
 
   if(is360View) {
     setModelValue("xHalfAngle", X_HALF_ANGLE_360);
@@ -495,6 +501,7 @@ function addRectangularSensor(ellipsoid) {
   rectangularSensor.showViewshed = showViewshed;
   rectangularSensor.showIntersection = showIntersection;
   rectangularSensor.showThroughEllipsoid = showThroughEllipsoid;
+  rectangularSensor.classificationType = Cesium.ClassificationType.BOTH
 
   return rectangularSensor;
 }
@@ -562,8 +569,6 @@ function getPosition(movement, viewer) {
 
       const cartographicDegrees = getCorrectHeightCartographicDegree(cartographic, viewer);
 
-      console.log(cartographicDegrees)
-
       if(!viewModel.isAltitudeAttachedToTerrain) {
         cartographicDegrees.height = viewModel.altitude;
       }
@@ -584,7 +589,3 @@ function getPosition(movement, viewer) {
   }
 
 }
-
-function toDegrees(num) {
-  return num * (180 / Math.PI);
-};

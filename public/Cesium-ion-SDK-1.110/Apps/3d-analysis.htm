@@ -10,7 +10,7 @@
             name="viewport"
             content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
         />
-        <title>Simple Viewer</title>
+        <title>3D Analysis</title>
         <script src="../../assets/scripts/polyfill.globalThis.js"></script>
         <script src="../Build/CesiumUnminified/Cesium.js"></script>
         <script src="../../viewerCesiumNavigationMixin.js"></script>
@@ -21,18 +21,18 @@
     <body>
         <div id="cesiumContainer">
           <template id="viewshedButtonTemplate">
-            <div class="cesium-button cesium-toolbar-button toggle-viewshed-button" title="Viewshed" data-bind="css: { toggled: isViewshedModeOn },click: toggleIsViewshedModeOn">
-              <img src="./viewshed.svg" alt="viewshed"/>
+            <div class="cesium-button cesium-toolbar-button toggle-viewshed-button" title="שטח נצפה" data-bind="css: { toggled: isViewshedModeOn },click: toggleIsViewshedModeOn">
+              <img src="./assets/viewshed.svg" alt="viewshed"/>
             </template>
           <div id="viewshedConfigPanel" data-bind="style: { display: isViewshedModeOn ? 'block' : 'none'  }, css: { open: !isPanelCollapsed, 'cesium-button cesium-toolbar-button': isPanelCollapsed }">
             <div id="panelTitle">
               <h2>שטח נצפה</h2>
               <div class="viewshedToolsContainer">
                 <div data-bind="click: toggle360View, css: { toggled: is360View }" class="cesium-button cesium-toolbar-button">
-                  <img class="toolButton" width="30" height="30" title="צפה ב-360°" src="./360-degrees.png" alt="toggle_360_view"/>
+                  <img class="toolButton" width="30" height="30" title="צפה ב-360°" src="./assets/360-degrees.png" alt="toggle_360_view"/>
                 </div>
                 <div data-bind="click: toggleFOVVolume, css: { toggled: showLateralSurfaces }" class="cesium-button cesium-toolbar-button">
-                  <img class="toolButton" width="30" height="30" title="הצג אזור לחישוב" src="./field-of-view.png" alt="toggle_show_fov_volume"/>
+                  <img class="toolButton" width="30" height="30" title="הצג אזור לחישוב" src="./assets/field-of-view.png" alt="toggle_show_fov_volume"/>
                 </div>
               </div>
             </div>
@@ -40,16 +40,6 @@
             <div id="panel">
               <table id="viewshedConfigTable">
                 <tbody>
-                  <!-- <tr>
-                    <td>נקודות מבט מעל הקרקע</td>
-                    <td>
-                      <div class="viewshedToolsContainer customPerspectivesContainer" data-bind="foreach: perspectivePresets">
-                        <div data-bind="click: onClick, css: { toggled: $parent.chosenPerspective && $parent.chosenPerspective.perspective === perspective , disabled: !$parent.isAltitudeAttachedToTerrain}" class="cesium-button cesium-toolbar-button">
-                          <img class="toolButton" width="30" height="30" data-bind="attr: {src: icon, title: height + ' ' + `מ'`}"/>
-                        </div>
-                      </div>
-                    </td>
-                  </tr> -->
                   <tr>
                     <td>הצמד גובה למודל</td>
                     <td id="customPerspectiveCell">
@@ -117,7 +107,7 @@
                     </td>
                   </tr>
                   <tr data-bind="if: showAdvancedFields">
-                    <td>חצי זווית צפיה לרוחב</td>
+                    <td>חצי זווית צפיה לאורך</td>
                     <td id="xHalfAngleSlider">
                       <input type="range" min="1.0" max="90.0" step="1" data-bind="value:xHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
                     </td>
@@ -126,7 +116,7 @@
                     </td>
                   </tr>
                    <tr data-bind="if: showAdvancedFields">
-                    <td>חצי זווית צפיה לאורך</td>
+                    <td>חצי זווית צפיה לרוחב</td>
                     <td id="yHalfAngleSlider">
                       <input type="range" min="1.0" max="90.0" step="1" data-bind="value:yHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
                     </td>
@@ -186,17 +176,16 @@
 
             // ----- Viewer Config -----
             const viewer = new Cesium.Viewer("cesiumContainer", {
-                // imageryProvider: false,
+                imageryProvider: false,
                 navigationHelpButton: false,
                 geocoder: false,
-                homeButton: false,
+                homeButton: true,
                 infoBox: false,
                 sceneModePicker: false,
                 timeline: false,
                 navigationInstructionsInitiallyVisible: false,
                 scene3DOnly: true,
                 baseLayerPicker: false,
-                terrain: Cesium.Terrain.fromWorldTerrain(),
             });
             viewer.extend(Cesium.viewerMeasureMixin, {
                 units: new Cesium.MeasureUnits({
@@ -210,6 +199,20 @@
               enableZoomControls: false
             });
 
+            function applyCesiumAssetsForDev() {
+              viewer.terrainProvider = Cesium.Terrain.fromWorldTerrain();
+              Cesium.Cesium3DTileset.fromIonAssetId(40866).then((tileset) => {
+                viewer.scene.primitives.add(tileset);
+                viewer.zoomTo(tileset);
+
+                overrideHomeButtonHandler(viewer, () => {
+                  viewer.zoomTo(tileset);
+                });
+              });
+            }
+
+            // Uncomment for development
+            // applyCesiumAssetsForDev();
             
             const canvas = viewer.canvas;
 
@@ -231,35 +234,6 @@
             if (searchParams.has("terrainProviderUrl")) {
                 terrainProviderUrl = searchParams.get("terrainProviderUrl");
             }
-             
-            // handler.setInputAction((movement) => {
-            //   const position = getPosition(movement, viewer);
-
-            //   setModelValue("latitude", position.latitude);
-            //   setModelValue("longitude", position.longitude);
-            //   setModelValue("altitude", position.height);
-
-            // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-            // -------------- Handle viewshed center point dragging ------------
-            onCesiumObjectDrag(viewer, 'viewshedCenterPoint', (draggingMovement) => {
-              const positionCartographic = getPosition({position: draggingMovement.endPosition}, viewer);
-
-              setModelValue("latitude", positionCartographic.latitude);
-              setModelValue("longitude", positionCartographic.longitude);
-
-              // if(viewModel.isAltitudeAttachedToTerrain) {
-                setModelValue("altitude", positionCartographic.height);
-              // }
-            });
-
-            // initViewshedMode(viewer);
-
-            /* Example! */
-            Cesium.Cesium3DTileset.fromIonAssetId(40866).then((tileset) => {
-                viewer.scene.primitives.add(tileset);
-                viewer.zoomTo(tileset);
-            });
 
             try {
                 if (terrainProviderUrl) {
@@ -269,13 +243,21 @@
                     addRasterLayer(viewer, { ...baseMapLayerWMTSOptions });
                 }
                 if (queryModelUrl) {
+                    const modelAddedCallback = (tileset) => {
+                      if(tileset) {
+                        overrideHomeButtonHandler(viewer, () => {
+                          viewer.zoomTo(tileset);
+                        });
+                      }
+                    };
+
                     add3DModel(viewer, queryModelUrl, {
                         maximumScreenSpaceError: MAXIMUM_SCREEN_SPACE_ERROR,
                         cullRequestsWhileMovingMultiplier: CULL_REQUESTS_WHILE_MOVING_MULTIPLIER,
                         preloadFlightDestinations: true,
                         preferLeaves: true,
                         skipLevelOfDetail: true
-                    });
+                    }, true, modelAddedCallback);
                 }
             } catch (e) {
                 console.error(e);

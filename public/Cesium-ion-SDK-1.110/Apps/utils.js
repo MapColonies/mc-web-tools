@@ -7,11 +7,15 @@ const addRasterLayer = async (viewer, options) => {
   viewer.imageryLayers.addImageryProvider(providerInstance);
 };
 
-const add3DModel = async (viewer, url, props, isZoomTo = true) => {
+const add3DModel = async (viewer, url, props, isZoomTo = true, callback = null) => {
   const tileset = await Cesium.Cesium3DTileset.fromUrl(url, { ...(props ? props : {}) });
   viewer.scene.primitives.add(tileset);
   if (isZoomTo) {
       viewer.zoomTo(tileset);
+  }
+
+  if(typeof callback === 'function') {
+    callback(tileset);
   }
 };
 
@@ -55,3 +59,19 @@ const onCesiumObjectDrag = (viewer, featureId, onDragging) => {
     onDragging(draggingMovement);
   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 }
+
+function overrideCesiumToolHandler(viewer, toolName, onClick) {
+  viewer[toolName].viewModel.command.beforeExecute.addEventListener(
+    function(e) {
+        e.cancel = true;
+        onClick(e);
+  });
+}
+
+function overrideHomeButtonHandler(viewer, onClick) {
+  overrideCesiumToolHandler(viewer, "homeButton", onClick);
+}
+
+function toDegrees(num) {
+  return num * (180 / Math.PI);
+};
