@@ -8,14 +8,14 @@ import { validateIDsQuery, validatePositionQuery } from '../../Utils/ValidateQue
 import { requestHandlerWithToken } from '../../Utils/RequestHandler';
 import { getRecordsQueryByID, parseQueryResults } from '../../Utils/CswQueryBuilder';
 
-import './SimpleViewer.css';
+import './ModelAnalyzer.css';
 
 interface IClientFlyToPosition {
 	center: [number, number];
 	zoom: number;
 }
 
-const SimpleViewer: React.FC = (): JSX.Element => {
+const ModelAnalyzer: React.FC = (): JSX.Element => {
 	const [models, setModels] = useState<Record<string, unknown>[]>([]);
 	const queryParams = useQueryParams();
 
@@ -85,7 +85,7 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 			links = links.find((link) => link["@_scheme"] === "3D_LAYER");
 	}
 
-	const url = `${links?.["#text"]}?token=${userToken}`;
+	const url = links ? `${links?.["#text"]}?token=${userToken}` : null;
 	const baseMapCurrent = appConfig.baseMaps.maps.find((baseMap: IBaseMap) => baseMap.isCurrent);
 	const WMTSLayerFromActiveBaseMap = baseMapCurrent?.baseRasteLayers.find((layer)=> layer.type === 'WMTS_LAYER');
 
@@ -104,12 +104,16 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 		return '';
 	};
 
+	const modelUrlParam = `?modelUrl=${url || ''}`;
+
+	const iframeParams = `${modelUrlParam}${buildBaseMapQueryParam(WMTSLayerFromActiveBaseMap as IRasterLayer)}${buildTerrainProviderParam()}`;
+
 	return (
 		<>
 			<Box>
 				<iframe
 					id="viewer-iframe"
-					src={`./Cesium-ion-SDK-1.110/Apps/3d-analysis.htm?modelUrl=${url}${buildBaseMapQueryParam(WMTSLayerFromActiveBaseMap as IRasterLayer)}${buildTerrainProviderParam()}`}
+					src={`./Cesium-ion-SDK-1.110/Apps/3d-analysis.htm${iframeParams}`}
 					title="Simple Viewer"
 				/>
 			</Box>
@@ -117,4 +121,4 @@ const SimpleViewer: React.FC = (): JSX.Element => {
 	);
 };
 
-export default SimpleViewer;
+export default ModelAnalyzer;

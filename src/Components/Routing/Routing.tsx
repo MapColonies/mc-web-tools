@@ -5,7 +5,7 @@ import PageNotFound from '../PageNotFound/PageNotFound';
 import TerrainVerification from '../TerrainVerification/TerrainVerification';
 import Tools from '../Tools/Tools';
 import SimpleCatalogViewer from '../SimpleCatalogViewer/SimpleCatalogViewer';
-import SimpleViewer from '../SimpleViewer/SimpleViewer';
+import ModelAnalyzer from '../ModelAnalyzer/ModelAnalyzer';
 
 import './Routing.css';
 
@@ -36,9 +36,9 @@ const Routing: React.FC = (): JSX.Element => {
           <SimpleCatalogViewer />
         </Route>
 
-        {/* Simple Viewer */}
+        {/* Model Analyzer */}
         <Route path="/3d-analysis">
-          <SimpleViewer />
+          <ModelAnalyzer />
         </Route>
 
         <Route path="*">

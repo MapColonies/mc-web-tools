@@ -73,10 +73,10 @@
                   <tr>
                     <td>אזימוט°</td>
                     <td id="clockSlider">
-                      <input type="range" min="0" max="360" step="1" data-bind="value:clock, valueUpdate: 'input', disable: is360View" style="width: 150px">
+                      <input type="range" min="0" max="360" step="1" data-bind="value:clock, valueUpdate: 'input'" style="width: 150px">
                     </td>
                     <td>
-                      <input type="number" size="5" step="1" data-bind="value: clock, valueUpdate: 'input', disable: is360View" style="width: 80px">
+                      <input type="number" size="5" step="1" data-bind="value: clock, valueUpdate: 'input'" style="width: 80px">
                     </td>
                   </tr>
                   <tr>
@@ -91,7 +91,7 @@
                   <tr>
                     <td>
                       <p data-bind="click: toggleShowAdvancedFields" id="toggleAdvancedFields">
-                      שימוש מתקדם 
+                        שימוש מתקדם 
                         <span data-bind="if: !showAdvancedFields">+</span>
                         <span data-bind="if: showAdvancedFields">-</span>
                       </p>
@@ -99,11 +99,11 @@
                   </tr>
                   <tr class="coordinatesRow" data-bind="if: showAdvancedFields">
                     <td>
-                      נקודת אורך <input type="number" size="5" step="1" data-bind="value: longitude, valueUpdate: 'input'" style="width: 80px">
+                      נקודת אורך <input type="number" size="5" step="0.00001" data-bind="value: longitude, valueUpdate: 'input'" style="width: 80px">
                     </td>
       
                     <td>
-                      נקודת רוחב <input type="number" size="5" step="1" data-bind="value: latitude, valueUpdate: 'input'" style="width: 80px">
+                      נקודת רוחב <input type="number" size="5" step="0.00001" data-bind="value: latitude, valueUpdate: 'input'" style="width: 80px">
                     </td>
                   </tr>
                   <tr data-bind="if: showAdvancedFields">
@@ -173,7 +173,6 @@
             const searchParams = new URLSearchParams(window.location.search.substring(1));
             const queryModelUrl = searchParams.get("modelUrl");
            
-
             // ----- Viewer Config -----
             const viewer = new Cesium.Viewer("cesiumContainer", {
                 imageryProvider: false,
