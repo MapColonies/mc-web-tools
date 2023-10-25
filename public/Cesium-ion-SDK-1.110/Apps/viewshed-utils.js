@@ -36,6 +36,7 @@ let sensorPawn;
 
 
 const viewModel = {
+  tilesLoading: false,
   hasChosenPosition: false,
   chosenPerspective: chosenPerspective,
   perspectivePresets: [{
@@ -134,8 +135,10 @@ Cesium.knockout.track(viewModel);
 
 const viewshedButton = document.querySelector(".toggle-viewshed-button");
 const viewshedConfigPanel = document.getElementById("viewshedConfigPanel");
+const modelLoadingContainer = document.querySelector(".tilesLoadingContainer");
 
 if(viewshedButton && viewshedConfigPanel) {
+  Cesium.knockout.applyBindings(viewModel, modelLoadingContainer);
   Cesium.knockout.applyBindings(viewModel, viewshedConfigPanel);
   Cesium.knockout.applyBindings(viewModel, viewshedButton);
 }

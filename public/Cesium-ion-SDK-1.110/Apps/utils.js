@@ -7,8 +7,27 @@ const addRasterLayer = async (viewer, options) => {
   viewer.imageryLayers.addImageryProvider(providerInstance);
 };
 
-const add3DModel = async (viewer, url, props, isZoomTo = true, callback = null) => {
+const add3DModel = async (viewer, url, props, isZoomTo = true, callback = null, tileIsLoadedCb = null) => {
+  let isLoaded = false;
+
   const tileset = await Cesium.Cesium3DTileset.fromUrl(url, { ...(props ? props : {}) });
+
+  if(typeof tileIsLoadedCb === 'function') {
+    tileset.allTilesLoaded.addEventListener(function() {
+      if(!isLoaded) {
+        isLoaded = true;
+        tileIsLoadedCb(isLoaded);
+      }
+    });
+
+    tileset.tileLoad.addEventListener(function() {
+      if(isLoaded) {
+        isLoaded = false;
+        tileIsLoadedCb(isLoaded);
+      }
+    });
+  }
+
   viewer.scene.primitives.add(tileset);
   if (isZoomTo) {
       viewer.zoomTo(tileset);
