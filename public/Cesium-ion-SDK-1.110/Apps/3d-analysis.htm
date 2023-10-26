@@ -30,10 +30,9 @@
           <div data-bind="hidden: !tilesLoading" class="loader" id="progressBar">
             <div class="loaderBar"></div>
           </div>
-          <div data-bind="hidden: !hasChosenPosition || !tilesLoading" class="tilesLoadingContainer">
+          <div data-bind="hidden: !hasChosenPosition || !tilesLoading, style: {display: tilesLoading && hasChosenPosition ? 'block' : 'none'}" class="tilesLoadingContainer">
             <img width="50" height="50" src="./assets//loading.svg" alt="tiles loading" />
-            <p>טוען נתונים</p>
-            <p>חישובים שתבצע אינם סופיים</p>
+            <p>מחשב...</p>
           </div>
           <template id="viewshedButtonTemplate">
             <div class="cesium-button cesium-toolbar-button toggle-viewshed-button" title="שטח נצפה" data-bind="css: { toggled: isViewshedModeOn },click: toggleIsViewshedModeOn">
@@ -183,7 +182,7 @@
             </div>
         </div>
         <script>
-            const MAXIMUM_SCREEN_SPACE_ERROR = 1;
+            const MAXIMUM_SCREEN_SPACE_ERROR = 2;
             const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
             const DISCLAIMER_TEXT = window._env_.SHOULD_SHOW_PRECISION_DISCLAIMER;
             
