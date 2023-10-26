@@ -36,7 +36,7 @@ let sensorPawn;
 
 
 const viewModel = {
-  tilesLoading: false,
+  tilesLoading: true,
   hasChosenPosition: false,
   chosenPerspective: chosenPerspective,
   perspectivePresets: [{
@@ -62,7 +62,6 @@ const viewModel = {
         this.is360View = DEFAULT_360_VIEW;
         this.showLateralSurfaces = false;
         this.isAltitudeAttachedToTerrain = true;
-        this.hasChosenPosition = false;
         this.chosenPerspective = this.perspectivePresets.find(perspectiveItem => perspectiveItem.perspective === DEFAULT_CHOSEN_PERSPECTIVE);
 
         viewer._container.style.cursor = "cell";
@@ -77,6 +76,7 @@ const viewModel = {
         viewer._container.style.cursor = "initial";
         viewer.scene.primitives.remove(this.sensor);
       }
+      this.hasChosenPosition = false;
     },
   isPanelCollapsed: isPanelCollapsed,
   togglePanelCollapsed: function () {
@@ -135,10 +135,12 @@ Cesium.knockout.track(viewModel);
 
 const viewshedButton = document.querySelector(".toggle-viewshed-button");
 const viewshedConfigPanel = document.getElementById("viewshedConfigPanel");
+const modelLoadingProgressBar = document.getElementById("progressBar");
 const modelLoadingContainer = document.querySelector(".tilesLoadingContainer");
 
 if(viewshedButton && viewshedConfigPanel) {
   Cesium.knockout.applyBindings(viewModel, modelLoadingContainer);
+  Cesium.knockout.applyBindings(viewModel, modelLoadingProgressBar);
   Cesium.knockout.applyBindings(viewModel, viewshedConfigPanel);
   Cesium.knockout.applyBindings(viewModel, viewshedButton);
 }

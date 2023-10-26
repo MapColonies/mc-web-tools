@@ -4,16 +4,11 @@ import { Box, IRasterLayer } from '@map-colonies/react-components';
 import { IBaseMap } from '@map-colonies/react-components/dist/cesium-map/settings/settings';
 import { useQueryParams } from '../../Hooks/useQueryParams';
 import appConfig from '../../Utils/Config';
-import { validateIDsQuery, validatePositionQuery } from '../../Utils/ValidateQueryParams';
+import { validateIDsQuery } from '../../Utils/ValidateQueryParams';
 import { requestHandlerWithToken } from '../../Utils/RequestHandler';
 import { getRecordsQueryByID, parseQueryResults } from '../../Utils/CswQueryBuilder';
 
 import './ModelAnalyzer.css';
-
-interface IClientFlyToPosition {
-	center: [number, number];
-	zoom: number;
-}
 
 const ModelAnalyzer: React.FC = (): JSX.Element => {
 	const [models, setModels] = useState<Record<string, unknown>[]>([]);

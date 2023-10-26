@@ -20,7 +20,10 @@
     </head>
     <body>
         <div id="cesiumContainer">
-          <div data-bind="if: tilesLoading" class="tilesLoadingContainer">
+          <div data-bind="hidden: !tilesLoading" class="loader" id="progressBar">
+            <div class="loaderBar"></div>
+          </div>
+          <div data-bind="hidden: !hasChosenPosition || !tilesLoading" class="tilesLoadingContainer">
             <img width="50" height="50" src="./assets//loading.svg" alt="tiles loading" />
             <p>טוען נתונים</p>
             <p>חישובים שתבצע אינם סופיים</p>
@@ -173,12 +176,12 @@
             </div>
         </div>
         <script>
-            const MAXIMUM_SCREEN_SPACE_ERROR = 5;
+            const MAXIMUM_SCREEN_SPACE_ERROR = 1;
             const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
             const searchParams = new URLSearchParams(window.location.search.substring(1));
             const queryModelUrl = searchParams.get("modelUrl");
             let terrainProviderUrl;
-           
+
             // ----- Viewer Config -----
             const viewer = new Cesium.Viewer("cesiumContainer", {
                 imageryProvider: false,
@@ -216,7 +219,7 @@
                 viewer.zoomTo(tileset);
 
                 overrideHomeButtonHandler(viewer, () => {
-                  viewer.zoomTo(tileset);
+                  // viewer.zoomTo(tileset);
                 });
               });
             }
@@ -273,8 +276,9 @@
                         preloadFlightDestinations: true,
                         preferLeaves: true,
                         skipLevelOfDetail: true,
-                        skipLevels: 999,
-                        immediatelyLoadDesiredLevelOfDetail: true
+                        dynamicScreenSpaceError: true,
+                        immediatelyLoadDesiredLevelOfDetail: true,
+                        foveatedTimeDelay: 0
                     }, true, modelAddedCallback, isModelLoaded);
                 }
             } catch (e) {
