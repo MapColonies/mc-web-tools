@@ -16,7 +16,11 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 
 	// let clientPosition: IClientFlyToPosition | undefined = undefined;
 	let modelIds: string[] = [];
-	let idQueried: string | null = queryParams.get("model_ids");
+	let idQueried = queryParams.get("model_ids");
+	const userToken = queryParams.get("token");
+	const withBaseMaps = queryParams.get("withBaseMaps");
+	const isDebugMode = queryParams.get("debug");
+
 	if (idQueried == null) {
 		console.error({ msg: `didn't provide models_ids` });
 	} else {
@@ -42,7 +46,6 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 	// 		};
 	// 	}
 	// }
-	const userToken = queryParams.get("token");
 	if (userToken === null) {
 		console.error(`Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=TOKEN"`);
 	}
@@ -99,9 +102,12 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 		return '';
 	};
 
+	const debugModeParam = `&debug=${isDebugMode || false}`;
+	const withBaseMapsParam = `&withBaseMaps=${withBaseMaps || true}`;
 	const modelUrlParam = `?modelUrl=${url || ''}`;
 
-	const iframeParams = `${modelUrlParam}${buildBaseMapQueryParam(WMTSLayerFromActiveBaseMap as IRasterLayer)}${buildTerrainProviderParam()}`;
+
+	const iframeParams = `${modelUrlParam}${buildBaseMapQueryParam(WMTSLayerFromActiveBaseMap as IRasterLayer)}${buildTerrainProviderParam()}${withBaseMapsParam}${debugModeParam}`;
 
 	return (
 		<>

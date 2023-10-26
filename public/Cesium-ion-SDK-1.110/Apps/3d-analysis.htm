@@ -11,8 +11,9 @@
             content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
         />
         <title>3D Analysis</title>
-        <script src="../../assets/scripts/polyfill.globalThis.js"></script>
-        <script src="../Build/CesiumUnminified/Cesium.js"></script>
+        <script sync src="../../assets/scripts/polyfill.globalThis.js"></script>
+        <script sync src="../../env-config.js"></script>
+        <script sync src="../Build/CesiumUnminified/Cesium.js"></script>
         <script sync src="./intl-overrides/cesium-measurments-override.js"></script>
         <script src="../../viewerCesiumNavigationMixin.js"></script>
         <script src="./utils.js"></script>
@@ -21,6 +22,11 @@
     </head>
     <body>
         <div id="cesiumContainer">
+          <template id="measurementsToolsDisclaimerTemplate">
+            <div id="disclaimerContainer">
+              <p id="disclaimerText"></p>
+            </div>
+          </template>
           <div data-bind="hidden: !tilesLoading" class="loader" id="progressBar">
             <div class="loaderBar"></div>
           </div>
@@ -179,8 +185,13 @@
         <script>
             const MAXIMUM_SCREEN_SPACE_ERROR = 1;
             const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
+            const DISCLAIMER_TEXT = window._env_.SHOULD_SHOW_PRECISION_DISCLAIMER;
+            
             const searchParams = new URLSearchParams(window.location.search.substring(1));
             const queryModelUrl = searchParams.get("modelUrl");
+            const shouldUseBaseMaps = JSON.parse(searchParams.get("withBaseMaps") || 'false');
+            const isDebugMode = JSON.parse(searchParams.get("debug") || 'false');
+
             let terrainProviderUrl;
 
             // ----- Viewer Config -----
@@ -209,18 +220,22 @@
             });
 
             // 3D Inspector tool
-            // viewer.extend(Cesium.viewerCesium3DTilesInspectorMixin);
+            if(isDebugMode) {
+              viewer.extend(Cesium.viewerCesium3DTilesInspectorMixin);
+            }
 
              function applyCesiumAssetsForDev() {
               const terrain = Cesium.Terrain.fromWorldTerrain();
               viewer.scene.setTerrain(terrain);
 
               Cesium.Cesium3DTileset.fromIonAssetId(40866).then((tileset) => {
+                tileset.enableDebugWireframe = isDebugMode;
+
                 viewer.scene.primitives.add(tileset);
                 viewer.zoomTo(tileset);
 
                 overrideHomeButtonHandler(viewer, () => {
-                  // viewer.zoomTo(tileset);
+                  viewer.zoomTo(tileset);
                 });
               });
             }
@@ -234,14 +249,28 @@
             viewer.scene.globe.shadows = Cesium.ShadowMode.ENABLED;
             viewer.scene.globe.depthTestAgainstTerrain = true;
 
-
+            const viewerContainer = document.querySelector("#cesiumContainer");
             const cesiumToolbarContainer = document.querySelector('.cesium-viewer-toolbar');
             const viewshedToolButtonTemplate = document.getElementById('viewshedButtonTemplate');
             cesiumToolbarContainer.prepend(viewshedToolButtonTemplate.content.cloneNode(true));
+
+            if(DISCLAIMER_TEXT.length > 0) {
+              const disclaimerContainerTemplate = document.getElementById('measurementsToolsDisclaimerTemplate');
+              const disclaimerContainer = disclaimerContainerTemplate.content.cloneNode(true);
+              const disclaimerParagraph = disclaimerContainer.querySelector('#disclaimerText');
+              disclaimerParagraph.innerHTML = DISCLAIMER_TEXT;
+
+              // Set relative elements styles accordingly
+              document.querySelector('#progressBar').classList.add('disclaimerVisible');
+              document.querySelector('#viewshedConfigPanel').classList.add('disclaimerVisible');
+              document.querySelector('.cesium-viewer-toolbar').classList.add('disclaimerVisible');
+
+              viewerContainer.appendChild(disclaimerContainer);
+            }
             // ----- View Config -----
 
             let baseMapLayerWMTSOptions = null;
-            if (searchParams.has("baseMapLayerEncoded")) {
+            if (searchParams.has("baseMapLayerEncoded") && shouldUseBaseMaps) {
                 baseMapLayerWMTSOptions = JSON.parse(
                     window.atob(searchParams.get("baseMapLayerEncoded"))
                 );
@@ -279,7 +308,8 @@
                         skipLevelOfDetail: true,
                         dynamicScreenSpaceError: true,
                         immediatelyLoadDesiredLevelOfDetail: true,
-                        foveatedTimeDelay: 0
+                        foveatedTimeDelay: 0,
+                        enableDebugWireframe: isDebugMode
                     }, true, modelAddedCallback, isModelLoaded);
                 }
             } catch (e) {

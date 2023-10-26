@@ -145,6 +145,9 @@ if(viewshedButton && viewshedConfigPanel) {
   Cesium.knockout.applyBindings(viewModel, viewshedButton);
 }
 
+if(!queryModelUrl) {
+viewModel.tilesLoading = false;
+}
 
   Cesium.knockout
     .getObservable(viewModel, "hasChosenPosition")
