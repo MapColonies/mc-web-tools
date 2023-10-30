@@ -13,6 +13,7 @@ const TOKEN_ATTRIBUTE_NAME = (window as any)._env_.ACCESS_TOKEN_ATTRIBUTE_NAME;
 const MAP_SERVICE_RASTER_URL = (window as any)._env_.MAP_SERVICE_RASTER_URL;
 const CSW_RASTER_URL = (window as any)._env_.CSW_RASTER_URL;
 const CSW_3D_URL = (window as any)._env_.CSW_3D_URL;
+const IMAGE_TAG = (window as any)._env_.IMAGE_TAG;
 
 export enum LinkType {
   WMTS_BASE = 'WMTS_BASE',
@@ -63,6 +64,7 @@ class Config {
   public mapSericeRasterUrl = MAP_SERVICE_RASTER_URL;
   public cswRasterUrl = CSW_RASTER_URL;
   public csw3dUrl = CSW_3D_URL;
+  public imageTag = IMAGE_TAG;
 }
 
 const appConfig = new Config(); // Singleton

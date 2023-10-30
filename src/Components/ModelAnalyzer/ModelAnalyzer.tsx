@@ -106,6 +106,8 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 	const withBaseMapsParam = `&withBaseMaps=${withBaseMaps || true}`;
 	const modelUrlParam = `?modelUrl=${url || ''}`;
 
+	const appVersion = `&version=${appConfig.imageTag}`;
+
 
 	const iframeParams = `${modelUrlParam}${buildBaseMapQueryParam(WMTSLayerFromActiveBaseMap as IRasterLayer)}${buildTerrainProviderParam()}${withBaseMapsParam}${debugModeParam}`;
 
@@ -114,7 +116,7 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 			<Box>
 				<iframe
 					id="viewer-iframe"
-					src={`./Cesium-ion-SDK-1.110/Apps/3d-analysis.htm${iframeParams}`}
+					src={`./Cesium-ion-SDK-1.110/Apps/3d-analysis.htm${iframeParams}${appVersion}`}
 					title="Simple Viewer"
 				/>
 			</Box>

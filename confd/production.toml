@@ -14,4 +14,5 @@ keys = [
   "/configuration/access/token/attribute/name",
   "/configuration/access/token/injection/type",
   "/configuration/should/show/precision/disclaimer",
+  "/configuration/image/tag",
 ]
