@@ -1,0 +1,160 @@
+#viewshedConfigPanel {
+  z-index: 2;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  height: 50px;
+  width: 50px;
+  color: white;
+  background-color: rgba(0,0,0,0.8);
+  padding: 10px;
+  border-radius: 8px;
+  /* transform: translate(0, -50%); */
+  display: none;
+  cursor: initial;
+  /* transition: all ease-in-out 0.5s; */
+}
+
+#viewshedConfigPanel.disclaimerVisible {
+  top: 40px;
+}
+
+#viewshedConfigPanel #panel, #viewshedConfigPanel #panelTitle {
+  display: none;
+}
+
+#viewshedConfigPanel #closePanel {
+  display: block;
+  direction: ltr;
+} 
+
+#viewshedConfigPanel.open #panel {
+  display: block;
+} 
+
+#viewshedConfigPanel.open #panelTitle {
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  gap: 30px;
+  width: 90%;
+}
+
+#viewshedConfigPanel.open {
+  width: 450px;
+  height: 500px;
+  direction: rtl;
+  /* transition: all ease-in-out 0.5s; */
+}
+
+#viewshedConfigPanel.open #closePanel {
+  transform: unset;
+  left: unset;
+  top: 20px;
+  left: 20px;
+}
+
+#viewshedConfigPanel #closePanel {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  margin: 0;
+}
+
+.cesium-button.cesium-toolbar-button.toggled {
+  color: #fff;
+  fill: #fff;
+  background: rgba(0, 255, 0, 0.6);
+  border-color: lime;
+  box-shadow: 0 0 8px lime;          
+}
+
+.cesium-viewer-bottom, .cesium-viewer-animationContainer {
+  display: none;
+}
+
+#toggleAdvancedFields {
+  user-select: none;
+  text-decoration: underline;
+  color: white;
+  cursor: pointer;
+}
+
+#viewshedConfigTable td {
+  min-width: 170px;
+}
+
+#viewshedConfigTable input[type="number"] {
+  direction: ltr;
+}
+
+#viewshedConfigTable .coordinatesRow td {
+  min-width: 0px!important;
+}
+.toolButton {
+  filter: invert(100%);
+}
+
+.cesium-button.disabled {
+  position: relative;
+  background: unset;
+  fill: unset;
+  box-shadow: unset;
+  color: unset;
+  border: 1px solid #444;
+}
+
+.cesium-button.disabled::after {
+  content: '';
+  position: absolute;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  cursor: not-allowed;
+  display: block;
+}
+
+.customPerspectivesContainer {
+  display: inline-block;
+}
+
+#customPerspectiveCell {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.tilesLoadingContainer {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translate(-50%);
+  z-index: 999;
+  text-align: center;
+  font-size: 16px;
+  color: white;
+  background: rgba(0,0,0,0.8);
+  padding: 20px;
+  display: none;
+  direction: rtl;
+}
+
+.tilesLoadingContainer img {
+  transform: scale(1.3);
+  margin: 10px;
+}
+
+.tilesLoadingContainer p {
+  margin: 0;
+  padding: 0;
+}
+
+.tilesLoadingContainer p:first-of-type {
+  font-weight: bold;
+}

@@ -12,13 +12,7 @@
         />
         <title>3D Analysis</title>
         <script sync src="../../assets/scripts/polyfill.globalThis.js"></script>
-        <script sync src="../../env-config.js"></script>
-        <script sync src="../Build/CesiumUnminified/Cesium.js"></script>
-        <script sync src="./intl-overrides/cesium-measurments-override.js"></script>
-        <script src="../../viewerCesiumNavigationMixin.js"></script>
-        <script src="./utils.js"></script>
-        <script defer src="./viewshed-utils.js"></script>
-        <link rel="stylesheet" href="./3d-analysis.css">
+        <script sync src="./3d-analysis-scripts-loader.js"></script>
     </head>
     <body>
         <div id="cesiumContainer">
@@ -27,161 +21,22 @@
               <p id="disclaimerText"></p>
             </div>
           </template>
+          <template id="measurementsToolsDisclaimerTemplate">
+            <div id="disclaimerContainer">
+              <p id="disclaimerText"></p>
+            </div>
+          </template>
           <div data-bind="hidden: !tilesLoading" class="loader" id="progressBar">
             <div class="loaderBar"></div>
           </div>
-          <div data-bind="hidden: !hasChosenPosition || !tilesLoading, style: {display: tilesLoading && hasChosenPosition ? 'block' : 'none'}" class="tilesLoadingContainer">
-            <img width="50" height="50" src="./assets//loading.svg" alt="tiles loading" />
-            <p>מחשב...</p>
-          </div>
-          <template id="viewshedButtonTemplate">
-            <div class="cesium-button cesium-toolbar-button toggle-viewshed-button" title="שטח נצפה" data-bind="css: { toggled: isViewshedModeOn },click: toggleIsViewshedModeOn">
-              <img src="./assets/viewshed.svg" alt="viewshed"/>
-          </template>
-          <div id="viewshedConfigPanel" data-bind="style: { display: isViewshedModeOn ? 'block' : 'none'  }, css: { open: !isPanelCollapsed, 'cesium-button cesium-toolbar-button': isPanelCollapsed }">
-            <div id="panelTitle">
-              <h2>שטח נצפה</h2>
-              <div class="viewshedToolsContainer">
-                <div data-bind="click: toggle360View, css: { toggled: is360View }" class="cesium-button cesium-toolbar-button">
-                  <img class="toolButton" width="30" height="30" title="צפה ב-360°" src="./assets/360-degrees.png" alt="toggle_360_view"/>
-                </div>
-                <div data-bind="click: toggleFOVVolume, css: { toggled: showLateralSurfaces }" class="cesium-button cesium-toolbar-button">
-                  <img class="toolButton" width="30" height="30" title="הצג אזור לחישוב" src="./assets/field-of-view.png" alt="toggle_show_fov_volume"/>
-                </div>
-              </div>
-            </div>
-            <p id="closePanel" data-bind="click: togglePanelCollapsed"><sup>⇱</sup><sub>⇲</sub></p>
-            <div id="panel">
-              <table id="viewshedConfigTable">
-                <tbody>
-                  <tr>
-                    <td>הצמד גובה למודל</td>
-                    <td id="customPerspectiveCell">
-                      <input data-bind="checked: isAltitudeAttachedToTerrain" type="checkbox" name="attachHeightToModel" align="">
-                      <span>לפי: </span>
-                      <div class="viewshedToolsContainer customPerspectivesContainer" data-bind="foreach: perspectivePresets">
-                        <div data-bind="click: onClick, css: { toggled: $parent.chosenPerspective && $parent.chosenPerspective.perspective === perspective , disabled: !$parent.isAltitudeAttachedToTerrain}" class="cesium-button cesium-toolbar-button">
-                          <img class="toolButton" width="30" height="30" data-bind="attr: {src: icon, title: '+' + height + ' ' + `מ'`}"/>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>גובה לפי מודל (מ')</td>
-                    <td id="altitudeSlider">
-                      <input type="range" min="0.0" max="1000.0" step="0.1" data-bind="value:altitude, valueUpdate: 'input', disable: isAltitudeAttachedToTerrain" style="width: 150px">
-                    </td>
-                    <td>
-                      <input type="number" size="5" step="1" data-bind="value: altitude, valueUpdate: 'input', disable: isAltitudeAttachedToTerrain" style="width: 80px">
-                    </td>
-                  </tr>
-                   <tr>
-                    <td>מרחק חישוב (מ')</td>
-                    <td id="radiusSlider">
-                      <input type="range" min="0.0" max="1000.0" step="100" data-bind="value:radius, valueUpdate: 'input'" style="width: 150px">
-                    </td>
-                    <td>
-                      <input type="number" size="5" step="10" data-bind="value: radius, valueUpdate: 'input'" style="width: 80px">
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>אזימוט°</td>
-                    <td id="clockSlider">
-                      <input type="range" min="0" max="360" step="1" data-bind="value:clock, valueUpdate: 'input'" style="width: 150px">
-                    </td>
-                    <td>
-                      <input type="number" size="5" step="1" data-bind="value: clock, valueUpdate: 'input'" style="width: 80px">
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>כיוון צפייה אנכי°</td>
-                    <td id="coneSlider">
-                      <input type="range" min="-90" max="90" step="1" data-bind="value:cone, valueUpdate: 'input'" style="width: 150px">
-                    </td>
-                    <td>
-                      <input type="number" min="-90" max="90" size="5" step="1" data-bind="value: cone, valueUpdate: 'input'" style="width: 80px">
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p data-bind="click: toggleShowAdvancedFields" id="toggleAdvancedFields">
-                        שימוש מתקדם 
-                        <span data-bind="if: !showAdvancedFields">+</span>
-                        <span data-bind="if: showAdvancedFields">-</span>
-                      </p>
-                    </td>
-                  </tr>
-                  <tr class="coordinatesRow" data-bind="if: showAdvancedFields">
-                    <td>
-                      נקודת אורך <input type="number" size="5" step="0.00001" data-bind="value: longitude, valueUpdate: 'input'" style="width: 80px">
-                    </td>
-      
-                    <td>
-                      נקודת רוחב <input type="number" size="5" step="0.00001" data-bind="value: latitude, valueUpdate: 'input'" style="width: 80px">
-                    </td>
-                  </tr>
-                  <tr data-bind="if: showAdvancedFields">
-                    <td>חצי זווית צפיה לאורך</td>
-                    <td id="xHalfAngleSlider">
-                      <input type="range" min="1.0" max="90.0" step="1" data-bind="value:xHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
-                    </td>
-                    <td>
-                      <input type="number" min="1.0" max="90.0" size="5" step="1" data-bind="value: xHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 80px">
-                    </td>
-                  </tr>
-                   <tr data-bind="if: showAdvancedFields">
-                    <td>חצי זווית צפיה לרוחב</td>
-                    <td id="yHalfAngleSlider">
-                      <input type="range" min="1.0" max="90.0" step="1" data-bind="value:yHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 150px">
-                    </td>
-                    <td>
-                      <input type="number" min="1.0" max="90.0" size="5" step="1" data-bind="value: yHalfAngle, valueUpdate: 'input', disable: is360View" style="width: 80px">
-                    </td>
-                  </tr>
-                  <!-- <tr>
-                    <td>Twist</td>
-                    <td id="twistSlider">
-                      <input type="range" min="-3.14" max="3.14" step="0.01" data-bind="value:twist, valueUpdate: 'input'" style="width: 150px">
-                    </td>
-                    <td>
-                      <input type="number" size="5" step="0.01" data-bind="value: twist, valueUpdate: 'input'" style="width: 80px">
-                    </td>
-                  </tr> -->
-                  <!-- <tr>
-                    <td>
-                      <label for="portionMenu">Select portion to display</label>
-                    </td>
-                    <td colspan="2">
-                      <select id="portionMenu" data-bind="options: portionOptions, value: selectedPortion"></select>
-                    </td>
-                  </tr> -->
-                </tbody>
-              </table>
-              <!-- <table>
-                <tbody>
-                  <tr>
-                    <td>Show Ellipsoid Horizon Surfaces</td>
-                    <td id="ellipsoidHorizonCheckBox" colspan="2">
-                      <input type="checkbox" data-bind="checked: showEllipsoidHorizonSurfaces">
-                    </td>
-                  </tr> 
-                  <tr>
-                    <td>Show Dome Surfaces</td>
-                    <td id="domeCheckBox" colspan="2">
-                      <input type="checkbox" data-bind="checked: showDomeSurfaces">
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Show Ellipsoid Surfaces</td>
-                    <td id="ellipsoidCheckBox" colspan="2">
-                      <input type="checkbox" data-bind="checked: showEllipsoidSurfaces">
-                    </td>
-                  </tr>
-                </tbody>
-              </table> -->
-            </div>
         </div>
         <script>
+            const viewModel = {
+              tilesLoading: true
+            };
+
+            Cesium.knockout.track(viewModel);
+
             const MAXIMUM_SCREEN_SPACE_ERROR = 2;
             const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
             const DISCLAIMER_TEXT = window._env_.SHOULD_SHOW_PRECISION_DISCLAIMER;
@@ -190,6 +45,9 @@
             const queryModelUrl = searchParams.get("modelUrl");
             const shouldUseBaseMaps = JSON.parse(searchParams.get("withBaseMaps") || 'false');
             const isDebugMode = JSON.parse(searchParams.get("debug") || 'false');
+            
+            const modelLoadingProgressBar = document.getElementById("progressBar");
+            Cesium.knockout.applyBindings(viewModel, modelLoadingProgressBar);
 
             let terrainProviderUrl;
 
@@ -206,6 +64,7 @@
                 scene3DOnly: true,
                 baseLayerPicker: false,
             });
+
             viewer.extend(Cesium.viewerMeasureMixin, {
                 units: new Cesium.MeasureUnits({
                     distanceUnits: Cesium.DistanceUnits.METERS,
@@ -217,6 +76,33 @@
             viewer.extend(Cesium.viewerCesiumNavigationMixin, {
               enableZoomControls: false
             });
+            
+            viewer.extend(CesiumSdkViewshedMixin, {
+              publicUrl: window._env_.PUBLIC_URL,
+              disablePick: !!viewer.measure.viewModel.selectedMeasurement
+            });
+
+            // Observe measure tools
+            Cesium.knockout.track(viewer.measure.viewModel);
+
+            Cesium.knockout.getObservable(viewer.measure.viewModel, "selectedMeasurement").subscribe((value) => {
+              viewer.viewshedTool.disablePick(!!value)
+            });
+
+
+            if(DISCLAIMER_TEXT.length > 0) {
+              const disclaimerContainerTemplate = document.getElementById('measurementsToolsDisclaimerTemplate');
+              const disclaimerContainer = disclaimerContainerTemplate.content.cloneNode(true);
+              const disclaimerParagraph = disclaimerContainer.querySelector('#disclaimerText');
+              disclaimerParagraph.innerHTML = DISCLAIMER_TEXT;
+
+              // Set relative elements styles accordingly
+              document.querySelector('#progressBar').classList.add('disclaimerVisible');
+              document.querySelector('#viewshedConfigPanel').classList.add('disclaimerVisible');
+              document.querySelector('.cesium-viewer-toolbar').classList.add('disclaimerVisible');
+
+              viewer.container.appendChild(disclaimerContainer);
+            }
 
             // 3D Inspector tool
             if(isDebugMode) {
@@ -240,32 +126,14 @@
             }
 
             // Uncomment for development
-            // applyCesiumAssetsForDev();
+            applyCesiumAssetsForDev();
             
             const canvas = viewer.canvas;
 
-            const handler = new Cesium.ScreenSpaceEventHandler(canvas);
             viewer.scene.globe.shadows = Cesium.ShadowMode.ENABLED;
             viewer.scene.globe.depthTestAgainstTerrain = true;
 
-            const viewerContainer = document.querySelector("#cesiumContainer");
-            const cesiumToolbarContainer = document.querySelector('.cesium-viewer-toolbar');
-            const viewshedToolButtonTemplate = document.getElementById('viewshedButtonTemplate');
-            cesiumToolbarContainer.prepend(viewshedToolButtonTemplate.content.cloneNode(true));
 
-            if(DISCLAIMER_TEXT.length > 0) {
-              const disclaimerContainerTemplate = document.getElementById('measurementsToolsDisclaimerTemplate');
-              const disclaimerContainer = disclaimerContainerTemplate.content.cloneNode(true);
-              const disclaimerParagraph = disclaimerContainer.querySelector('#disclaimerText');
-              disclaimerParagraph.innerHTML = DISCLAIMER_TEXT;
-
-              // Set relative elements styles accordingly
-              document.querySelector('#progressBar').classList.add('disclaimerVisible');
-              document.querySelector('#viewshedConfigPanel').classList.add('disclaimerVisible');
-              document.querySelector('.cesium-viewer-toolbar').classList.add('disclaimerVisible');
-
-              viewerContainer.appendChild(disclaimerContainer);
-            }
             // ----- View Config -----
 
             let baseMapLayerWMTSOptions = null;
@@ -296,7 +164,8 @@
                     };
 
                     const isModelLoaded = (isTilesLoaded) => {
-                      setModelValue("tilesLoading", !isTilesLoaded);
+                      viewModel.tilesLoading = !isTilesLoaded;
+                      viewer.viewshedTool.setIsLoading(!isTilesLoaded);
                     };
 
                     add3DModel(viewer, queryModelUrl, {
@@ -310,6 +179,9 @@
                         foveatedTimeDelay: 0,
                         enableDebugWireframe: isDebugMode
                     }, true, modelAddedCallback, isModelLoaded);
+                } else {
+                  viewer.viewshedTool.setIsLoading(false);
+                  viewModel.tilesLoading = false;
                 }
             } catch (e) {
                 console.error(e);
