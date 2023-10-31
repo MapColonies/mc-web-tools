@@ -814,6 +814,10 @@ function CesiumSdkViewshedMixin(viewer, options = { publicUrl: '.', disablePick:
         throw new Error("[CesiumSdkViewshedMixin] Cesium is required.");
     }
 
+    if(typeof Cesium.RectangularSensor === "undefined") {
+      throw new Cesium.DeveloperError("[CesiumSdkViewshedMixin] Cesium ION SDK is required in order to use RectangularSensor.");
+    }
+
     if (!Cesium.defined(viewer)) {
         throw new Cesium.DeveloperError("[CesiumSdkViewshedMixin] Viewer is required.");
     }
