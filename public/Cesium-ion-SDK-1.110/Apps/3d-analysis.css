@@ -17,6 +17,11 @@ body,
   top: 20px;
 }
 
+.cesium-baseLayerPicker-dropDown {
+  right: unset;
+  left: 0;
+}
+
 .cesium-viewer-toolbar.disclaimerVisible {
   top: 40px;
 }
