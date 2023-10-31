@@ -1,4 +1,7 @@
-function CesiumSdkViewshedMixin(viewer, options = { publicUrl: '.', disablePick: false }) {
+function CesiumSdkViewshedMixin(viewer, options) {
+    const DEFAULT_OPTIONS = { publicUrl: '.', disablePick: false };
+    options = {...DEFAULT_OPTIONS, ...options};
+    
     function CesiumViewshedTool(viewer, options) {
       const DEFAULT_X_HALF_ANGLE = 25;
       const DEFAULT_Y_HALF_ANGLE = 30;

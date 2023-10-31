@@ -35,16 +35,16 @@
             const MAXIMUM_SCREEN_SPACE_ERROR = 2;
             const CULL_REQUESTS_WHILE_MOVING_MULTIPLIER = 120;
             const DISCLAIMER_TEXT = window._env_.SHOULD_SHOW_PRECISION_DISCLAIMER;
+            const BASE_MAPS = JSON.parse(window._env_.BASE_MAPS || '{}');
             
             const searchParams = new URLSearchParams(window.location.search.substring(1));
             const queryModelUrl = searchParams.get("modelUrl");
-            const shouldUseBaseMaps = JSON.parse(searchParams.get("withBaseMaps") || 'false');
             const isDebugMode = JSON.parse(searchParams.get("debug") || 'false');
             
             const modelLoadingProgressBar = document.getElementById("progressBar");
             Cesium.knockout.applyBindings(viewModel, modelLoadingProgressBar);
 
-            let terrainProviderUrl;
+            let terrainProviderUrl = window._env_.DEFAULT_TERRAIN_PROVIDER;
 
             // ----- Viewer Config -----
             const viewer = new Cesium.Viewer("cesiumContainer", {
@@ -77,7 +77,9 @@
               disablePick: !!viewer.measure.viewModel.selectedMeasurement
             });
 
-            debugger;
+            viewer.extend(CesiumBaseMapsPickerMixin, {
+              baseMaps: BASE_MAPS,
+            });
 
             // Observe measure tools
             Cesium.knockout.track(viewer.measure.viewModel);
@@ -133,23 +135,9 @@
 
             // ----- View Config -----
 
-            let baseMapLayerWMTSOptions = null;
-            if (searchParams.has("baseMapLayerEncoded") && shouldUseBaseMaps) {
-                baseMapLayerWMTSOptions = JSON.parse(
-                    window.atob(searchParams.get("baseMapLayerEncoded"))
-                );
-                baseMapLayerWMTSOptions.tilingScheme = new Cesium.GeographicTilingScheme();
-            }
-            if (searchParams.has("terrainProviderUrl")) {
-                terrainProviderUrl = searchParams.get("terrainProviderUrl");
-            }
-
             try {
                 if (terrainProviderUrl) {
                     addTerrainProvider(viewer, terrainProviderUrl, {});
-                }
-                if (baseMapLayerWMTSOptions) {
-                    addRasterLayer(viewer, { ...baseMapLayerWMTSOptions });
                 }
                 if (queryModelUrl) {
                     const modelAddedCallback = (tileset) => {

@@ -84,32 +84,14 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 	}
 
 	const url = links ? `${links?.["#text"]}?token=${userToken}` : null;
-	const baseMapCurrent = appConfig.baseMaps.maps.find((baseMap: IBaseMap) => baseMap.isCurrent);
-	const WMTSLayerFromActiveBaseMap = baseMapCurrent?.baseRasteLayers.find((layer)=> layer.type === 'WMTS_LAYER');
-
-	const buildBaseMapQueryParam = (rasterLayer: IRasterLayer) => {
-		if (rasterLayer) {
-			const baseLayerEncoded = window.btoa(JSON.stringify(rasterLayer.options));
-			return `&baseMapLayerEncoded=${baseLayerEncoded}`;
-		}
-		return '';
-	};
-
-	const buildTerrainProviderParam = () => {
-		if (appConfig.terrainProviderUrl) {
-			return `&terrainProviderUrl=${appConfig.terrainProviderUrl}`;
-		}
-		return '';
-	};
 
 	const debugModeParam = `&debug=${isDebugMode || false}`;
-	const withBaseMapsParam = `&withBaseMaps=${withBaseMaps || true}`;
 	const modelUrlParam = `?modelUrl=${url || ''}`;
 
 	const appVersion = `&version=${appConfig.imageTag}`;
 
 
-	const iframeParams = `${modelUrlParam}${buildBaseMapQueryParam(WMTSLayerFromActiveBaseMap as IRasterLayer)}${buildTerrainProviderParam()}${withBaseMapsParam}${debugModeParam}`;
+	const iframeParams = `${modelUrlParam}${debugModeParam}`;
 
 	return (
 		<>
