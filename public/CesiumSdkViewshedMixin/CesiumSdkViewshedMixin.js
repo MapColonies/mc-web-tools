@@ -51,17 +51,17 @@ function CesiumSdkViewshedMixin(viewer, options) {
           const cesiumToolbarContainer = document.querySelector(".cesium-viewer-toolbar");
 
           const viewshedButtonHTML = `<div class="cesium-button cesium-toolbar-button toggle-viewshed-button" title="שטח נצפה" data-bind="css: { toggled: isViewshedModeOn },click: toggleIsViewshedModeOn">
-        <img src="/${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/viewshed.svg" alt="viewshed"/>
+        <img src="${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/viewshed.svg" alt="viewshed"/>
       </div>`;
           const viewshedControlPanelHTML = `<div id="viewshedConfigPanel" data-bind="style: { display: isViewshedModeOn ? 'block' : 'none'  }, css: { open: !isPanelCollapsed, 'cesium-button cesium-toolbar-button': isPanelCollapsed }">
               <div id="panelTitle">
                 <h2>שטח נצפה</h2>
                 <div class="viewshedToolsContainer">
                   <div data-bind="click: toggle360View, css: { toggled: is360View }" class="cesium-button cesium-toolbar-button">
-                    <img class="toolButton" width="30" height="30" title="צפה ב-360°" src="/${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/360-degrees.png" alt="toggle_360_view"/>
+                    <img class="toolButton" width="30" height="30" title="צפה ב-360°" src="${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/360-degrees.png" alt="toggle_360_view"/>
                   </div>
                   <div data-bind="click: toggleFOVVolume, css: { toggled: showLateralSurfaces }" class="cesium-button cesium-toolbar-button">
-                    <img class="toolButton" width="30" height="30" title="הצג אזור לחישוב" src="/${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/field-of-view.png" alt="toggle_show_fov_volume"/>
+                    <img class="toolButton" width="30" height="30" title="הצג אזור לחישוב" src="${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/field-of-view.png" alt="toggle_show_fov_volume"/>
                   </div>
                 </div>
               </div>
@@ -196,7 +196,7 @@ function CesiumSdkViewshedMixin(viewer, options) {
                 </table> -->
       </div>`;
           const viewshedTilesLoading = `<div data-bind="hidden: !hasChosenPosition || !tilesLoading, style: {display: tilesLoading && hasChosenPosition ? 'block' : 'none'}" class="tilesLoadingContainer">
-          <img width="50" height="50" src="/${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/loading.svg" alt="tiles loading" />
+          <img width="50" height="50" src="${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/loading.svg" alt="tiles loading" />
           <p>מחשב...</p>
         </div>`;
 
@@ -233,8 +233,8 @@ function CesiumSdkViewshedMixin(viewer, options) {
               chosenPerspective: chosenPerspective,
               perspectivePresets: [
                   {
-                      icon: `/${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/solider.png`,
-                      pawn: `/${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/solider-pawn.png`,
+                      icon: `${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/solider.png`,
+                      pawn: `${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/solider-pawn.png`,
                       height: 1.7,
                       perspective: "solider",
                       onClick() {
@@ -242,8 +242,8 @@ function CesiumSdkViewshedMixin(viewer, options) {
                       }
                   },
                   {
-                      icon: `/${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/tank.png`,
-                      pawn: `/${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/tank-pawn.png`,
+                      icon: `${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/tank.png`,
+                      pawn: `${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/tank-pawn.png`,
                       height: 2.66,
                       perspective: "tank",
                       onClick() {
