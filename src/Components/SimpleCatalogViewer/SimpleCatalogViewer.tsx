@@ -97,7 +97,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                 params: Record<string, unknown>
             ): Promise<AxiosResponse> =>
                 requestHandlerWithToken(
-                    appConfig.csw3dUrl,
+                    url,
                     method,
                     params,
                     userToken

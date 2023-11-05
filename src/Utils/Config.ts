@@ -10,8 +10,6 @@ const DEFAULT_TERRAIN_PROVIDER_URL = (window as any)._env_.DEFAULT_TERRAIN_PROVI
 const APPS = JSON.parse((window as any)._env_.APPS);
 const TOKEN_INJECTION_TYPE = (window as any)._env_.ACCESS_TOKEN_INJECTION_TYPE;
 const TOKEN_ATTRIBUTE_NAME = (window as any)._env_.ACCESS_TOKEN_ATTRIBUTE_NAME;
-const MAP_SERVICE_RASTER_URL = (window as any)._env_.MAP_SERVICE_RASTER_URL;
-const CSW_RASTER_URL = (window as any)._env_.CSW_RASTER_URL;
 const CSW_3D_URL = (window as any)._env_.CSW_3D_URL;
 const IMAGE_TAG = (window as any)._env_.IMAGE_TAG;
 
@@ -61,8 +59,6 @@ class Config {
   public apps = APPS;
   public tokenInjectionType = TOKEN_INJECTION_TYPE;
   public tokenAttributeName = TOKEN_ATTRIBUTE_NAME;
-  public mapSericeRasterUrl = MAP_SERVICE_RASTER_URL;
-  public cswRasterUrl = CSW_RASTER_URL;
   public csw3dUrl = CSW_3D_URL;
   public imageTag = IMAGE_TAG;
 }

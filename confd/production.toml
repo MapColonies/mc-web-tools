@@ -8,8 +8,6 @@ keys = [
   "/configuration/base/maps",
   "/configuration/default/terrain/provider/url",
   "/configuration/apps",
-  "/configuration/map/service/raster/url",
-  "/configuration/csw/raster/url",
   "/configuration/csw/3d/url",
   "/configuration/access/token/attribute/name",
   "/configuration/access/token/injection/type",

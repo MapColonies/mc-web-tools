@@ -1,9 +1,8 @@
 import { AxiosResponse } from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Box, IRasterLayer } from '@map-colonies/react-components';
-import { IBaseMap } from '@map-colonies/react-components/dist/cesium-map/settings/settings';
+import { Box } from '@map-colonies/react-components';
 import { useQueryParams } from '../../Hooks/useQueryParams';
-import appConfig from '../../Utils/Config';
+import appConfig, { LinkType } from '../../Utils/Config';
 import { validateIDsQuery } from '../../Utils/ValidateQueryParams';
 import { requestHandlerWithToken } from '../../Utils/RequestHandler';
 import { getRecordsQueryByID, parseQueryResults } from '../../Utils/CswQueryBuilder';
@@ -18,7 +17,6 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 	let modelIds: string[] = [];
 	let idQueried = queryParams.get("model_ids");
 	const userToken = queryParams.get("token");
-	const withBaseMaps = queryParams.get("withBaseMaps");
 	const isDebugMode = queryParams.get("debug");
 
 	if (idQueried == null) {
@@ -34,18 +32,6 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 		}
 	}
 
-	// const positionQueried: string | null = queryParams.get("position");
-	// if (positionQueried != null) {
-	// 	if (!validatePositionQuery(positionQueried)) {
-	// 		console.error({ msg: `position param is not according to the specifications` });
-	// 	} else {
-	// 		const parsedPosition = positionQueried.split(',');
-	// 		clientPosition = {
-	// 			center: [+parsedPosition[0], +parsedPosition[1]],
-	// 			zoom: +parsedPosition[2]
-	// 		};
-	// 	}
-	// }
 	if (userToken === null) {
 		console.error(`Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=TOKEN"`);
 	}
@@ -61,7 +47,7 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 				method: string,
 				params: Record<string, unknown>
 			): Promise<AxiosResponse> =>
-				requestHandlerWithToken(appConfig.csw3dUrl, method, params, userToken);
+				requestHandlerWithToken(url, method, params, userToken);
 
 			cswRequestHandler(appConfig.csw3dUrl, 'POST', {
 				data: getRecordsQueryByID(modelIds, 'http://schema.mapcolonies.com/3d')
@@ -80,16 +66,13 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 
 	let links = models[0]?.["mc:links"] as any;
 	if (Array.isArray(links)) {
-			links = links.find((link) => link["@_scheme"] === "3D_LAYER");
+			links = links.find((link) => link["@_scheme"] === LinkType.THREE_D_LAYER || link["@_scheme"] === LinkType.THREE_D_TILES);
 	}
-
 	const url = links ? `${links?.["#text"]}?token=${userToken}` : null;
 
-	const debugModeParam = `&debug=${isDebugMode || false}`;
 	const modelUrlParam = `?modelUrl=${url || ''}`;
-
+	const debugModeParam = `&debug=${isDebugMode || false}`;
 	const appVersion = `&version=${appConfig.imageTag}`;
-
 
 	const iframeParams = `${modelUrlParam}${debugModeParam}`;
 
