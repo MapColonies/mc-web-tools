@@ -53,7 +53,7 @@ const enrichBaseMaps = (baseMaps: IBaseMaps): IBaseMaps => {
 class Config {
   public publicUrl = PUBLIC_URL || '.';
   public mapCenter = MAP_CENTER || '[34.817, 31.911]';
-  public mapZoom = MAP_ZOOM || '14';
+  public mapZoom = MAP_ZOOM || '7';
   public baseMaps = enrichBaseMaps(BASE_MAPS);
   public terrainProviderUrl = DEFAULT_TERRAIN_PROVIDER_URL;
   public apps = APPS;
