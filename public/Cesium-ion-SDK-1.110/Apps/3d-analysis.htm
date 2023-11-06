@@ -44,7 +44,7 @@
             const modelLoadingProgressBar = document.getElementById("progressBar");
             Cesium.knockout.applyBindings(viewModel, modelLoadingProgressBar);
 
-            let terrainProviderUrl = window._env_.DEFAULT_TERRAIN_PROVIDER;
+            const terrainProviderUrl = window._env_.DEFAULT_TERRAIN_PROVIDER_URL;
 
             // ----- Viewer Config -----
             const viewer = new Cesium.Viewer("cesiumContainer", {
