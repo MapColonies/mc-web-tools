@@ -32,13 +32,13 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 		}
 	}
 
-	if (userToken === null) {
-		console.error(`Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=TOKEN"`);
-	}
-
 	useEffect(() => {
+		if (userToken === null) {
+			console.error({ msg: `No token was provided` });
+		}
+
 		if (modelIds.length > 2) {
-			console.warn('You provided more than 2 models. This is not recommended');
+			console.warn({ msg: 'You provided more than 2 models. This is not recommended' });
 		}
 
 		if (userToken) {
@@ -46,8 +46,7 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 				url: string,
 				method: string,
 				params: Record<string, unknown>
-			): Promise<AxiosResponse> =>
-				requestHandlerWithToken(url, method, params, userToken);
+			): Promise<AxiosResponse> => requestHandlerWithToken(url, method, params, userToken);
 
 			cswRequestHandler(appConfig.csw3dUrl, 'POST', {
 				data: getRecordsQueryByID(modelIds, 'http://schema.mapcolonies.com/3d')
@@ -59,7 +58,7 @@ const ModelAnalyzer: React.FC = (): JSX.Element => {
 					}
 				})
 				.catch((e) => {
-					console.error(e);
+					console.error({ e });
 				});
 		}
 	}, []);
