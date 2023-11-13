@@ -7,7 +7,7 @@ function CesiumSdkViewshedMixin(viewer, options) {
       const DEFAULT_Y_HALF_ANGLE = 30;
       const DEFAULT_360_VIEW = true;
       const DEFAULT_PANEL_COLLAPSED = true;
-      const DEFAULT_CHOSEN_PERSPECTIVE = "solider";
+      const DEFAULT_CHOSEN_PERSPECTIVE = "soldier";
       const REAL_WORLD_VERTICAL_DEGREE_OFFSET = 90;
       const DEFUALT_CONE = 90 - REAL_WORLD_VERTICAL_DEGREE_OFFSET;
       const ENABLE_SENSOR_POINT_DRAGGING = true;
@@ -233,10 +233,10 @@ function CesiumSdkViewshedMixin(viewer, options) {
               chosenPerspective: chosenPerspective,
               perspectivePresets: [
                   {
-                      icon: `${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/solider.png`,
-                      pawn: `${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/solider-pawn.png`,
+                      icon: `${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/soldier.png`,
+                      pawn: `${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/soldier-pawn.png`,
                       height: 1.7,
-                      perspective: "solider",
+                      perspective: "soldier",
                       onClick() {
                         handleCustomPerspectiveClick.call(this, self.viewModel, setModelValue.bind(self));
                       }
