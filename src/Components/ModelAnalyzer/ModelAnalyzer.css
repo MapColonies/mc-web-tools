@@ -2,25 +2,7 @@
   overflow: hidden;
 }
 
-.SimpleViewer.loading {
-  position: relative;
-}
-
-.SimpleViewer.loading::after {
-  content: 'Loading...';
-  color: white;
-  text-align: center;
-  font-size: 5rem;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 9999;
-}
-
-.SimpleViewer .Errors{
+.SimpleViewer .Errors {
   position: absolute;
   top: 20px;
   left: 50%;
@@ -41,15 +23,14 @@
 
 #viewer-iframe {
   position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    z-index: 999999;
-  }
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}

@@ -29,7 +29,6 @@ interface IClientFlyToPosition {
 const SimpleCatalogViewer: React.FC = (): JSX.Element => {
     const [models, setModels] = useState<Record<string, unknown>[]>([]);
     const [footprints, setFootprints] = useState<Record<string, unknown>[]>([]);
-    // const [isLoading, setIsLoading] = useState(true);
     const queryParams = useQueryParams();
 
     let clientPosition: IClientFlyToPosition | undefined = undefined;
@@ -120,9 +119,6 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                 .catch((e) => {
                     console.error(e);
                 });
-            //   .finally(() => {
-            //       setIsLoading(false);
-            //   });
         }
     }, []);
 
@@ -133,7 +129,6 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
                 zoom={clientPosition?.zoom ?? appConfig.mapZoom}
                 sceneModes={[CesiumSceneMode.SCENE3D]}
                 baseMaps={appConfig.baseMaps}
-                // className={`simpleViewer ${isLoading ? "loading" : ""}`}
             >
                 {models.map((model) => {
                     let links = model["mc:links"] as any;
