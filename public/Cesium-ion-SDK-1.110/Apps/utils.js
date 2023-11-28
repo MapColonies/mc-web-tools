@@ -7,10 +7,77 @@ const addRasterLayer = async (viewer, options) => {
   viewer.imageryLayers.addImageryProvider(providerInstance);
 };
 
+/*
+  ***** Still not working, shader should be sensetive to sun or custom light source direction which should be updated every tick
+  ***** DEPENDS ON 3D TILE MATERIAL DEFINITION !!!!!
+  ***** Nice source to consider an algorithm for darkening(brightness/contrast) 
+  ***** https://flights.noelphilips.com/Source/Shaders/Builtin/Functions/phong.glsl
+*/
+// const customShaderWithParams = new Cesium.CustomShader({
+//     varyings: {
+//       v_normal: Cesium.VaryingType.VEC3,
+//     },
+//     vertexShaderText: `
+//     void vertexMain(VertexInput vsInput, inout czm_modelVertexOutput vsOutput) {
+//       // Transform vertex normal to eye coordinates
+//       v_normal = czm_normal * vsInput.attributes.normalMC;
+//     }
+//     `,
+//     fragmentShaderText: `
+//     void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
+//         // Normalize the custom light direction vector
+//         vec3 normalizedCustomLightDir = normalize(customLightDirection);
+  
+//         // Calculate diffuse factor using dot product of normal and custom light direction
+//         float diffuseFactor = max(dot(v_normal, normalizedCustomLightDir), 0.3);
+  
+//         // Darken/lighten the model by adjusting diffuse color
+//         material.diffuse *= vec3(diffuseFactor);
+//     }
+//     `,
+//     uniforms: {
+//       customLightDirection:  {
+//        type:'vec3' ,
+//        value: new Cesium.Cartesian3(),
+//       }
+//     },
+//     });
+
+/*
+  ***** THIS SHADER IS PREATY MUCH WORKING (depends on 3d tile material definition!!!! )
+  ***** BUT STILL SHOULD BE TUNED
+*/
+// const customShader = new Cesium.CustomShader({
+//   varyings: {
+//     v_normal: Cesium.VaryingType.VEC3,
+//   },
+//   vertexShaderText: `
+//   void vertexMain(VertexInput vsInput, inout czm_modelVertexOutput vsOutput) {
+//      // Transform vertex normal to eye coordinates
+//       v_normal = czm_normal * vsInput.attributes.normalMC;
+//   }
+//   `,
+//   fragmentShaderText: `
+//   void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
+//      // Normalize sun direction in eye coordinates
+//      vec3 sunDirectionEC = normalize(czm_sunDirectionEC);
+ 
+//      // Calculate diffuse factor using dot product of normal and sun direction
+//      float diffuseFactor = max(dot(v_normal, sunDirectionEC), 0.3);
+ 
+//      // Darken/lighten the model by adjusting diffuse color
+//      material.diffuse *= vec3(diffuseFactor);
+//   }
+//   `,
+//   });
+
 const add3DModel = async (viewer, url, props, isZoomTo = true, callback = null, tileIsLoadedCb = null) => {
   let isLoaded = false;
 
-  const tileset = await Cesium.Cesium3DTileset.fromUrl(url, { ...(props ? props : {}) });
+  const tileset = await Cesium.Cesium3DTileset.fromUrl(url, {
+    // customShader: customShaderWithParams,
+    ...(props ? props : {})
+  });
 
   if(typeof tileIsLoadedCb === 'function') {
     tileset.allTilesLoaded.addEventListener(function() {

@@ -13,6 +13,8 @@ public/Cesium-ion-SDK-1.110/*
 !public/Cesium-ion-SDK-1.110/Apps
 public/Cesium-ion-SDK-1.110/Build
 public/ua-parser
+public/CesiumSdkViewshedMixin/scripts/flatpickr
+public/CesiumSdkViewshedMixin/scripts/suncalc
 public/fonts/*
 !public/assets/scripts/
 !public/assets/pages/

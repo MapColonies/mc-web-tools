@@ -71,11 +71,11 @@
   box-shadow: 0 0 8px lime;          
 }
 
-.cesium-viewer-bottom, .cesium-viewer-animationContainer {
+.cesium-viewer-bottom {
   display: none;
 }
 
-#toggleAdvancedFields {
+#toggleLightingFields, #toggleAdvancedFields {
   user-select: none;
   text-decoration: underline;
   color: white;

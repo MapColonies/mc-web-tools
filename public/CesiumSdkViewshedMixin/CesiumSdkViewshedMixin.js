@@ -11,7 +11,10 @@ function CesiumSdkViewshedMixin(viewer, options) {
       const REAL_WORLD_VERTICAL_DEGREE_OFFSET = 90;
       const DEFUALT_CONE = 90 - REAL_WORLD_VERTICAL_DEGREE_OFFSET;
       const ENABLE_SENSOR_POINT_DRAGGING = true;
-      
+      const FLATPICKR_DATE_FROMAT = 'd-m-Y H:i';
+      const MAX_MOON_INTENSITY = 0.1; // moonlight illuminates the earth in the range of 0.05-0.1 lux
+      const MIN_MOON_INTENSITY = 0.05;
+
       let longitude = 0;
       let latitude = 0;
       let altitude = -1000;
@@ -34,11 +37,51 @@ function CesiumSdkViewshedMixin(viewer, options) {
       let isViewshedModeOn = false;
       let isPanelCollapsed = DEFAULT_PANEL_COLLAPSED;
       let showAdvancedFields = false;
+      let showLightingFields = false;
+      let enableLighting = false;
       let isAltitudeAttachedToTerrain = true;
       let chosenPerspective = DEFAULT_CHOSEN_PERSPECTIVE;
       
       let sensorPawn;
       
+      const scratchIcrfToFixed = new Cesium.Matrix3();
+      const scratchMoonPosition = new Cesium.Cartesian3();
+      const scratchMoonDirection = new Cesium.Cartesian3();
+      function getMoonDirection(result) {
+        result = Cesium.defined(result) ? result : new Cesium.Cartesian3();
+        const icrfToFixed = scratchIcrfToFixed;
+        const date = viewer.clock.currentTime;
+        if (
+          !Cesium.defined(
+            Cesium.Transforms.computeIcrfToFixedMatrix(date, icrfToFixed)
+          )
+        ) {
+          Cesium.Transforms.computeTemeToPseudoFixedMatrix(date, icrfToFixed);
+        }
+        const moonPosition = Cesium.Simon1994PlanetaryPositions.computeMoonPositionInEarthInertialFrame(
+          date,
+          scratchMoonPosition
+        );
+        Cesium.Matrix3.multiplyByVector(
+          icrfToFixed,
+          moonPosition,
+          moonPosition
+        );
+        const moonDirection = Cesium.Cartesian3.normalize(
+          moonPosition,
+          scratchMoonDirection
+        );
+        return Cesium.Cartesian3.negate(moonDirection, result);
+      }
+
+      const moonLight = new Cesium.DirectionalLight({
+        direction: getMoonDirection(), 
+        color: new Cesium.Color(0.9, 0.925, 1.0), //new Cesium.Color(1.0, 0, 0), 
+        intensity: MAX_MOON_INTENSITY,
+      });
+
+      const sunLight = new Cesium.SunLight();
+
       this.viewer = viewer;
       this.options = options;
       const self = this;
@@ -63,6 +106,9 @@ function CesiumSdkViewshedMixin(viewer, options) {
                   <div data-bind="click: toggleFOVVolume, css: { toggled: showLateralSurfaces }" class="cesium-button cesium-toolbar-button">
                     <img class="toolButton" width="30" height="30" title="הצג אזור לחישוב" src="${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/field-of-view.png" alt="toggle_show_fov_volume"/>
                   </div>
+                  <div data-bind="click: toggleLighting, css: { toggled: enableLighting }" class="cesium-button cesium-toolbar-button">
+                  <img class="toolButton" width="30" height="30" title="הצג אזור לחישוב" src="${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/flash-light.png" alt="toggle_show_fov_volume"/>
+                </div>
                 </div>
               </div>
               <p id="closePanel" data-bind="click: togglePanelCollapsed"><sup>⇱</sup><sub>⇲</sub></p>
@@ -115,6 +161,23 @@ function CesiumSdkViewshedMixin(viewer, options) {
                       </td>
                       <td>
                         <input type="number" min="-90" max="90" size="5" step="1" data-bind="value: cone, valueUpdate: 'input'" style="width: 80px">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p data-bind="click: toggleShowLightingFields" id="toggleLightingFields">
+                          מצב תאורה
+                          <span data-bind="if: !showLightingFields">+</span>
+                          <span data-bind="if: showLightingFields">-</span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr class="coordinatesRow" data-bind="if: showLightingFields">
+                      <td>
+                        תאריך וזמן
+                      </td>
+                      <td>
+                        <input id=lightingDate data-bind="datetimepicker:lightingDateTime" style="width: 110px;direction: ltr;">
                       </td>
                     </tr>
                     <tr>
@@ -226,6 +289,66 @@ function CesiumSdkViewshedMixin(viewer, options) {
             }
           }
 
+          let nextSunriseDate = new Date();
+          function lightChanger (scene, time)  {
+            // ***** EXAMPLE HOW TO UPDATE SHADER PARAM. 
+            // ***** customShaderWithParams IN THIS EXAMPLE EXPOSED AS GLOBAL VARIABLE
+            // const sunPosition = new Cesium.Cartesian3();
+            // Cesium.Simon1994PlanetaryPositions.computeSunPositionInEarthInertialFrame(time, sunPosition);
+            // customShaderWithParams.setUniform('customLightDirection', sunPosition);
+
+            function setNightStyleTo3DTilesets(isNight){
+              for(let i=0; i < scene.primitives.length; i++){
+                if(scene.primitives.get(i).constructor.name === 'Cesium3DTileset'){
+                  if(isNight){
+                    scene.primitives.get(i).style = new Cesium.Cesium3DTileStyle({
+                      color: {
+                          conditions: [
+                              ['true', `color('#4f5a73')`]
+                          ]
+                      }
+                    });
+                  } else {
+                    scene.primitives.get(i).style = null;
+                  }
+                }
+              }
+            }
+
+            const currentDate = Cesium.JulianDate.toDate(time);
+            const times = SunCalc.getTimes(
+              currentDate,
+              toDegrees(scene.camera.positionCartographic.latitude),
+              toDegrees(scene.camera.positionCartographic.longitude)
+            );
+
+            if(scene.light != moonLight && (currentDate > times.sunset || currentDate < times.sunrise) ){
+              scene.light = moonLight;
+
+              const followingDate = new Date(times.sunset.getTime() + 86400000);
+              const nextTimes = SunCalc.getTimes(
+                followingDate,
+                toDegrees(scene.camera.positionCartographic.latitude),
+                toDegrees(scene.camera.positionCartographic.longitude)
+              );
+              nextSunriseDate = nextTimes.sunrise;
+            }
+
+            if (scene.light === moonLight) {
+              scene.light.direction = getMoonDirection(scene.light.direction);
+              const moonFraction = SunCalc.getMoonIllumination(currentDate).fraction;
+              scene.light.intensity = Math.max(MAX_MOON_INTENSITY * moonFraction, MIN_MOON_INTENSITY);
+              setNightStyleTo3DTilesets(true);
+            }
+
+            if(scene.light != sunLight){
+              if((currentDate > times.sunrise && currentDate < times.sunset) || currentDate > nextSunriseDate){
+                scene.light = sunLight;
+                setNightStyleTo3DTilesets(false);
+              }
+            }
+          }
+
           self.viewModel = {
               disablePick: self.options.disablePick || false,
               tilesLoading: true,
@@ -303,10 +426,42 @@ function CesiumSdkViewshedMixin(viewer, options) {
               toggleShowAdvancedFields: function () {
                   this.showAdvancedFields = !this.showAdvancedFields;
               },
+              toggleLighting: function() {
+                this.toggleShowLightingFields();
+                this.enableLighting = !this.enableLighting;
+                self.viewer.shadows = this.enableLighting;
+
+                const scene = self.viewer.scene;
+                if(this.enableLighting){
+                  scene.preRender.addEventListener(lightChanger);
+                } else {
+                  scene.preRender.removeEventListener(lightChanger);
+                }
+
+                Cesium.knockout.getObservable(self.viewer.clockViewModel,'shouldAnimate').subscribe(function(isAnimating) {
+                  if (isAnimating) {
+                    console.log('Cesium clock is animating.');
+                  } else {
+                    const currentDate = Cesium.JulianDate.toDate(self.viewer.clockViewModel.currentTime);
+                    self.viewModel.lightingDateTime = currentDate;
+                    document.getElementById('lightingDate').value = flatpickr.formatDate(currentDate, FLATPICKR_DATE_FROMAT);
+                    console.log('Cesium clock is paused.');
+                  }
+                });
+              },
+              toggleShowLightingFields: function () {
+                this.showLightingFields = !this.showLightingFields;
+
+                self.viewer.animation.container.style.display = this.showLightingFields ? 'block' : 'none';
+                self.viewer.timeline.container.style.display = this.showLightingFields ? 'block' : 'none';
+              },
               isAltitudeAttachedToTerrain: isAltitudeAttachedToTerrain,
               modelHeightAtPos: 0,
               is360View: is360View,
               showAdvancedFields: showAdvancedFields,
+              showLightingFields: showLightingFields,
+              enableLighting: enableLighting,
+              lightingDateTime: Cesium.knockout.observable(new Date()),
               sensor: undefined,
               longitude: longitude,
               latitude: latitude,
@@ -325,6 +480,41 @@ function CesiumSdkViewshedMixin(viewer, options) {
               selectedPortion: portion
           };
 
+          Cesium.knockout.bindingHandlers.datetimepicker = {
+            init: function (element, valueAccessor, allBindingsAccessor) {
+              const ko = Cesium.knockout;
+              const options = { 
+                dateFormat: FLATPICKR_DATE_FROMAT, 
+                time_24hr: true,
+                enableTime: true ,
+                ...allBindingsAccessor().datetimepickerOptions
+              };
+              const $el = element,
+                    picker = new flatpickr(element, options),
+                    observable = Cesium.knockout.observable(valueAccessor());
+          
+              //handle the field changing by registering datepicker's changeDate event
+              ko.utils.registerEventHandler(element, "change", function () {
+                observable(picker.parseDate($el.value));
+              });
+              
+              //handle disposal (if KO removes by the template binding)
+              ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                $el.flatpickr("destroy");
+              });
+              
+              observable.subscribe(function(newVal) {
+                self.viewer.clock.currentTime = new Cesium.JulianDate.fromDate(newVal);
+                $el.value = picker.formatDate(newVal, options.dateFormat);
+              });
+          
+              picker.setDate(ko.unwrap(observable));
+            },
+            update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+              element._flatpickr.setDate(viewModel.lightingDateTime);
+            }
+          };
+          
 
           Cesium.knockout.track(self.viewModel);
 

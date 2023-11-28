@@ -13,9 +13,12 @@
   document.write(`<script src="../../CesiumSdkViewshedMixin/CesiumSdkViewshedMixin.js?version=${app_version}"><\/script>`);
   document.write(`<script src="../../CesiumBaseMapsMixin/CesiumBaseMapsMixin.js?version=${app_version}"><\/script>`);
   document.write(`<script src="./utils.js?version=${app_version}"><\/script>`);
+  document.write(`<script src="../../CesiumSdkViewshedMixin/scripts/flatpickr/flatpickr.js?version=${app_version}"><\/script>`);
+  document.write(`<script src="../../CesiumSdkViewshedMixin/scripts/suncalc/suncalc.js?version=${app_version}"><\/script>`);
 
   document.write(`<link rel="stylesheet" href="../Build/CesiumUnminified/Widgets/widgets.css?version=${app_version}">`);
   document.write(`<link rel="stylesheet" href="../../CesiumSdkViewshedMixin/CesiumSdkViewshedMixin.css?version=${app_version}">`);
   document.write(`<link rel="stylesheet" href="../../CesiumBaseMapsMixin/CesiumBaseMapsMixin.css?version=${app_version}">`);
   document.write(`<link rel="stylesheet" href="./3d-analysis.css?version=${app_version}">`);
-})()
+  document.write(`<link rel="stylesheet" href="../../CesiumSdkViewshedMixin/scripts/flatpickr/themes/dark.css?version=${app_version}">`);
+  })()

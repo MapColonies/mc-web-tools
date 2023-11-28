@@ -54,11 +54,23 @@
                 homeButton: true,
                 infoBox: false,
                 sceneModePicker: false,
-                timeline: false,
+                timeline: true,
                 navigationInstructionsInitiallyVisible: false,
                 scene3DOnly: true,
                 baseLayerPicker: false,
             });
+
+            setTimeout(()=>{
+              viewer.animation.container.style.display = 'none';
+              viewer.timeline.container.style.display = 'none';
+
+              const zeroPad = (n, digits=2) => n.toString().padStart(digits, '0');
+              viewer.animation.viewModel.timeFormatter = function(date, viewModel) {
+                date = Cesium.JulianDate.toDate(date);
+                return `${zeroPad(date.getHours())}:${zeroPad(date.getMinutes())}`;
+              };
+            },200);
+
 
             viewer.extend(Cesium.viewerMeasureMixin, {
                 units: new Cesium.MeasureUnits({
@@ -137,7 +149,8 @@
 
             try {
                 if (terrainProviderUrl) {
-                    addTerrainProvider(viewer, terrainProviderUrl, {});
+                    // requestVertexNormals=true enables terrain lightening
+                    addTerrainProvider(viewer, terrainProviderUrl, {requestVertexNormals: true});
                 }
                 if (queryModelUrl) {
                     const modelAddedCallback = (tileset) => {
