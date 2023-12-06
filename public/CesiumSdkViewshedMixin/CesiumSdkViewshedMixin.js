@@ -14,6 +14,11 @@ function CesiumSdkViewshedMixin(viewer, options) {
       const FLATPICKR_DATE_FROMAT = 'd-m-Y H:i';
       const MAX_MOON_INTENSITY = 0.1; // moonlight illuminates the earth in the range of 0.05-0.1 lux
       const MIN_MOON_INTENSITY = 0.05;
+      const NO_DATA = -9999;
+      const CAMERA_MOVEMENT_SMOOTHNESS = 600; //it would make one full circle in roughly 600 frames
+      const CAMERA_MOVEMENT_RANGE_FACTOR = 3; // when in drone/rotating mode radius multiplier factor
+      const CAMERA_ROTATION_DIR = -1; //counter-clockwise; +1 would be clockwise
+      const CAMERA_PITCH = -Math.PI/8; //looking down at 45/2 degrees (PI/8)
 
       let longitude = 0;
       let latitude = 0;
@@ -39,6 +44,7 @@ function CesiumSdkViewshedMixin(viewer, options) {
       let showAdvancedFields = false;
       let showLightingFields = false;
       let enableLighting = false;
+      let enableCameraFlight = false;
       let isAltitudeAttachedToTerrain = true;
       let chosenPerspective = DEFAULT_CHOSEN_PERSPECTIVE;
       
@@ -107,8 +113,11 @@ function CesiumSdkViewshedMixin(viewer, options) {
                     <img class="toolButton" width="30" height="30" title="הצג אזור לחישוב" src="${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/field-of-view.png" alt="toggle_show_fov_volume"/>
                   </div>
                   <div data-bind="click: toggleLighting, css: { toggled: enableLighting }" class="cesium-button cesium-toolbar-button">
-                  <img class="toolButton" width="30" height="30" title="הצג אזור לחישוב" src="${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/flash-light.png" alt="toggle_show_fov_volume"/>
-                </div>
+                    <img class="toolButton" width="30" height="30" title="הצג תאורה" src="${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/flash-light.png" alt="toggle_show_fov_volume"/>
+                  </div>
+                  <div data-bind="click: toggleCameraFlight, css: { toggled: enableCameraFlight }" class="cesium-button cesium-toolbar-button">
+                    <img class="toolButton" width="30" height="30" title="טיסה סיבובית" src="${window.location.origin}${self.options.publicUrl}/CesiumSdkViewshedMixin/assets/drone-camera.png" alt="toggle_show_fov_volume"/>
+                  </div>
                 </div>
               </div>
               <p id="closePanel" data-bind="click: togglePanelCollapsed"><sup>⇱</sup><sub>⇲</sub></p>
@@ -349,6 +358,15 @@ function CesiumSdkViewshedMixin(viewer, options) {
             }
           }
 
+          let heading = 0; //or any starting angle in radians
+          function cameraMover () {
+            if(self.viewModel.sensorMSLHeight > NO_DATA){ //self.viewModel.modelHeightAtPos might be used but not updated accurately
+              heading += CAMERA_ROTATION_DIR * Math.PI / CAMERA_MOVEMENT_SMOOTHNESS;
+              let centre = new Cesium.Cartesian3.fromDegrees(self.viewModel.longitude, self.viewModel.latitude, self.viewModel.sensorMSLHeight);
+              self.viewer.camera.lookAt(centre, new Cesium.HeadingPitchRange(heading, CAMERA_PITCH, self.viewModel.radius * CAMERA_MOVEMENT_RANGE_FACTOR));
+            }
+          }
+
           self.viewModel = {
               disablePick: self.options.disablePick || false,
               tilesLoading: true,
@@ -455,12 +473,26 @@ function CesiumSdkViewshedMixin(viewer, options) {
                 self.viewer.animation.container.style.display = this.showLightingFields ? 'block' : 'none';
                 self.viewer.timeline.container.style.display = this.showLightingFields ? 'block' : 'none';
               },
+              toggleCameraFlight: function () {
+                this.enableCameraFlight = !this.enableCameraFlight;
+
+                
+                if(this.enableCameraFlight){
+                  self.viewer.clock.onTick.addEventListener(cameraMover);
+                } else {
+                  self.viewer.clock.onTick.removeEventListener(cameraMover);
+                  self.viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+                }
+
+              },
               isAltitudeAttachedToTerrain: isAltitudeAttachedToTerrain,
-              modelHeightAtPos: 0,
+              modelHeightAtPos: NO_DATA,
               is360View: is360View,
               showAdvancedFields: showAdvancedFields,
               showLightingFields: showLightingFields,
               enableLighting: enableLighting,
+              enableCameraFlight: enableCameraFlight,
+              sensorMSLHeight: NO_DATA,
               lightingDateTime: Cesium.knockout.observable(new Date()),
               sensor: undefined,
               longitude: longitude,
@@ -859,6 +891,17 @@ function CesiumSdkViewshedMixin(viewer, options) {
       function addSensorPawn(cartesian) {
         const SHOW_PAWN_ICON = false;
       
+        const cartographic = self.viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+        Cesium.sampleTerrainMostDetailed(self.viewer.terrainProvider,[cartographic])
+            .then(
+              (updatedWithHeight)=>{
+                self.viewModel.sensorMSLHeight = updatedWithHeight[0].height + self.viewModel.altitude;
+              },
+              () => {
+                self.viewModel.sensorMSLHeight = self.viewModel.altitude;
+              }
+            );
+
         self.viewer.entities.remove(sensorPawn);
         if (Cesium.defined(cartesian)) {
           if(self.viewModel.chosenPerspective && SHOW_PAWN_ICON) {
