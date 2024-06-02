@@ -1,0 +1,27 @@
+{{- if .Values.tools.enabled -}}
+{{- $environment := include "app.environment" . -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "app.fullname" . }}-tools-configmap
+  labels:
+    app: {{ template "app.name" . }}
+    component: tools-configmap
+    environment: {{ $environment }}
+    release: {{ .Release.Name }}
+data:
+  {{- if .Values.sso.enabled }}
+  default.conf: {{ tpl (.Files.Get "config/default.conf") . | quote }}
+  {{- end }}
+  CONFIGURATION_ACCESS_TOKEN_ATTRIBUTE_NAME: {{ quote .Values.shared.accessToken.attributeName }}
+  CONFIGURATION_ACCESS_TOKEN_INJECTION_TYPE: {{ quote .Values.shared.accessToken.injectionType }}
+  CONFIGURATION_IMAGE_TAG: {{ quote .Values.tools.imageTag }}
+  CONFIGURATION_PUBLIC_URL: {{ quote .Values.tools.env.publicUrl }}
+  CONFIGURATION_MAP_CENTER: {{ quote .Values.tools.env.map.center }}
+  CONFIGURATION_MAP_ZOOM: {{ quote .Values.tools.env.map.zoom }}
+  CONFIGURATION_BASE_MAPS: {{ quote .Values.tools.env.baseMaps }}
+  CONFIGURATION_DEFAULT_TERRAIN_PROVIDER_URL: {{ quote .Values.tools.env.defaultTerrainProviderUrl }}
+  CONFIGURATION_APPS: {{ quote .Values.tools.env.apps }}
+  CONFIGURATION_CSW_3D_URL: {{ quote .Values.tools.env.csw3DUrl }}
+  CONFIGURATION_SHOULD_SHOW_PRECISION_DISCLAIMER: {{ quote .Values.tools.env.shouldShowPrecisionDisclaimer }}
+{{- end }}
