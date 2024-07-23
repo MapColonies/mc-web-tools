@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build --rm --no-cache -t mc-web-tools:latest -f Dockerfile .
+docker image build --rm --no-cache -t mc-web-tools:latest -f Dockerfile .
