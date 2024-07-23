@@ -15,6 +15,8 @@ interface IApp {
   url: string;
   description?: string;
   isInternal?: boolean;
+  isDownloadable?: boolean;
+  fileName?: string;
 }
 
 const Tools: React.FC = (): JSX.Element => {
@@ -36,8 +38,24 @@ const Tools: React.FC = (): JSX.Element => {
     document.documentElement.style.setProperty('--toolsRowNum', rows.toString());
   }, []);
 
-  const openInNewTab = (url: string) => {
+  const handleClick = (url: string, isDownloadable: boolean, fileName: string) => {
+    if (isDownloadable) {
+      downloadUrl(url, fileName);
+    } else {
+      openUrl(url);
+    }
+  };
+
+  const openUrl = (url: string) => {
     window.open(url, '_blank', 'noopener noreferrer');
+  };
+
+  const downloadUrl = (url: string, fileName: string) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    link.click();
+    link.remove();
   };
 
   const format = (text: string): JSX.Element => {
@@ -70,7 +88,7 @@ const Tools: React.FC = (): JSX.Element => {
 
   const externalTool = (app: IApp, index: number): JSX.Element => {
     return (
-      <Box onClick={() => openInNewTab(app.url)} className="Item">
+      <Box onClick={() => handleClick(app.url, app.isDownloadable === true, app.fileName ?? '')} className="Item">
         {appDetails(app)}
       </Box>
     );
