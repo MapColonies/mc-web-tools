@@ -12,6 +12,24 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 * Inspector tool
 
+### 🐼 Simple Catalog Viewer app
+
+* Cesium map
+
+* Terrain provider
+
+* 3D model
+
+### 🐼 3D Analysis app
+
+* Cesium map
+
+* Terrain provider
+
+* 3D model
+
+* 3D analysis tools
+
 ### 🐼 Reference to Nominatim app
 
 * OpenStreetMap
@@ -26,6 +44,14 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 * Tools like time+distance matrix computation, isochrones, elevation sampling, map matching and tour optimization (Travelling Salesman)
 
+### 🐼 Reference to Cesium-Sandcastle app
+
+* Cesium map
+
+* A live-coding area
+
+* CesiumJS examples
+
 ### 🐼 Reference to Developer Portal app
 
 * MapColonies Documentation
@@ -35,14 +61,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 * Release Notes
 
 * OGC Protocols
-
-### 🐼 Reference to Cesium-Sandcastle app
-
-* Cesium map
-
-* A live-coding area
-
-* CesiumJS examples
 
 ## Install
 ```
