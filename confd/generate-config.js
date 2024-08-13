@@ -1,7 +1,7 @@
 const fs = require('fs');
 const url = require('url');
 const path = require('path');
-const exec = require('child_process').execFile;
+const exec = require('child_process').exec;
 
 let confdUrl =
   'https://github.com/kelseyhightower/confd/releases/download/v0.15.0/confd-0.15.0-windows-amd64.exe';
@@ -70,33 +70,19 @@ const downloadIfNotExists = (uri, filename) => {
   console.log(`Checking if ${filename} exists`);
   return new Promise(resolve => {
     if (fs.existsSync(filename)) {
-      console.log(`File ${filename} exists, proceeding to the next stage`);
+      console.log(`${filename} exists, proceeding to the next stage`);
       resolve();
       return;
     }
-    console.log(`File ${filename} does not exist`);
+    console.log(`${filename} does not exist`);
     resolve(download(uri, filename));
   });
 };
 
 const copyFile = (src, dest, mutationFunc) => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(src, 'utf8', function(err, data) {
-      if (err) {
-        reject(err);
-        return;
-      }
-      const result = mutationFunc ? mutationFunc(data) : data;
-
-      fs.writeFile(dest, result, 'utf8', function(err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-  });
+  const data = fs.readFileSync(src, 'utf8');
+  const result = mutationFunc ? mutationFunc(data) : data;
+  fs.writeFileSync(dest, result, {encoding: 'utf8'});
 };
 
 const createDirIfNotExists = dir => {
@@ -105,7 +91,7 @@ const createDirIfNotExists = dir => {
   }
 };
 
-const createDevConfdConfigFile = async (env, isInDocker) => {
+const createDevConfdConfigFile = (env, isInDocker) => {
   createDirIfNotExists(confdDevBasePath);
   createDirIfNotExists(path.join(confdDevBasePath, 'conf.d'));
   createDirIfNotExists(path.join(confdDevBasePath, 'templates'));
@@ -113,35 +99,32 @@ const createDevConfdConfigFile = async (env, isInDocker) => {
   if (!env) {
     env = 'default';
   }
-  console.log('Creating a development toml and tmpl files');
-  const tmplCopy = copyFile(confdTmplPath, devTmplPath);
-  const tomlCopy = copyFile(confdConfigPath, devConfigPath, data => {
+  console.log('Get toml and tmpl files');
+  copyFile(confdTmplPath, devTmplPath);
+  copyFile(confdConfigPath, devConfigPath, data => {
     const target = 'dest = "' + path.join(confdBasePath, '..', 'html') + '/'; 
     return !isInDocker ? data : data.replace('dest = "public/', target);
   });
-  const indexTmplCopy = copyFile(indexTmplPath, devIndexTmplPath);
-  const indexTomlCopy = copyFile(indexConfigPath, devIndexConfigPath, data => {
+  copyFile(indexTmplPath, devIndexTmplPath);
+  copyFile(indexConfigPath, devIndexConfigPath, data => {
     const target = 'dest = "' + path.join(confdBasePath, '..', 'html') + '/'; 
     return !isInDocker ? data : data.replace('dest = "public/', target);
   });
-
-  return Promise.all([tmplCopy, tomlCopy, indexTmplCopy, indexTomlCopy]);
 };
 
 const replacePlaceHolders = () => {
   return copyFile(indexTmplPath, indexTmplPath, (content) => {
     console.log('**** Replace PLACEHOLDERS by CONFD syntax ****');
     return content
-      .replace(/{PUBLIC_URL_PLACEHOLDER}/g, '{{ getv "/configuration/public/url" "." }}')
-      .replace(/{APP_VERSION_PLACEHOLDER}/g, '{{ getv "/configuration/image/tag" "{APP_VERSION_PLACEHOLDER}" }}');
+          .replace(/{PUBLIC_URL_PLACEHOLDER}/g, '{{ getv "/configuration/public/url" "." }}')
+          .replace(/{APP_VERSION_PLACEHOLDER}/g, '{{ getv "/configuration/image/tag" "vUnknown" }}');
   });
 };
 
 const runConfd = () => {
   console.log('Running confd');
   exec(
-    `${confdPath}`,
-    ['-backend', 'env', '-onetime', '-confdir', confdDevBasePath],
+    `${confdPath} -backend env -onetime -confdir ${confdDevBasePath}`,
     (error, stdout, stderr) => {
       console.log(stdout);
       console.error(stderr);
@@ -151,6 +134,10 @@ const runConfd = () => {
     }
   );
 };
+
+// const createTargetDir = () => {
+//   createDirIfNotExists('config');
+// };
 
 const help = () => {
   console.log('usage: "node <path to this script> [options]\n');
@@ -174,10 +161,10 @@ const main = () => {
   const env = envIdx !== -1 ? process.argv[envIdx + 1] : null;
   downloadIfNotExists(confdUrl, confdPath)
     .then(() => {
-      replacePlaceHolders().then(async () => {
-        await createDevConfdConfigFile(env, isInDocker);
-      });
+      replacePlaceHolders();
+      createDevConfdConfigFile(env, isInDocker);
     })
+    // .then(createTargetDir())
     .then(() => runConfd())
     .catch(err => {
       console.error('Failed to generate the configuration');
