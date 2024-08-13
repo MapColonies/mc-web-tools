@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "app.fullname" . }}-tools-configmap
+  name: {{ template "app.fullname" . }}-configmap
   labels:
     app: {{ template "app.name" . }}
     component: tools-configmap

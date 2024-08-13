@@ -6,7 +6,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "app.fullname" . }}-tools
+  name: {{ template "app.fullname" . }}
   labels:
     app: {{ template "app.name" . }}
     component: tools-deployment
@@ -35,7 +35,7 @@ spec:
         - name: {{ $cloudProviderImagePullSecretName | quote }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}-tools
+        - name: {{ .Chart.Name }}
           image: {{ $cloudProviderDockerRegistryUrl }}/{{ .Values.tools.image }}:{{ .Values.tools.imageTag }}
           imagePullPolicy: {{ $cloudProviderImagePullPolicy }}
           securityContext:
@@ -68,7 +68,7 @@ spec:
           {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ template "app.fullname" . }}-tools-configmap
+                name: {{ template "app.fullname" . }}-configmap
           {{- if .Values.sso.enabled }}
           volumeMounts:
             - name: nginx-config
@@ -79,7 +79,7 @@ spec:
         volume:
           - name: nginx-config
             configMap:
-              name: {{ template "app.fullname" . }}-tools-configmap
+              name: {{ template "app.fullname" . }}-configmap
               items:
                 - key: default.conf
                   path: default.conf
