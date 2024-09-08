@@ -1,21 +1,4 @@
 global:
-  cloudProvider: {}
-  environment: development
-environment: development
-runAsUser: 1001050000
-cloudProvider:
-  dockerRegistryUrl: acrarolibotnonprod.azurecr.io
-  imagePullSecretName: acr-registry
-  imagePullPolicy: Always
-  flavor: openshift
-annotations:
-  collectord.io/index: ''
-  collectord.io/logs-output: splunk
-  collectord.io/procstats-output: devnull
-  collectord.io/netstats-output: devnull
-  collectord.io/nettable-output: devnull
-  collectord.io/stats-output: devnull
-global:
   configManagment:
     enabled: false
   imageRegistry: acrarolibotnonprod.azurecr.io
