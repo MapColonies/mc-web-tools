@@ -9,8 +9,8 @@
   RESPONSE_COMPRESSION_ENABLED: {{ .Values.env.responseCompressionEnabled | quote }}
 {{- end }}
   default.conf: {{ tpl (.Files.Get "config/default.conf") . | quote }}
-  CONFIGURATION_ACCESS_TOKEN_ATTRIBUTE_NAME: {{ quote .Values.shared.accessToken.attributeName }}
-  CONFIGURATION_ACCESS_TOKEN_INJECTION_TYPE: {{ quote .Values.shared.accessToken.injectionType }}
+  CONFIGURATION_ACCESS_TOKEN_ATTRIBUTE_NAME: {{ quote .Values.global.shared.accessToken.attributeName }}
+  CONFIGURATION_ACCESS_TOKEN_INJECTION_TYPE: {{ quote .Values.global.shared.accessToken.injectionType }}
   CONFIGURATION_IMAGE_TAG: {{ quote .Values.configValues.image.tag }}
   CONFIGURATION_PUBLIC_URL: {{ quote .Values.env.publicUrl }}
   CONFIGURATION_MAP_CENTER: {{ quote .Values.env.map.center }}
