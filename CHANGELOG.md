@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/MapColonies/mc-web-tools/compare/v1.3.2...v1.4.0) (2024-09-19)
+
+
+### Features
+
+* use helm common ([2226a23](https://github.com/MapColonies/mc-web-tools/commit/2226a235d3452fe297b046d4001a1158c9682e05))
+
+
+### Bug Fixes
+
+* for index.html ([47fe847](https://github.com/MapColonies/mc-web-tools/commit/47fe84788ee04b3b46a8fab3944ec090e69d81b8))
+* index html should not be cashed by browser ([88248bc](https://github.com/MapColonies/mc-web-tools/commit/88248bcc166a8bb260c56925b8c6cf18abbfbdc1))
+* sso volumes ([094ac71](https://github.com/MapColonies/mc-web-tools/commit/094ac715d0bbfc77736e2ff5ad2f4a0a94426aab))
+
 ### [1.3.2](https://github.com/MapColonies/mc-web-tools/compare/v1.3.1...v1.3.2) (2023-10-17)
 
 
