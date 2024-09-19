@@ -6,9 +6,10 @@ global:
     - my-registry
   deploymentFlavor: openshift
   tlsCertificates:
-    certificate:
-    key:
-    caCertificate:
+    - hostname: catalog-dem-dev.mapcolonies.net
+      certificate:
+      key:
+      caCertificate:
   tracing:
     enabled: false
     url: http://localhost:55681/v1/traces
@@ -18,18 +19,20 @@ global:
   environment: development
   releaseVersion: DUMMY_releaseVersion
   currentSubChart: DUMMY_currentSubChart
+  shared:
+    accessToken:
+      attributeName: token
+      injectionType: queryParam
+      tokenValue: TOKEN
+    sso:
+      enabled: false
+      redirectUrl:
+        ui:
+        tools:
 
-shared:
-  servedEntityTypes: RECORD_ALL,RECORD_RASTER,RECORD_3D,RECORD_DEM
-  accessToken:
-    attributeName: token
-    injectionType: queryParam
-    tokenValue: TOKEN
-
-sso:
-  enabled: false
-  redirectUrl:
-
+nameOverride:
+fullnameOverride:
+# --------------- common --------------
 commonLabels:
 commonAnnotations:
 # ----------- initContainers ----------
@@ -58,13 +61,13 @@ configValues:
     enabled: false
   tracing:
     enabled: false
-  topologySpreadConstraints:
-    - maxSkew: 1
-      topologyKey: zone
-      whenUnsatisfiable: DoNotSchedule
-      labelSelector:
-        matchLabels:
-          foo: bar
+  # topologySpreadConstraints:
+  #   - maxSkew: 1
+  #     topologyKey: zone
+  #     whenUnsatisfiable: DoNotSchedule
+  #     labelSelector:
+  #       matchLabels:
+  #         app.kubernetes.io/name: '{{ include "common.names.name" . }}'
   # ----------- containers ------------
   image:
     repository: mc-web-tools
@@ -109,7 +112,7 @@ configValues:
       path: /env-config.js
       port: http
   startupProbe:
-    enabled : false
+    enabled: false
   extraVolumeMounts:
     - name: nginx-config
       mountPath: /etc/nginx/conf.d/default.conf
