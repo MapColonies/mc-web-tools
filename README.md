@@ -1,6 +1,6 @@
 # MC Web Tools
 
-React app created with typescript and displays a selection of various web tools
+React app created with typescript and displays a selection of web tools
 
 ### Included web tools:
 
@@ -113,5 +113,24 @@ node ./confd/generate-config.js --environment production --indocker
 ```
 
 ## Deployment
+
+> [!IMPORTANT] 
+> We depend on `Red-Hat Yaml Extention` for validating the values files against the relevant schemas from helm-common.
+> That means, you should install the extention from vscode in order to be able to edit values files according to our schemas.
+
+To update helm dependencies
+```bash
+yarn helm-update
+```
+
+In order to create/renew values schemas 
+```bash
+yarn helm-assets
+```
+
+To deploy: helm values **MUST** be combined from global.yaml and values.yaml (use npm script!)
+```bash
+yarn helm-install
+```
 
 See [helm values](https://github.com/MapColonies/helm-common/blob/c352a2453117895ec0f9df0267a66d6f5b9c2da2/README.md)
