@@ -58,13 +58,11 @@ class Config {
   public baseMaps = enrichBaseMaps(BASE_MAPS);
   public terrainProviderUrl = DEFAULT_TERRAIN_PROVIDER_URL;
   public apps = APPS;
-  public simpleCatalogViewerTool = {
-    tokenInjectionType: TOKEN_INJECTION_TYPE,
-    tokenAttributeName: TOKEN_ATTRIBUTE_NAME,
-    mapSericeRasterUrl: MAP_SERVICE_RASTER_URL,
-    cswRasterUrl: CSW_RASTER_URL,
-    csw3dUrl: CSW_3D_URL,
-  }
+  public tokenInjectionType = TOKEN_INJECTION_TYPE;
+  public tokenAttributeName = TOKEN_ATTRIBUTE_NAME;
+  public mapSericeRasterUrl = MAP_SERVICE_RASTER_URL;
+  public cswRasterUrl = CSW_RASTER_URL;
+  public csw3dUrl = CSW_3D_URL;
 }
 
 const appConfig = new Config(); // Singleton
