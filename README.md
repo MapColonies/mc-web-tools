@@ -2,6 +2,8 @@
 
 React app created with typescript and displays a selection of web tools
 
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app)
+
 ### Included web tools:
 
 ### 🐼 Terrain Verification app
@@ -44,9 +46,6 @@ React app created with typescript and displays a selection of web tools
 
 * CesiumJS examples
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app)
-
-
 ## Installation
 
 Install deps with yarn
@@ -64,7 +63,13 @@ yarn confd
 To generate:  
 public/env-config.js  <- For env variables  
 public/index.html  <- For PUBLIC_URL, to support non-root URL  
-  
+
+To use app env variables inside a docker, run the following command
+
+```bash
+node ./confd/generate-config.js --environment production --indocker
+```
+
 Start app
 
 ```bash
@@ -90,6 +95,7 @@ yarn test
 ```
 
 It will run in an interactive mode  
+
 See [running tests](https://facebook.github.io/create-react-app/docs/running-tests)
 
 ## Preparing for deployment
@@ -103,14 +109,6 @@ yarn build
 It bundles react app with production mode and optimizes performance
 
 See [deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-## Init configuration inside a docker
-
-To use app env variables inside a docker, run the following command
-
-```bash
-node ./confd/generate-config.js --environment production --indocker
-```
 
 ## Deployment
 
