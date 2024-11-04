@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v2
 description: Helm chart to deploy Catalog App
 name: mc-web-tools
 version: 1.11.0
