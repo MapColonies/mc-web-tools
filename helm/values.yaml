@@ -115,8 +115,10 @@ route:
   timeout:
     enabled: false
     duration: 60s
-  hostname:
-  path: /tools
+  routesMapping:
+    - hostname:
+      path: /tools
+      suffix:
   targetPort: http
   tls: 
     enabled: true
