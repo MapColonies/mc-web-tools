@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { get } from 'lodash';
-import { Box, CesiumCesiumTerrainProvider, CesiumEllipsoidTerrainProvider, useCesiumMap } from '@map-colonies/react-components';
+import {
+  CesiumCesiumTerrainProvider,
+  CesiumEllipsoidTerrainProvider,
+  useCesiumMap
+} from '@map-colonies/react-components';
 import appConfig from '../../Utils/Config';
 
 import './Terrain.css';
@@ -8,7 +12,6 @@ import './Terrain.css';
 const Terrain: React.FC = () => {
 
   const mapViewer = useCesiumMap();
-  const [ missingTiles, setMissingTiles ] = useState<string[]>([]);
 
   useEffect(() => {
       const isTerrainTileError = (e: Record<string, unknown>): boolean => {
@@ -38,21 +41,9 @@ const Terrain: React.FC = () => {
         console.error(`Terrain Provider Access Error:\n\nEmpty Terrain URL`);
         mapViewer.terrainProvider = new CesiumEllipsoidTerrainProvider({});
       }
-    
   }, []);
 
-  return (
-    <Box className="Terrain">
-      {
-        missingTiles.length > 0 &&
-        <Box className="Dialog">
-          {
-            missingTiles.map(tile => <Box>{tile}</Box>)
-          }
-        </Box>
-      }
-    </Box>
-  );
+  return <></>;
 
 };
 

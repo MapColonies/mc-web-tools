@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
-import  appConfig  from '../../../Utils/Config';
+import  appConfig  from './Config';
 
 export const requestHandler = async (url: string, method: string, params: AxiosRequestConfig): Promise<AxiosResponse> => {
   const requestConfig: AxiosRequestConfig = {
@@ -20,9 +20,9 @@ export const requestHandler = async (url: string, method: string, params: AxiosR
 };
 
 export const requestHandlerWithToken = async (url: string, method: string, params: AxiosRequestConfig, token: string): Promise<AxiosResponse> => {
-const injectionType = appConfig.simpleCatalogViewerTool.tokenInjectionType;
-const attributeName = appConfig.simpleCatalogViewerTool.tokenAttributeName;
-const reqConfig = { ...params };
+  const injectionType = appConfig.tokenInjectionType;
+  const attributeName = appConfig.tokenAttributeName;
+  const reqConfig = { ...params };
 
   if (injectionType.toLowerCase() === 'header') {
     reqConfig.headers = {
