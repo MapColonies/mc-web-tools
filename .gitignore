@@ -8,7 +8,7 @@ confd/**
 
 # public
 public/env-config.js
-public/[cC]esium
+public/[cC]esium*
 public/ua-parser
 public/fonts/*
 !public/assets/scripts/
