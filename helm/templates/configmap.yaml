@@ -1,0 +1,25 @@
+{{- $MAIN_OBJECT_BLOCK := "configValues" -}}
+{{- $COMPONENT_NAME := "backend" -}}
+{{- $DATA := include "mcWebToolsData" . -}}
+
+{{- define "mcWebToolsData" -}}
+{{- $CONFIG_MANAGER_OBJECT := include "common.tplvalues.getGlobalObject" (dict "objName" "configManagment" "context" .) | fromYaml }}
+{{- if not $CONFIG_MANAGER_OBJECT.enabled -}}
+  REQUEST_PAYLOAD_LIMIT: {{ .Values.env.requestPayloadLimit | quote }}
+  RESPONSE_COMPRESSION_ENABLED: {{ .Values.env.responseCompressionEnabled | quote }}
+{{- end }}
+  default.conf: {{ tpl (.Files.Get "config/default.conf") . | quote }}
+  CONFIGURATION_ACCESS_TOKEN_ATTRIBUTE_NAME: {{ quote .Values.global.shared.accessToken.attributeName }}
+  CONFIGURATION_ACCESS_TOKEN_INJECTION_TYPE: {{ quote .Values.global.shared.accessToken.injectionType }}
+  CONFIGURATION_IMAGE_TAG: {{ quote .Values.configValues.image.tag }}
+  CONFIGURATION_PUBLIC_URL: {{ quote .Values.env.publicUrl }}
+  CONFIGURATION_MAP_CENTER: {{ quote .Values.env.map.center }}
+  CONFIGURATION_MAP_ZOOM: {{ quote .Values.env.map.zoom }}
+  CONFIGURATION_BASE_MAPS: {{ quote .Values.env.baseMaps }}
+  CONFIGURATION_DEFAULT_TERRAIN_PROVIDER_URL: {{ quote .Values.env.defaultTerrainProviderUrl }}
+  CONFIGURATION_APPS: {{ quote .Values.env.apps }}
+  CONFIGURATION_CSW_3D_URL: {{ quote .Values.env.csw3DUrl }}
+  CONFIGURATION_SHOULD_SHOW_PRECISION_DISCLAIMER: {{ quote .Values.env.shouldShowPrecisionDisclaimer }}
+{{- end }}
+
+{{ include "mc-chart.configmap" (dict "MAIN_OBJECT_BLOCK" $MAIN_OBJECT_BLOCK "COMPONENT_NAME" $COMPONENT_NAME "DATA" $DATA "WITH_TELEMETRY_TRACING" false "WITH_TELEMETRY_METRICS" false "context" .)}}
