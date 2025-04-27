@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/MapColonies/mc-web-tools/compare/v1.4.0...v1.5.0) (2025-04-27)
+
+
+### Features
+
+* values schema integration ([4027aef](https://github.com/MapColonies/mc-web-tools/commit/4027aef52ac1caa616e2d14180d8588add403c96))
+
+
+### Bug Fixes
+
+* helm artifacts ([886c5ff](https://github.com/MapColonies/mc-web-tools/commit/886c5ff84d392451d2a36dc88305ddfdc241a743))
+* support specific and official routes ([6c5e4e7](https://github.com/MapColonies/mc-web-tools/commit/6c5e4e7254a838de23aeac6456f94e62defb84c5))
+* synch master ci and model analyzer branch ([81962f6](https://github.com/MapColonies/mc-web-tools/commit/81962f6a85f23c0cab2ab3d2ecf21175229a0691))
+
 ## [1.4.0](https://github.com/MapColonies/mc-web-tools/compare/v1.3.2...v1.4.0) (2024-09-19)
 
 
