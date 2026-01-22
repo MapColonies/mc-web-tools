@@ -6,6 +6,7 @@ import PageNotFound from '../PageNotFound/PageNotFound';
 import TerrainVerification from '../TerrainVerification/TerrainVerification';
 import Tools from '../Tools/Tools';
 import SimpleCatalogViewer from '../SimpleCatalogViewer/SimpleCatalogViewer';
+import GeoJsonViewer from '../GeoJsonViewer/GeoJsonViewer';
 
 import './Routing.css';
 
@@ -35,6 +36,11 @@ const Routing: React.FC = (): JSX.Element => {
         {/* Simple Catalog Viewer */}
         <Route path="/simple-catalog-viewer">
           <SimpleCatalogViewer />
+        </Route>
+
+        {/* geoJson Viewer */}
+        <Route path="/geojson-viewer">
+          <GeoJsonViewer />
         </Route>
 
         <Route path="*">

@@ -12,7 +12,7 @@ const TerrainVerification: React.FC = (): JSX.Element => {
       style={{height: '95%'}}
       center={JSON.parse(appConfig.mapCenter)}
       zoom={+appConfig.mapZoom}
-      sceneModes={[CesiumSceneMode.SCENE3D]}
+      sceneMode={CesiumSceneMode.SCENE3D}
       baseMaps={appConfig.baseMaps}
     >
       <Cesium3DTileset
