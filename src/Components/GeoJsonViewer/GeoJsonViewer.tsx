@@ -9,84 +9,8 @@ import { MonacoInitializer } from "./Components/monacoInitalizer";
 import "./GeoJsonViewer.css";
 import { formatJson } from "./Utils/GeoJsonViewer/utils";
 import { GeoDrawingTools } from "./Components/GeoDrawingTools";
-// const geoFeatures = [
-//   {
-//     "type": "Feature",
-//     "properties": {},
-//     "geometry": {
-//       "coordinates": [
-//         [
-//           [
-//             -73.81078170569457,
-//             40.763327294370185
-//           ],
-//           [
-//             -73.81078170569457,
-//             40.650608669882786
-//           ],
-//           [
-//             -73.5707365262566,
-//             40.650608669882786
-//           ],
-//           [
-//             -73.5707365262566,
-//             40.763327294370185
-//           ],
-//           [
-//             -73.81078170569457,
-//             40.763327294370185
-//           ]
-//         ]
-//       ],
-//       "type": "Polygon"
-//     },
-//     "id": 0
-//   },
-//   {
-//     "type": "Feature",
-//     "properties": {},
-//     "geometry": {
-//       "coordinates": [
-//         [
-//           [
-//             -74.17140764668494,
-//             40.622173335990055
-//           ],
-//           [
-//             -74.17140764668496,
-//             40.55637598015247
-//           ],
-//           [
-//             -73.98055222810099,
-//             40.55637598015247
-//           ],
-//           [
-//             -73.98055222810099,
-//             40.622173335990055
-//           ],
-//           [
-//             -74.17140764668494,
-//             40.622173335990055
-//           ]
-//         ]
-//       ],
-//       "type": "Polygon"
-//     }
-//   },
-//   {
-//     "type": "Feature",
-//     "properties": {
-//       "featureType": "PP_PERIMETER_MARKER"
-//     },
-//     "geometry": {
-//       "coordinates": [
-//         -73.88946776594211,
-//         40.59560924152893
-//       ],
-//       "type": "Point"
-//     }
-//   }
-// ];
+import { GeoMenu } from "./Components/GeoMenu";
+
 const kuku = 0;
 
 const GeoJsonViewer: React.FC = (): JSX.Element => {
@@ -98,7 +22,7 @@ const GeoJsonViewer: React.FC = (): JSX.Element => {
   //   props.onPolygonSelection(rewindedPolygon);
   // };
   const handleGeometryDrawn = (geometry: any): void => {
-    console.log('***** handlePolygonSelected', geometry);
+    console.log('***** handleGeometryDrawn', geometry);
     const updatedGeoFeatures: Feature<Geometry, GeoJsonProperties>[] = [
       ...geoFeatures,
       {
@@ -118,6 +42,16 @@ const GeoJsonViewer: React.FC = (): JSX.Element => {
     );
   };
 
+  const handleGeoJSONLoaded = (featCollection: any): void => {
+    console.log('***** handleGeoJSONLoaded', featCollection);
+   
+    setGeoFeatures(featCollection.features);
+    
+    setCode(
+      formatJson(featCollection)
+    );
+  };
+
   return (
     <Box className="geojsonViewer container">
       <Box className="left">
@@ -132,6 +66,7 @@ const GeoJsonViewer: React.FC = (): JSX.Element => {
           fitOptions={{ padding: [10, 20, 10, 20] }}
         >
           <GeoDrawingTools onGeometryDrawn={handleGeometryDrawn}></GeoDrawingTools>
+          <GeoMenu onFileLoaded={handleGeoJSONLoaded}></GeoMenu>
         </GeoFeaturesPresentorComponent>
       </Box>
       <Box className="right">

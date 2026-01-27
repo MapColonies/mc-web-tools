@@ -24,7 +24,7 @@ const Tools: React.FC = (): JSX.Element => {
   const [apps] = useState({
     'terrain-verification': { category: 'DEM', name: 'Terrain Verification Tool', icon: 'map-marker.gif', url: '/terrain-verification', description: 'A Terrain Verification Tool', isInternal: true },
     'simple-catalog-viewer': { category: 'CATALOG', name: 'Simple Catalog Viewer', icon: 'globe.gif', width: '120px', url: '/simple-catalog-viewer', description: 'A Simple catalog viewer', isInternal: true },
-    'geojson-viewer': { category: 'GEO TOOLS', name: 'Geojson Viewer', icon: 'geojson-viewer.png', width: '120px', url: '/geojson-viewer', description: 'GeoJson viewer', isInternal: true },
+    'geojson-viewer': { category: 'GEO TOOLS', name: 'Geojson Viewer (Beta)', icon: 'geojson-viewer.png', width: '120px', url: '/geojson-viewer', description: 'GeoJson viewer (Beta)', isInternal: true },
     ...appConfig.apps
   });
 
