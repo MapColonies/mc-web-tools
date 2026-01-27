@@ -1,6 +1,11 @@
 import shp, { parseShp } from 'shpjs';
-import { Style, Icon } from 'ol/style';
+import { Style, Icon, Stroke, Fill } from 'ol/style';
 import { FeatureCollection } from 'geojson';
+import CircleStyle from 'ol/style/Circle';
+import { Coordinate } from 'ol/coordinate';
+import MultiPoint from 'ol/geom/MultiPoint';
+
+export const FEATURE_ID_FIELD = 'id';
 
 export enum FeatureType {
   POINT = 'Point',
@@ -12,8 +17,9 @@ export enum FeatureType {
   MULTI_POLYGON = 'MultiPolygon',
   GEOMETRY_COLLECTION = 'GeometryCollection',
   CIRCLE = 'Circle',
+  SELECTED_FILL = 'SELECTED_FILL',
+  SELECTED_MARKER = 'SELECTED_MARKER',
 }
-
 
 export const formatJson = (json: Record<string,unknown>)=>{
   return JSON.stringify(json,null,2);
@@ -39,7 +45,40 @@ export const FeatureTypeDrawingStyles = new Map<FeatureType, Style | undefined>(
         src: 'assets/img/map-marker.gif'
       })
     })
-  ]
+  ],
+  [
+    FeatureType.SELECTED_FILL,
+    new Style({
+      stroke: new Stroke({
+        width: 2,
+        color: "#ff0000"
+      }),
+      fill: new Fill({
+        color: "#aa2727"
+      })
+
+    }),
+  ],
+  [
+    FeatureType.SELECTED_MARKER,
+    new Style({
+      image: new CircleStyle({
+        radius: 5,
+        fill: new Fill({
+          color: '#FFA032', //GC_WARNING_HIGH
+        }),
+      }),
+      geometry: function (feature) {
+        // return the coordinates of the inner and outer rings of the polygon
+        //@ts-ignore
+        const coordinates = feature?.getGeometry()?.getCoordinates().reduce( 
+          (accumulator: Array<Coordinate>, currentValue: Array<Coordinate>) => [...accumulator, ...currentValue],
+          []
+        );
+        return new MultiPoint(coordinates);
+      }
+    })
+  ],
 ]);
 
 export function importShapeFileFromClient(

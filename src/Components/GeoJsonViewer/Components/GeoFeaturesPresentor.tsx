@@ -22,7 +22,7 @@ import {
   VectorSource
 } from '@map-colonies/react-components';
 import appConfig from '../../../Utils/Config';
-import { FeatureType, FeatureTypeDrawingStyles } from '../Utils/GeoJsonViewer/utils';
+import { FEATURE_ID_FIELD, FeatureType, FeatureTypeDrawingStyles } from '../Utils/GeoJsonViewer/utils';
 
 import './GeoFeaturesPresentor.css';
 
@@ -124,7 +124,7 @@ export const GeoFeaturesPresentorComponent: React.FC<PropsWithChildren<GeoFeatur
           geoFeatures?.map((feat, idx) => {
             let featureStyle = FeatureTypeDrawingStyles.get(feat?.geometry.type as FeatureType);
 
-            if ( selectedFeatureKey && feat?.properties?.key === selectedFeatureKey) {
+            if ( selectedFeatureKey && feat?.properties?.[FEATURE_ID_FIELD] === selectedFeatureKey) {
               featureStyle = selectionStyle;
             }
 
