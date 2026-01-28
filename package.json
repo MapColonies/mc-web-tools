@@ -114,6 +114,7 @@
     "fast-xml-parser": "^4.3.2",
     "geojson-schema": "^1.0.5",
     "https-browserify": "^1.0.0",
+    "jsonc-parser": "^3.3.1",
     "jsum": "^2.0.0-alpha.4",
     "lodash": "4.17.20",
     "monaco-editor": "^0.55.1",

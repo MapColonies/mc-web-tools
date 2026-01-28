@@ -7,6 +7,8 @@ import MultiPoint from 'ol/geom/MultiPoint';
 
 export const FEATURE_ID_FIELD = 'id';
 
+export const MONACO_ROW_NUMBER_COLUMN = 1;
+
 export enum FeatureType {
   POINT = 'Point',
   LINE_STRING = 'LineString',
@@ -19,6 +21,11 @@ export enum FeatureType {
   CIRCLE = 'Circle',
   SELECTED_FILL = 'SELECTED_FILL',
   SELECTED_MARKER = 'SELECTED_MARKER',
+}
+
+export enum HighlightMode {
+  HOVER_ON_KEY_FIELD = 'HOVER_ON_KEY_FIELD',
+  HOVER_ON_FEATTURE = 'HOVER_ON_FEATTURE',
 }
 
 export const formatJson = (json: Record<string,unknown>)=>{

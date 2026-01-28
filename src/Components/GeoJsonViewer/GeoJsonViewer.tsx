@@ -3,11 +3,11 @@ import { Box } from "@material-ui/core";
 import { Feature, GeoJsonProperties, Geometry } from 'geojson';
 import FeatureCollectionSchema from "geojson-schema/FeatureCollection.json";
 import { GeoFeaturesPresentorComponent } from "./Components/GeoFeaturesPresentor";
-import { MonacoEditor } from "./Components/monacoEditor";
+import { MonacoGeoJSONEditor } from "./Components/monacoEditor";
 import { MonacoInitializer } from "./Components/monacoInitalizer";
 
 import "./GeoJsonViewer.css";
-import { FeatureType, FeatureTypeDrawingStyles, formatJson } from "./Utils/GeoJsonViewer/utils";
+import { FeatureType, FeatureTypeDrawingStyles, formatJson, HighlightMode } from "./Utils/GeoJsonViewer/utils";
 import { GeoDrawingTools } from "./Components/GeoDrawingTools";
 import { GeoMenu } from "./Components/GeoMenu";
 
@@ -72,9 +72,10 @@ const GeoJsonViewer: React.FC = (): JSX.Element => {
       </Box>
       <Box className="right">
         <MonacoInitializer />
-        <MonacoEditor 
+        <MonacoGeoJSONEditor 
           height="100%"
           codeText={code}
+          highlightMode={HighlightMode.HOVER_ON_FEATTURE}
           onSelectGeometry={(key) => {
             setSelectedFeature(key);
           }}

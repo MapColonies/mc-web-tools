@@ -2,15 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { EditorProps, Editor, OnChange, OnMount, BeforeMount, useMonaco } from '@monaco-editor/react';
 import { LinearProgress } from '@map-colonies/react-core';
 import { editor, Uri } from 'monaco-editor';
-// import * as monaco from 'monaco-editor';
+import { parseTree, findNodeAtOffset, getNodeValue } from 'jsonc-parser';
 import 'monaco-editor/esm/vs/language/json/monaco.contribution';
 import { SchemaObject } from 'ajv';
-import { FEATURE_ID_FIELD } from '../Utils/GeoJsonViewer/utils';
+import { FEATURE_ID_FIELD, HighlightMode, MONACO_ROW_NUMBER_COLUMN } from '../Utils/GeoJsonViewer/utils';
+import { Feature, GeoJsonProperties, Geometry } from 'geojson';
 
-type MonacoEditorProps = EditorProps & { codeText?: string, readonly?: boolean; isFetching?: boolean; schema?: SchemaObject; onSelectGeometry?: (key: string) => void; };
+type MonacoGeoJSONEditorProps = EditorProps & { codeText?: string, readonly?: boolean; isFetching?: boolean; schema?: SchemaObject; onSelectGeometry?: (key: string) => void; highlightMode?: HighlightMode};
 
-export const MonacoEditor: React.FC<MonacoEditorProps> = (editorProps) => {
-  const { schema, readonly = false, isFetching = false, onChange, codeText, onSelectGeometry } = editorProps;
+export const MonacoGeoJSONEditor: React.FC<MonacoGeoJSONEditorProps> = (editorProps) => {
+  const { schema, readonly = false, isFetching = false, onChange, codeText, onSelectGeometry, highlightMode = HighlightMode.HOVER_ON_FEATTURE } = editorProps;
   const [loadProgressBar, setLoadProgressBar] = useState<boolean>(false);
   const [code, setCode] = useState<string>('');
 
@@ -77,30 +78,76 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (editorProps) => {
     }
   };
 
+  const getFeatureAtPosition = (
+    model: editor.ITextModel,
+    lineNumber: number,
+    column: number
+  ): Feature<Geometry, GeoJsonProperties> | null => {
+    const text = model.getValue();
+    const offset = model.getOffsetAt({ lineNumber, column });
+
+    const tree = parseTree(text);
+    if (!tree) return null;
+
+    let node = findNodeAtOffset(tree, offset);
+    if (!node) return null;
+
+    while (node) {
+      if (node.type === 'object') {
+        const value = getNodeValue(node);
+        if (value?.type === 'Feature' && value.geometry) {
+          return value;
+        }
+      }
+      node = node.parent!;
+    }
+
+    return null;
+  }
+
   const editorDidMount: OnMount = (editor) => {
+    setLoadProgressBar(false);
+    editor.focus();
     editor.onMouseMove((e) => {
       if (e.target && e.target.position) {
         const { lineNumber, column } = e.target.position;
         const model = editor.getModel();
-        
-        const lineContent = model?.getLineContent(lineNumber);
-        const regex = new RegExp(`"${FEATURE_ID_FIELD}":\\s*"(.*)"`);// /"id":\s*"(.*)"/;
-        const match = lineContent?.match(regex);
 
-        if (match) {
-          const featureId = match[1];
-          onSelectGeometry?.(featureId);
-          // setHoveredFeatureId(featureId);
-          console.log(`Hovered over feature with id: ${featureId}`);
-        } else {
-          // setHoveredFeatureId(null);
+        if (column === MONACO_ROW_NUMBER_COLUMN) { //Hover on linenumber editor column
           onSelectGeometry?.('');
+          return;
+        }
+
+        if (!model) return;
+
+        if (highlightMode === HighlightMode.HOVER_ON_FEATTURE) {
+          const feature = getFeatureAtPosition(
+            model,
+            lineNumber,
+            column
+          );
+
+          if (!feature) return;
+
+          const featureId = feature.properties?.[FEATURE_ID_FIELD];
+          onSelectGeometry?.(featureId);
+          // console.log('Hovered Feature(HOVER_ON_FEATTURE):', featureId);
+        }
+        else {
+          const lineContent = model?.getLineContent(lineNumber);
+          const regex = new RegExp(`"${FEATURE_ID_FIELD}":\\s*"(.*)"`);// /"id":\s*"(.*)"/;
+          const match = lineContent?.match(regex);
+
+          if (match) {
+            const featureId = match[1];
+            onSelectGeometry?.(featureId);
+            // console.log(`Hovered Feature(HOVER_ON_KEY_FIELD): ${featureId}`);
+          } else {
+            onSelectGeometry?.('');
+          }
         }
       }
     });
-
-    setLoadProgressBar(false);
-    editor.focus();
   };
 
   const handleBeforeMount: BeforeMount = () => {
