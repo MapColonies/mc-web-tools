@@ -132,7 +132,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
       <CesiumMap
         center={clientPosition?.center ?? JSON.parse(appConfig.mapCenter)}
         zoom={clientPosition?.zoom ?? appConfig.mapZoom}
-        sceneModes={[CesiumSceneMode.SCENE3D]}
+        sceneMode={CesiumSceneMode.SCENE3D}
         baseMaps={appConfig.baseMaps}
         // className={`simpleViewer ${isLoading ? "loading" : ""}`}
       >
@@ -154,12 +154,12 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
               preferLeaves
               skipLevelOfDetail
               // url={
-              //   new CesiumResource({
-              //     url: `${links['#text']}`,
-              //     queryParameters: {
-              //       token: userToken
-              //     }
-              //   })
+              //     new CesiumResource({
+              //         url: `${links['#text']}`,
+              //         queryParameters: {
+              //             token: userToken
+              //         }
+              //     })
               // }
               url={`${links['#text']}?token=${userToken}`}
               isZoomTo={!clientPosition && model['mc:id'] === modelIds[0]}

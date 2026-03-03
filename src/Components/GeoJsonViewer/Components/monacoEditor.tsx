@@ -1,17 +1,43 @@
 import { useEffect, useMemo, useState } from 'react';
-import { EditorProps, Editor, OnChange, OnMount, BeforeMount, useMonaco } from '@monaco-editor/react';
-import { LinearProgress } from '@map-colonies/react-core';
-import { editor, Uri } from 'monaco-editor';
-import { parseTree, findNodeAtOffset, getNodeValue } from 'jsonc-parser';
-import 'monaco-editor/esm/vs/language/json/monaco.contribution';
 import { SchemaObject } from 'ajv';
-import { FEATURE_ID_FIELD, HighlightMode, MONACO_ROW_NUMBER_COLUMN } from '../Utils/GeoJsonViewer/utils';
 import { Feature, GeoJsonProperties, Geometry } from 'geojson';
+import { parseTree, findNodeAtOffset, getNodeValue } from 'jsonc-parser';
+import { editor, Uri } from 'monaco-editor';
+import 'monaco-editor/esm/vs/language/json/monaco.contribution';
+import {
+  EditorProps,
+  Editor,
+  OnChange,
+  OnMount,
+  BeforeMount,
+  useMonaco,
+} from '@monaco-editor/react';
+import { LinearProgress } from '@map-colonies/react-core';
+import {
+  FEATURE_ID_FIELD,
+  HighlightMode,
+  MONACO_ROW_NUMBER_COLUMN,
+} from '../Utils/GeoJsonViewer/utils';
 
-type MonacoGeoJSONEditorProps = EditorProps & { codeText?: string, readonly?: boolean; isFetching?: boolean; schema?: SchemaObject; onSelectGeometry?: (key: string) => void; highlightMode?: HighlightMode};
+type MonacoGeoJSONEditorProps = EditorProps & {
+  codeText?: string;
+  readonly?: boolean;
+  isFetching?: boolean;
+  schema?: SchemaObject;
+  onSelectGeometry?: (key: string) => void;
+  highlightMode?: HighlightMode;
+};
 
 export const MonacoGeoJSONEditor: React.FC<MonacoGeoJSONEditorProps> = (editorProps) => {
-  const { schema, readonly = false, isFetching = false, onChange, codeText, onSelectGeometry, highlightMode = HighlightMode.HOVER_ON_FEATTURE } = editorProps;
+  const {
+    schema,
+    readonly = false,
+    isFetching = false,
+    onChange,
+    codeText,
+    onSelectGeometry,
+    highlightMode = HighlightMode.HOVER_ON_FEATTURE,
+  } = editorProps;
   const [loadProgressBar, setLoadProgressBar] = useState<boolean>(false);
   const [code, setCode] = useState<string>('');
 
@@ -26,7 +52,6 @@ export const MonacoGeoJSONEditor: React.FC<MonacoGeoJSONEditorProps> = (editorPr
   useEffect(() => {
     setCode(codeText as string);
   }, [codeText]);
-
 
   const diagnosticOptions = useMemo(() => {
     if (!schema) {
@@ -58,15 +83,15 @@ export const MonacoGeoJSONEditor: React.FC<MonacoGeoJSONEditorProps> = (editorPr
     return () => {};
   }, [monaco, diagnosticOptions]);
 
-  const handleCodeChange: OnChange = (value: string | undefined, ev: editor.IModelContentChangedEvent) => {
+  const handleCodeChange: OnChange = (
+    value: string | undefined,
+    ev: editor.IModelContentChangedEvent
+  ) => {
     const localCode = value ?? '';
     const model = monaco?.editor.getModel(schema?.$id as unknown as Uri);
     const markers = monaco?.editor
       .getModelMarkers({ resource: model?.uri })
-      .filter(m =>
-        m.severity === monaco.MarkerSeverity.Error &&
-        m.owner === 'json'
-      );
+      .filter((m) => m.severity === monaco.MarkerSeverity.Error && m.owner === 'json');
     setCode(localCode);
     try {
       const parsedJson = JSON.parse(localCode);
@@ -103,7 +128,7 @@ export const MonacoGeoJSONEditor: React.FC<MonacoGeoJSONEditorProps> = (editorPr
     }
 
     return null;
-  }
+  };
 
   const editorDidMount: OnMount = (editor) => {
     setLoadProgressBar(false);
@@ -113,7 +138,8 @@ export const MonacoGeoJSONEditor: React.FC<MonacoGeoJSONEditorProps> = (editorPr
         const { lineNumber, column } = e.target.position;
         const model = editor.getModel();
 
-        if (column === MONACO_ROW_NUMBER_COLUMN) { //Hover on linenumber editor column
+        if (column === MONACO_ROW_NUMBER_COLUMN) {
+          // Hover on linenumber editor column
           onSelectGeometry?.('');
           return;
         }
@@ -121,21 +147,16 @@ export const MonacoGeoJSONEditor: React.FC<MonacoGeoJSONEditorProps> = (editorPr
         if (!model) return;
 
         if (highlightMode === HighlightMode.HOVER_ON_FEATTURE) {
-          const feature = getFeatureAtPosition(
-            model,
-            lineNumber,
-            column
-          );
+          const feature = getFeatureAtPosition(model, lineNumber, column);
 
           if (!feature) return;
 
           const featureId = feature.properties?.[FEATURE_ID_FIELD];
           onSelectGeometry?.(featureId);
           // console.log('Hovered Feature(HOVER_ON_FEATTURE):', featureId);
-        }
-        else {
+        } else {
           const lineContent = model?.getLineContent(lineNumber);
-          const regex = new RegExp(`"${FEATURE_ID_FIELD}":\\s*"(.*)"`);// /"id":\s*"(.*)"/;
+          const regex = new RegExp(`"${FEATURE_ID_FIELD}":\\s*"(.*)"`); // /"id":\s*"(.*)"/;
           const match = lineContent?.match(regex);
 
           if (match) {
@@ -156,7 +177,9 @@ export const MonacoGeoJSONEditor: React.FC<MonacoGeoJSONEditorProps> = (editorPr
 
   return (
     <>
-      {loadProgressBar && <LinearProgress value={100} variant={isFetching ? 'indeterminate' : 'determinate'} />}
+      {loadProgressBar && (
+        <LinearProgress value={100} variant={isFetching ? 'indeterminate' : 'determinate'} />
+      )}
       <Editor
         width={'100%'}
         defaultLanguage={'json'}

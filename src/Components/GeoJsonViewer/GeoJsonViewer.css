@@ -1,4 +1,4 @@
-.geojsonViewer{
+.geojsonViewer {
   height: 100%;
 }
 
@@ -9,7 +9,7 @@
 
 .geojsonViewer .left {
   flex: 0 0 70%;
-   min-height: 0;
+  min-height: 0;
 }
 
 .geojsonViewer .right {

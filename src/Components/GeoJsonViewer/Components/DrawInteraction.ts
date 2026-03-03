@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useMap } from '@map-colonies/react-components';
 import { Draw } from 'ol/interaction';
 import { Geometry as OlGeom, Polygon } from 'ol/geom';
@@ -51,9 +51,9 @@ export const DrawInteraction: React.FC<DrawProps> = ({ drawType, onPolygonSelect
             image: new Icon({
               scale: 0.2,
               anchor: [0.5, 1],
-              src: 'assets/img/map-marker.gif'
-            })
-          })
+              src: 'assets/img/map-marker.gif',
+            }),
+          });
           break;
         case DrawType.STAR:
           options.geometryFunction = function (coordinates, geometry) {
@@ -101,7 +101,7 @@ export const DrawInteraction: React.FC<DrawProps> = ({ drawType, onPolygonSelect
 
     return () => {
       if (draw) {
-        draw.un('drawend', () => { });
+        draw.un('drawend', () => {});
         map.removeInteraction(draw);
       }
     };

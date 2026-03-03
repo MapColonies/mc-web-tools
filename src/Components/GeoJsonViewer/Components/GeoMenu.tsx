@@ -1,20 +1,23 @@
-import React, { useState } from "react";
-import { Box } from "@map-colonies/react-components";
+import React, { useState } from 'react';
+import { FeatureCollection } from 'geojson';
+import { Box } from '@map-colonies/react-components';
+import {
+  Button,
+  // ListDivider,
+  Menu,
+  MenuItem,
+  MenuSurfaceAnchor
+} from '@map-colonies/react-core';
+import { importShapeFileFromClient, proccessShapeFile } from '../Utils/GeoJsonViewer/utils';
 
 import '@map-colonies/react-core/dist/menu/styles';
 import './GeoMenu.css';
-import { Button, ListDivider, Menu, MenuItem, MenuSurfaceAnchor } from "@map-colonies/react-core";
-import { importShapeFileFromClient, proccessShapeFile } from "../Utils/GeoJsonViewer/utils";
-import { FeatureCollection } from "geojson";
 
 interface GeoMenuProps {
   onFileLoaded: (fc: FeatureCollection) => void;
 }
 
-
-export const GeoMenu: React.FC<GeoMenuProps> = ({ 
-  onFileLoaded 
-}) => {
+export const GeoMenu: React.FC<GeoMenuProps> = ({ onFileLoaded }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -25,16 +28,13 @@ export const GeoMenu: React.FC<GeoMenuProps> = ({
           onSelect={(evt: any) => {
             console.log(evt.detail.index);
             importShapeFileFromClient((ev, fileType) => {
-              const shpFile = (ev.target?.result as unknown) as ArrayBuffer;
+              const shpFile = ev.target?.result as unknown as ArrayBuffer;
               void proccessShapeFile(shpFile, fileType)
                 .then((geometryPolygon) => {
-                  onFileLoaded(geometryPolygon as FeatureCollection)
+                  onFileLoaded(geometryPolygon as FeatureCollection);
                 })
-                .catch((e) => {
-                  
-                })
-                .finally(() => {
-                });
+                .catch((e) => {})
+                .finally(() => {});
             });
           }}
           onClose={() => setOpen(false)}
@@ -49,5 +49,5 @@ export const GeoMenu: React.FC<GeoMenuProps> = ({
         </Button>
       </MenuSurfaceAnchor>
     </Box>
-  )
-}
+  );
+};

@@ -45,7 +45,7 @@ const Tools: React.FC = (): JSX.Element => {
       width: '120px',
       url: '/geojson-viewer',
       description: 'GeoJson viewer (Beta)',
-      isInternal: true
+      isInternal: true,
     },
     ...appConfig.apps,
   });
