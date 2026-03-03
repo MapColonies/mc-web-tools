@@ -38,6 +38,15 @@ const Tools: React.FC = (): JSX.Element => {
       description: 'A Simple catalog viewer',
       isInternal: true,
     },
+    'geojson-viewer': {
+      category: 'GEO TOOLS',
+      name: 'Geojson Viewer (Beta)',
+      icon: 'geojson-viewer.png',
+      width: '120px',
+      url: '/geojson-viewer',
+      description: 'GeoJson viewer (Beta)',
+      isInternal: true,
+    },
     ...appConfig.apps,
   });
 

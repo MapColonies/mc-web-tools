@@ -1,9 +1,5 @@
-import { CesiumGeographicTilingScheme } from '@map-colonies/react-components';
+import { CesiumGeographicTilingScheme, IBaseMap, IBaseMaps } from '@map-colonies/react-components';
 import { IRasterLayer } from '@map-colonies/react-components/dist/cesium-map/layers-manager';
-import {
-  IBaseMap,
-  IBaseMaps,
-} from '@map-colonies/react-components/dist/cesium-map/settings/settings';
 
 const PUBLIC_URL = (window as any)._env_.PUBLIC_URL;
 const MAP_CENTER = (window as any)._env_.MAP_CENTER;
@@ -40,7 +36,7 @@ const enrichBaseMaps = (baseMaps: IBaseMaps): IBaseMaps => {
     maps: baseMaps.maps.map((baseMap: IBaseMap) => {
       return {
         ...baseMap,
-        baseRasteLayers: (baseMap.baseRasteLayers as IRasterLayer[]).map((rasterLayer) => {
+        baseRasterLayers: (baseMap.baseRasterLayers as IRasterLayer[]).map((rasterLayer) => {
           return {
             ...rasterLayer,
             options: {
