@@ -1,9 +1,7 @@
 version: '3'
 
 services:
-
-  mc-web-tools-service: 
-
+  mc-web-tools-service:
     image: mc-web-tools
 
     build: .

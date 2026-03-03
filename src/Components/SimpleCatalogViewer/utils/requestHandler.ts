@@ -1,13 +1,17 @@
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
-import  appConfig  from '../../../Utils/Config';
+import appConfig from '../../../Utils/Config';
 
-export const requestHandler = async (url: string, method: string, params: AxiosRequestConfig): Promise<AxiosResponse> => {
+export const requestHandler = async (
+  url: string,
+  method: string,
+  params: AxiosRequestConfig
+): Promise<AxiosResponse> => {
   const requestConfig: AxiosRequestConfig = {
     url,
     method: method as Method,
     ...params,
     headers: {
-      ...{ ...(params.headers ?? {})},
+      ...{ ...(params.headers ?? {}) },
     } as Record<string, unknown>,
   };
 
@@ -19,10 +23,15 @@ export const requestHandler = async (url: string, method: string, params: AxiosR
     });
 };
 
-export const requestHandlerWithToken = async (url: string, method: string, params: AxiosRequestConfig, token: string): Promise<AxiosResponse> => {
-const injectionType = appConfig.simpleCatalogViewerTool.tokenInjectionType;
-const attributeName = appConfig.simpleCatalogViewerTool.tokenAttributeName;
-const reqConfig = { ...params };
+export const requestHandlerWithToken = async (
+  url: string,
+  method: string,
+  params: AxiosRequestConfig,
+  token: string
+): Promise<AxiosResponse> => {
+  const injectionType = appConfig.simpleCatalogViewerTool.tokenInjectionType;
+  const attributeName = appConfig.simpleCatalogViewerTool.tokenAttributeName;
+  const reqConfig = { ...params };
 
   if (injectionType.toLowerCase() === 'header') {
     reqConfig.headers = {
@@ -38,4 +47,3 @@ const reqConfig = { ...params };
 
   return requestHandler(url, method, reqConfig);
 };
-

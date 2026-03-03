@@ -1,4 +1,4 @@
-.simpleViewer{
+.simpleViewer {
   overflow: hidden;
 }
 
@@ -16,10 +16,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 9999;
 }
-.errors{
+.errors {
   position: absolute;
   top: 20px;
   left: 50%;
@@ -30,7 +30,7 @@
 }
 .Dialog {
   padding: 20px;
-  background: rgba(255,0,0,0.5);
+  background: rgba(255, 0, 0, 0.5);
   color: var(--white);
   border-radius: 10px;
   max-height: 300px;
