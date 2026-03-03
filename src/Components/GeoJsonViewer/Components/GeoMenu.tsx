@@ -6,7 +6,7 @@ import {
   // ListDivider,
   Menu,
   MenuItem,
-  MenuSurfaceAnchor
+  MenuSurfaceAnchor,
 } from '@map-colonies/react-core';
 import { importShapeFileFromClient, proccessShapeFile } from '../Utils/GeoJsonViewer/utils';
 

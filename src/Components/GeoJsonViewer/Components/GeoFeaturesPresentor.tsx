@@ -42,7 +42,6 @@ const DEFAULT_PROJECTION = 'EPSG:4326';
 export const GeoFeaturesPresentorComponent: React.FC<
   PropsWithChildren<GeoFeaturesPresentorProps>
 > = ({ geoFeatures, style, fitOptions, selectedFeatureKey, selectionStyle, children }) => {
-
   const previewBaseMap = useMemo(() => {
     // eslint-disable-next-line @typescript-eslint/no-array-constructor
     const olBaseMap = new Array();

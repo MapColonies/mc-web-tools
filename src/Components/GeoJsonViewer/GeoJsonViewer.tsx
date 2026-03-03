@@ -16,8 +16,6 @@ import {
 
 import './GeoJsonViewer.css';
 
-const kuku = 0;
-
 const GeoJsonViewer: React.FC = (): JSX.Element => {
   const [geoFeatures, setGeoFeatures] = useState<Feature<Geometry, GeoJsonProperties>[]>([]);
   const [code, setCode] = useState<string>(formatJson({ type: 'FeatureCollection', features: [] }));
