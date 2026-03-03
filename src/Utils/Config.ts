@@ -36,7 +36,7 @@ const enrichBaseMaps = (baseMaps: IBaseMaps): IBaseMaps => {
     maps: baseMaps.maps.map((baseMap: IBaseMap) => {
       return {
         ...baseMap,
-        baseRasteLayers: (baseMap.baseRasterLayers as IRasterLayer[]).map((rasterLayer) => {
+        baseRasterLayers: (baseMap.baseRasterLayers as IRasterLayer[]).map((rasterLayer) => {
           return {
             ...rasterLayer,
             options: {
