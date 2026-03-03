@@ -1,15 +1,20 @@
 import React from 'react';
-import { Cesium3DTileset, CesiumMap, CesiumSceneMode, TerrainianHeightTool, InspectorTool } from '@map-colonies/react-components';
+import {
+  Cesium3DTileset,
+  CesiumMap,
+  CesiumSceneMode,
+  TerrainianHeightTool,
+  InspectorTool,
+} from '@map-colonies/react-components';
 import appConfig from '../../Utils/Config';
 import Terrain from '../Terrain/Terrain';
 
 import './TerrainVerification.css';
 
 const TerrainVerification: React.FC = (): JSX.Element => {
-
   return (
     <CesiumMap
-      style={{height: '95%'}}
+      style={{ height: '95%' }}
       center={JSON.parse(appConfig.mapCenter)}
       zoom={+appConfig.mapZoom}
       sceneMode={CesiumSceneMode.SCENE3D}
@@ -24,7 +29,6 @@ const TerrainVerification: React.FC = (): JSX.Element => {
       <InspectorTool />
     </CesiumMap>
   );
-
 };
 
 export default TerrainVerification;

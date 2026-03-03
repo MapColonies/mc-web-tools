@@ -6,13 +6,17 @@ import './Header.css';
 const Header: React.FC = (): JSX.Element => {
   return (
     <Box className="Header">
-      {
-        window.opener &&
-        <Box className="Back" onClick={ (): void => { window.close(); } }>
+      {window.opener && (
+        <Box
+          className="Back"
+          onClick={(): void => {
+            window.close();
+          }}
+        >
           <Box className="ArrowHead"></Box>
           <Box className="ArrowBody">Back to app</Box>
         </Box>
-      }
+      )}
     </Box>
   );
 };

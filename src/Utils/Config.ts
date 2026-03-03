@@ -28,7 +28,7 @@ export enum LinkType {
   THUMBNAIL_L = 'THUMBNAIL_L',
   LEGEND_DOC = 'LEGEND_DOC',
   LEGEND_IMG = 'LEGEND_IMG',
-  LEGEND = 'LEGEND'
+  LEGEND = 'LEGEND',
 }
 
 const enrichBaseMaps = (baseMaps: IBaseMaps): IBaseMaps => {
@@ -41,13 +41,16 @@ const enrichBaseMaps = (baseMaps: IBaseMaps): IBaseMaps => {
             ...rasterLayer,
             options: {
               ...rasterLayer.options,
-              tilingScheme: (rasterLayer.type === LinkType.WMTS_LAYER) ? new CesiumGeographicTilingScheme() : undefined
-            }
+              tilingScheme:
+                rasterLayer.type === LinkType.WMTS_LAYER
+                  ? new CesiumGeographicTilingScheme()
+                  : undefined,
+            },
           };
-        })
-      }
-    })
-  }
+        }),
+      };
+    }),
+  };
 };
 
 class Config {
@@ -63,7 +66,7 @@ class Config {
     mapSericeRasterUrl: MAP_SERVICE_RASTER_URL,
     cswRasterUrl: CSW_RASTER_URL,
     csw3dUrl: CSW_3D_URL,
-  }
+  };
 }
 
 const appConfig = new Config(); // Singleton

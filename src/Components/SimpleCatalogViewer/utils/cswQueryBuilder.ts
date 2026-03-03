@@ -1,27 +1,27 @@
 import { XMLParser } from 'fast-xml-parser';
 
 const filterQueryByIDs = (ids: string[]): string => {
-    let result = '';
-    let isMultiFilter = ids.length > 1;
+  let result = '';
+  let isMultiFilter = ids.length > 1;
 
-    for (let i = 0;i<ids.length;i++) {
-      result += `
+  for (let i = 0; i < ids.length; i++) {
+    result += `
       <ogc:PropertyIsEqualTo>
         <ogc:PropertyName>mc:id</ogc:PropertyName>
         <ogc:Literal>${ids[i]}</ogc:Literal>
       </ogc:PropertyIsEqualTo>
-      `
-    }
+      `;
+  }
 
-    if (isMultiFilter) {
-      result = `<ogc:Or>${result}</ogc:Or>`;
-    }
+  if (isMultiFilter) {
+    result = `<ogc:Or>${result}</ogc:Or>`;
+  }
 
-    return result;
-  };
-  
-  export const getRecordsQueryByID = (ids: string[], outputSchema: string)  => {
-    return `
+  return result;
+};
+
+export const getRecordsQueryByID = (ids: string[], outputSchema: string) => {
+  return `
         <csw:GetRecords
         maxRecords="${ids.length}"
         outputFormat="application/xml"
@@ -44,18 +44,20 @@ const filterQueryByIDs = (ids: string[]): string => {
         </csw:GetRecords>`;
 };
 
-export const parseQueryResults = (xml: string, recordType: string): Record<string,unknown>[] | null => {
-    const parser = new XMLParser({ignoreAttributes: false});
-    const parsedQuery = parser.parse(xml);
-    const recordsResult = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'];
-    if (recordsResult['@_numberOfRecordsMatched'] === '0') {
-      console.error(`Didn't find matched IDs!`);
-      return null;
-    }
-    const records = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'][recordType];
-    if(Array.isArray(records)) {
-      return records;
-    }
-    return [records];
-    
-} 
+export const parseQueryResults = (
+  xml: string,
+  recordType: string
+): Record<string, unknown>[] | null => {
+  const parser = new XMLParser({ ignoreAttributes: false });
+  const parsedQuery = parser.parse(xml);
+  const recordsResult = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'];
+  if (recordsResult['@_numberOfRecordsMatched'] === '0') {
+    console.error(`Didn't find matched IDs!`);
+    return null;
+  }
+  const records = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'][recordType];
+  if (Array.isArray(records)) {
+    return records;
+  }
+  return [records];
+};

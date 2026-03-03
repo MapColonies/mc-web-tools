@@ -1,7 +1,8 @@
 const fs = require('fs');
-const url = require('url');
 const path = require('path');
-const exec = require('child_process').execFile;
+const { execFile } = require('child_process');
+const http = require('http');
+const https = require('https');
 
 let confdUrl =
   'https://github.com/kelseyhightower/confd/releases/download/v0.15.0/confd-0.15.0-windows-amd64.exe';
@@ -41,16 +42,20 @@ const devIndexConfigPath = path.join(confdDevBasePath, 'conf.d/index.toml');
 
 const download = (uri, filename) => {
   console.log(`Downloading ${filename} from ${uri}`);
-  const protocol = url.parse(uri).protocol.slice(0, -1);
+
+  const urlObj = new URL(uri);
+  const client = urlObj.protocol === 'https:' ? https : http;
 
   return new Promise((resolve, reject) => {
-    const onError = e => {
-      fs.unlink(filename);
+    const onError = (e) => {
+      if (fs.existsSync(filename)) {
+        fs.unlinkSync(filename);
+      }
       reject(e);
     };
 
-    require(protocol)
-      .get(uri, function(response) {
+    client
+      .get(uri, (response) => {
         if (response.statusCode >= 200 && response.statusCode < 300) {
           const fileStream = fs.createWriteStream(filename, { mode: 0o755 });
           fileStream.on('error', onError);
@@ -59,7 +64,9 @@ const download = (uri, filename) => {
         } else if (response.headers.location) {
           resolve(download(response.headers.location, filename));
         } else {
-          reject(new Error(response.statusCode + ' ' + response.statusMessage));
+          reject(
+            new Error(`${response.statusCode} ${response.statusMessage}`)
+          );
         }
       })
       .on('error', onError);
@@ -125,14 +132,14 @@ const replacePlaceHolders = () => {
 
 const runConfd = () => {
   console.log('Running confd');
-  exec(
+  execFile(
     `${confdPath}`,
     ['-backend', 'env', '-onetime', '-confdir', confdDevBasePath],
     (error, stdout, stderr) => {
       console.log(stdout);
       console.error(stderr);
       if (error !== null) {
-        throw new Error(`exec error: ${error}`);
+        throw new Error(`execFile error: ${error}`);
       }
     }
   );
@@ -153,7 +160,7 @@ const help = () => {
 };
 
 const main = () => {
-  if (process.argv.indexOf('--help') != -1) {
+  if (process.argv.indexOf('--help') !== -1) {
     help();
   }
   const envIdx = process.argv.indexOf('--environment');
