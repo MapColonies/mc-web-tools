@@ -21,10 +21,7 @@ const Terrain: React.FC = () => {
 
     const handleTerrainError = (e: Record<string, unknown>): void => {
       if (!isTerrainTileError(e)) {
-        console.error(
-          'Terrain provider error: Falling back to default terrain.',
-          e
-        );
+        console.error('Terrain provider error: Falling back to default terrain.', e);
         // Remove error event listener after failing once
         // @ts-ignore
         mapViewer.terrainProvider.errorEvent.removeEventListener(handleTerrainError);

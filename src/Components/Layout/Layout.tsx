@@ -1,9 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  RMWCProvider,
-  ThemeProvider as RMWCThemeProvider,
-  Themes,
-} from '@map-colonies/react-core';
+import { RMWCProvider, ThemeProvider as RMWCThemeProvider, Themes } from '@map-colonies/react-core';
 import { Box } from '@map-colonies/react-components';
 import version from '../../../package.json';
 import Header from '../Header/Header';
@@ -19,13 +15,10 @@ const Layout: React.FC = (): JSX.Element => {
   const camelize = (value: string): string => {
     return value
       .toLowerCase()
-      .replace(
-        /^([A-Z])|[\s-_]+(\w)/g,
-        (match, p1: string, p2: string, offset) => {
-          if (p2) return p2.toUpperCase();
-          return p1.toLowerCase();
-        }
-      );
+      .replace(/^([A-Z])|[\s-_]+(\w)/g, (match, p1: string, p2: string, offset) => {
+        if (p2) return p2.toUpperCase();
+        return p1.toLowerCase();
+      });
   };
 
   const CustomTheme = {
@@ -62,10 +55,7 @@ const Layout: React.FC = (): JSX.Element => {
     surface: '#151A22',
     alternativeSurface: '#2D3748',
     ...Object.fromEntries(
-      Object.entries(CustomTheme.darkTheme).map(([key, value]) => [
-        camelize(key),
-        value,
-      ])
+      Object.entries(CustomTheme.darkTheme).map(([key, value]) => [camelize(key), value])
     ),
   };
 

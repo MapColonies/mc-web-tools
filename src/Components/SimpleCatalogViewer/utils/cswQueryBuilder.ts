@@ -50,14 +50,12 @@ export const parseQueryResults = (
 ): Record<string, unknown>[] | null => {
   const parser = new XMLParser({ ignoreAttributes: false });
   const parsedQuery = parser.parse(xml);
-  const recordsResult =
-    parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'];
+  const recordsResult = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'];
   if (recordsResult['@_numberOfRecordsMatched'] === '0') {
     console.error(`Didn't find matched IDs!`);
     return null;
   }
-  const records =
-    parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'][recordType];
+  const records = parsedQuery['csw:GetRecordsResponse']['csw:SearchResults'][recordType];
   if (Array.isArray(records)) {
     return records;
   }

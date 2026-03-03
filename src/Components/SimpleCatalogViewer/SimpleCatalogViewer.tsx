@@ -12,10 +12,7 @@ import { useQueryParams } from '../../Hooks/useQueryParams';
 import appConfig, { LinkType } from '../../Utils/Config';
 import Terrain from '../Terrain/Terrain';
 import { getFootprintsCollection } from './utils';
-import {
-  getRecordsQueryByID,
-  parseQueryResults,
-} from './utils/cswQueryBuilder';
+import { getRecordsQueryByID, parseQueryResults } from './utils/cswQueryBuilder';
 import { requestHandlerWithToken } from './utils/requestHandler';
 import {
   validateIDsQuery,
@@ -41,7 +38,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
   let clientPosition: IClientFlyToPosition | undefined = undefined;
   let modelIds: string[] = [];
   let shouldShowExtent = false;
-  let idQueried: string | null = queryParams.get("model_ids");
+  let idQueried: string | null = queryParams.get('model_ids');
   if (idQueried == null) {
     console.error(
       `Error: model_ids does not exists in the query params!\nA good example: "http://url?model_ids=ID1,ID2"`
@@ -52,35 +49,35 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
         `Error: model_ids does not fit the specification!\nA good example: "http://url?model_ids=ID1,ID2"`
       );
     } else {
-      modelIds = idQueried.split(",");
+      modelIds = idQueried.split(',');
 
       // Make a unique model ids array
       modelIds = [...new Set(modelIds)];
     }
   }
 
-  const positionQueried: string | null = queryParams.get("position");
+  const positionQueried: string | null = queryParams.get('position');
   if (positionQueried != null) {
     if (!validatePositionQuery(positionQueried)) {
       console.error(
         `Error: position does not fit the specification!\nA good example: "http://url?position=lon,lat,height"\nP.S\nThe position param is optional`
       );
     } else {
-      const parsedPosition = positionQueried.split(",");
+      const parsedPosition = positionQueried.split(',');
       clientPosition = {
         center: [+parsedPosition[0], +parsedPosition[1]],
         zoom: +parsedPosition[2],
       };
     }
   }
-  const userToken = queryParams.get("token");
+  const userToken = queryParams.get('token');
   if (userToken === null) {
     console.error(
       `Error: No token was provided. The token should be as a query param with the name "token".\nA good example: "http://url?token=TOKEN"`
     );
   }
 
-  const shouldShowExtentQueried = queryParams.get("show_extent");
+  const shouldShowExtentQueried = queryParams.get('show_extent');
   if (shouldShowExtentQueried != null) {
     if (!validateShowExtent(shouldShowExtentQueried)) {
       console.error(
@@ -93,7 +90,7 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     if (modelIds.length > 2) {
-      console.warn("You provided more than 2 models. This is not recommended");
+      console.warn('You provided more than 2 models. This is not recommended');
     }
 
     if (userToken) {
@@ -109,17 +106,15 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
           userToken
         );
 
-      cswRequestHandler(appConfig.simpleCatalogViewerTool.csw3dUrl, "POST", {
-        data: getRecordsQueryByID(modelIds, "http://schema.mapcolonies.com/3d"),
+      cswRequestHandler(appConfig.simpleCatalogViewerTool.csw3dUrl, 'POST', {
+        data: getRecordsQueryByID(modelIds, 'http://schema.mapcolonies.com/3d'),
       })
         .then((res) => {
-          let modelsResponse = parseQueryResults(res.data, "mc:MC3DRecord");
+          let modelsResponse = parseQueryResults(res.data, 'mc:MC3DRecord');
           if (modelsResponse !== null) {
             setModels(modelsResponse);
             setFootprints(
-              modelsResponse.map((model) =>
-                JSON.parse(model["mc:footprint"] as string)
-              )
+              modelsResponse.map((model) => JSON.parse(model['mc:footprint'] as string))
             );
           }
         })
@@ -142,21 +137,19 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
         // className={`simpleViewer ${isLoading ? "loading" : ""}`}
       >
         {models.map((model) => {
-          let links = model["mc:links"] as any;
+          let links = model['mc:links'] as any;
           if (Array.isArray(links)) {
             links = links.find(
               (link) =>
-                link["@_scheme"] === LinkType.THREE_D_LAYER ||
-                link["@_scheme"] === LinkType.THREE_D_TILES
+                link['@_scheme'] === LinkType.THREE_D_LAYER ||
+                link['@_scheme'] === LinkType.THREE_D_TILES
             );
           }
           return (
             <Cesium3DTileset
               key={model.id as string}
               maximumScreenSpaceError={MAXIMUM_SCREEN_SPACE_ERROR}
-              cullRequestsWhileMovingMultiplier={
-                CULL_REQUESTS_WHILE_MOVING_MULTIPLIER
-              }
+              cullRequestsWhileMovingMultiplier={CULL_REQUESTS_WHILE_MOVING_MULTIPLIER}
               preloadFlightDestinations
               preferLeaves
               skipLevelOfDetail
@@ -168,8 +161,8 @@ const SimpleCatalogViewer: React.FC = (): JSX.Element => {
               //     }
               //   })
               // }
-              url={`${links["#text"]}?token=${userToken}`}
-              isZoomTo={!clientPosition && model["mc:id"] === modelIds[0]}
+              url={`${links['#text']}?token=${userToken}`}
+              isZoomTo={!clientPosition && model['mc:id'] === modelIds[0]}
             />
           );
         })}

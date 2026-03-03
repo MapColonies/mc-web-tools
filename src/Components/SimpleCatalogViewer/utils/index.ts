@@ -7,7 +7,7 @@ export const getFootprintsCollection = (
   isPolylined = false
 ): FeatureCollection => {
   return {
-    type: "FeatureCollection",
+    type: 'FeatureCollection',
     features: geometryList.map<Feature>((geom) => {
       let geometry = geom as unknown as Geometry;
 
@@ -16,7 +16,7 @@ export const getFootprintsCollection = (
       }
 
       return {
-        type: "Feature",
+        type: 'Feature',
         properties: {},
         geometry: geometry,
       };

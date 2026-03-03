@@ -7,7 +7,7 @@
 }
 
 .simpleViewer.loading::after {
-  content: "Loading...";
+  content: 'Loading...';
   color: white;
   text-align: center;
   font-size: 5rem;
