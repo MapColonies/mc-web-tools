@@ -8,43 +8,43 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ### 🐼 Terrain Verification app
 
-* Cesium map with a terrain provider
+- Cesium map with a terrain provider
 
-* Height tool
+- Height tool
 
-* Inspector tool
+- Inspector tool
 
 ### 🐼 Reference to Nominatim app
 
-* OpenStreetMap
+- OpenStreetMap
 
-* A tool to search OSM data by name or address (geocoding) and to generate synthetic addresses of OSM points (reverse geocoding)
+- A tool to search OSM data by name or address (geocoding) and to generate synthetic addresses of OSM points (reverse geocoding)
 
 ### 🐼 Reference to Valhalla app
 
-* OpenStreetMap
+- OpenStreetMap
 
-* A routing engine and accompanying libraries for use with OSM data
+- A routing engine and accompanying libraries for use with OSM data
 
-* Tools like time+distance matrix computation, isochrones, elevation sampling, map matching and tour optimization (Travelling Salesman)
+- Tools like time+distance matrix computation, isochrones, elevation sampling, map matching and tour optimization (Travelling Salesman)
 
 ### 🐼 Reference to Developer Portal app
 
-* MapColonies Documentation
+- MapColonies Documentation
 
-* Getting started guide
+- Getting started guide
 
-* Release Notes
+- Release Notes
 
-* OGC Protocols
+- OGC Protocols
 
 ### 🐼 Reference to Cesium-Sandcastle app
 
-* Cesium map
+- Cesium map
 
-* A live-coding area
+- A live-coding area
 
-* CesiumJS examples
+- CesiumJS examples
 
 ## Installation
 
@@ -61,8 +61,8 @@ yarn confd
 ```
 
 To generate:  
-public/env-config.js  <- For env variables  
-public/index.html  <- For PUBLIC_URL, to support non-root URL  
+public/env-config.js <- For env variables  
+public/index.html <- For PUBLIC_URL, to support non-root URL
 
 To use app env variables inside a docker, run the following command
 
@@ -94,7 +94,7 @@ To run tests, run the following command
 yarn test
 ```
 
-It will run in an interactive mode  
+It will run in an interactive mode
 
 See [running tests](https://facebook.github.io/create-react-app/docs/running-tests)
 
@@ -112,21 +112,24 @@ See [deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
 ## Deployment
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > We depend on `Red-Hat Yaml Extension` for validating the values files against the relevant schemas from helm-common.
 > That means, you should install the extension from vscode in order to be able to edit values files according to our schemas.
 
 To update helm dependencies
+
 ```bash
 yarn helm-update
 ```
 
-In order to create/renew values schemas 
+In order to create/renew values schemas
+
 ```bash
 yarn helm-assets
 ```
 
 To deploy: helm values **MUST** be combined from global.yaml and values.yaml (use npm script!)
+
 ```bash
 yarn helm-install
 ```

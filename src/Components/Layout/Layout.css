@@ -42,6 +42,6 @@
 }
 
 .dark-theme .mdc-dialog .mdc-dialog__content {
-  color: rgba(var(--mdc-theme-on-surface),.7);
+  color: rgba(var(--mdc-theme-on-surface), 0.7);
   padding: 0 20px;
 }

@@ -1,2 +1,6 @@
 .vscode/settings.json
-schemas/*.json
+confd
+helm
+public
+CHANGELOG.md
+*.json
