@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.1](https://github.com/MapColonies/mc-web-tools/compare/v3.1.0...v3.1.1) (2026-03-18)
+
+
+### Bug Fixes
+
+* nginx worker_processes from auto to 4 for faster startup ([e2c8e05](https://github.com/MapColonies/mc-web-tools/commit/e2c8e052afc9740982409d72f5f1bea60fe3fffa))
+* nginx worker_processes from auto to 4 for faster startup ([ffcf223](https://github.com/MapColonies/mc-web-tools/commit/ffcf2234712697623d15ad1152b7bb8cf9b5a19a))
+
 ## [3.1.0](https://github.com/MapColonies/mc-web-tools/compare/v3.0.0...v3.1.0) (2026-03-03)
 
 
