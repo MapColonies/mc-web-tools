@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.2](https://github.com/MapColonies/mc-web-tools/compare/v3.1.1...v3.1.2) (2026-03-19)
+
+
+### Bug Fixes
+
+* artifacts.json in build-and-push.yaml ([38a43d2](https://github.com/MapColonies/mc-web-tools/commit/38a43d20e5dc73561a326159d96a175cd271cb57))
+* artifacts.json in build-and-push.yaml ([e6e47f9](https://github.com/MapColonies/mc-web-tools/commit/e6e47f9eca6a8a039e0222f976adbeccdd55ee13))
+
 ## [3.1.1](https://github.com/MapColonies/mc-web-tools/compare/v3.1.0...v3.1.1) (2026-03-18)
 
 
