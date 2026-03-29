@@ -8,7 +8,7 @@ const FootprintVerification: React.FC = (): JSX.Element => {
       style={{ height: '100%' }}
       center={JSON.parse(appConfig.mapCenter)}
       zoom={+appConfig.mapZoom}
-      sceneModes={[CesiumSceneMode.SCENE2D]}
+      sceneMode={CesiumSceneMode.SCENE2D}
       baseMaps={appConfig.baseMaps}
     />
   );

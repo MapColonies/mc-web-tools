@@ -1,0 +1,14 @@
+.geojsonViewer #geo-menu {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.geojsonViewer #geo-menu .mdc-menu .mdc-list {
+  color: unset;
+  position: relative;
+}
