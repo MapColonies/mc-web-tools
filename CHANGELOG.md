@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.4](https://github.com/MapColonies/mc-web-tools/compare/v3.1.3...v3.1.4) (2026-08-03)
+
+
+### Bug Fixes
+
+* helm sync with infra ([4ef5947](https://github.com/MapColonies/mc-web-tools/commit/4ef594743eb2f50259f4b016392a2c8c9d498cbb))
+* helm sync with infra ([3bc7932](https://github.com/MapColonies/mc-web-tools/commit/3bc79321bd4e0ddeefd2d5acb38fe789172e2ad2))
+
 ## [3.1.3](https://github.com/MapColonies/mc-web-tools/compare/v3.1.2...v3.1.3) (2026-04-09)
 
 
